@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Tables / General - NiceAdmin Bootstrap Template</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  
+</head>
+
+<body>
+
+  
+    <app-header></app-header>
+    <app-sidebar></app-sidebar>
+  
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      
+     
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Liste des Fournisseurs</h5>
+
+              <!-- Default Table -->
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Adresse</th>
+                    <th scope="col">Téléphone</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let fournisseur of fournisseurs ; let i = index" >
+                    <th scope="row">{{ i + 1 }}</th>
+                    
+                <td>{{ fournisseur.nomFournisseur }}</td>
+                <td>{{ fournisseur.email }}</td>
+                <td>{{ fournisseur.adresse }}</td>
+                <td>{{ fournisseur.telephone }}</td>
+                <td>
+                    <button type="submit" class="btn btn-primary">Modifier</button>
+                  <button type="reset" class="btn btn-secondary"  (click)="deleteFournisseur(fournisseur.idFournisseur)">Supprimer</button>
+                </td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+              <!-- End Default Table Example -->
+            </div>
+          </div>
+
+          
+
+          
+
+          
+
+          
+
+        </div>
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  
+
+  
+
+</body>
+<app-footer></app-footer>
+</html>

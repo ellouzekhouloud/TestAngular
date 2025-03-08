@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+ 
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <app-header></app-header>
+
+    
+
+  <!-- ======= Sidebar ======= -->
+  <app-sidebar></app-sidebar>
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Ajouter Fournisseur</h1>
+    </div><!-- End Page Title -->
+  
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+  
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Ajouter un Fournisseur</h5>
+  
+             
+              <form [formGroup]="fournisseurForm" (ngSubmit)="onSubmit()" class="row g-3">
+                <div class="col-12">
+                  <label for="nomFournisseur" class="form-label">Nom</label>
+                  <input type="text" id="nomFournisseur" class="form-control" formControlName="nomFournisseur">
+                </div>
+                
+                <div class="col-12">
+                  <label for="emailFournisseur" class="form-label">Email</label>
+                  <input type="email" id="emailFournisseur" class="form-control" formControlName="email">
+                </div>
+  
+                <div class="col-12">
+                  <label for="adresseFournisseur" class="form-label">Adresse</label>
+                  <input type="text" id="adresseFournisseur" class="form-control" formControlName="adresse">
+                </div>
+  
+                <div class="col-12">
+                  <label for="telephoneFournisseur" class="form-label">Téléphone</label>
+                  <input type="text" id="telephoneFournisseur" class="form-control" formControlName="telephone">
+                </div>
+  
+                <div class="text-end">
+                  <button class="btn btn-primary">Ajouter</button>
+                </div>
+              </form>
+  
+            </div>
+          </div>
+  
+        </div>
+      </div>
+    </section>
+  
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <app-footer></app-footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+
+
+</body>
+
+</html>
