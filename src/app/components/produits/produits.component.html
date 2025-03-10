@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,34 +33,43 @@
 
           <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Liste des Fournisseurs</h5>
+                <h5 class="card-title">Liste des Produits</h5>
 
               <!-- Default Table -->
               <table class="table">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Référence</th>
                     <th scope="col">Nom</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Adresse</th>
-                    <th scope="col">Téléphone</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Prix</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Fournisseur</th>
+                    <th scope="col">Caractéristiques</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let fournisseur of fournisseurs ; let i = index" >
+                  <tr *ngFor="let produit of produits; let i = index" >
                     <th scope="row">{{ i + 1 }}</th>
                     
-                <td>{{ fournisseur.nomFournisseur }}</td>
-                <td>{{ fournisseur.email }}</td>
-                <td>{{ fournisseur.adresse }}</td>
-                <td>{{ fournisseur.telephone }}</td>
+                    <td>{{ produit.reference }}</td>
+                    <td>{{ produit.nom }}</td>
+                    <td>{{ produit.description }}</td>
+                    <td>{{ produit.prix | currency:'EUR' }}</td>
+                    <td>   <img *ngIf="produit.imagePath" [src]="'http://localhost:8080' + produit.imagePath" alt="Image produit" width="100"></td>
+                    <td>{{ produit.fournisseur.nomFournisseur }}</td>
+                    <td>
+                      <ul>
+                        <li *ngFor="let carac of produit.caracteristiques">
+                          <strong>{{ carac.nom }}:</strong> {{ carac.valeur }}
+                        </li>
+                      </ul>
+                    </td>
                 <td>
-                  <button type="button" class="btn btn-info" [routerLink]="['/fournisseurs', fournisseur.idFournisseur, 'produits']">
-                    Voir les produits
-                  </button>
                     <button type="submit" class="btn btn-primary">Modifier</button>
-                  <button type="reset" class="btn btn-secondary"  (click)="deleteFournisseur(fournisseur.idFournisseur)">Supprimer</button>
+                  <button type="reset" class="btn btn-secondary" (click)="supprimerProduit(produit.idProduit)" >Supprimer</button>
                 </td>
                   </tr>
                   

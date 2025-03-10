@@ -11,6 +11,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { FournisseursComponent } from './components/fournisseurs/fournisseurs.component';
 import { AddfournisseurComponent } from './components/addfournisseur/addfournisseur.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ProduitsComponent } from './components/produits/produits.component';
+import { AddProduitComponent } from './components/add-produit/add-produit.component';
+import { ViewProduitsFournisseurComponent } from './components/view-produits-fournisseur/view-produits-fournisseur.component';
+
 
 
 @NgModule({
@@ -22,6 +26,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DashboardComponent,
     FournisseursComponent,
     AddfournisseurComponent,
+    ProduitsComponent,
+    AddProduitComponent,
+    ViewProduitsFournisseurComponent,
+   
    
   ],
   imports: [

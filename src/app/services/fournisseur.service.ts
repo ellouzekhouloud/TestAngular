@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Produit } from './produit.service';
 
 export interface Fournisseur {
   idFournisseur: number;
@@ -32,4 +33,9 @@ export class FournisseurService {
   deleteFournisseur(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getProduitsByFournisseur(idFournisseur: number): Observable<Produit[]> {
+    return this.http.get<Produit[]>(`http://localhost:8080/api/produits/fournisseur/${idFournisseur}/produits`);
+  }
+  
 }

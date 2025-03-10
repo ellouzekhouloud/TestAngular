@@ -1,6 +1,7 @@
 import { FournisseurService } from '../../services/fournisseur.service';
 import { Component, OnInit } from '@angular/core';
 import { Fournisseur } from '../../services/fournisseur.service';
+import { Produit, ProduitService } from 'src/app/services/produit.service';
 
 @Component({
   selector: 'app-fournisseurs',
@@ -9,8 +10,9 @@ import { Fournisseur } from '../../services/fournisseur.service';
 })
 export class FournisseursComponent implements OnInit {
   fournisseurs: Fournisseur[] = [];
+  
 
-  constructor(private FournisseurService: FournisseurService) {}
+  constructor(private FournisseurService: FournisseurService,private ProduitService: ProduitService) {}
 
   ngOnInit(): void {
     this.getFournisseurs();
@@ -29,4 +31,5 @@ export class FournisseursComponent implements OnInit {
       });
     }
   }
+  
 }
