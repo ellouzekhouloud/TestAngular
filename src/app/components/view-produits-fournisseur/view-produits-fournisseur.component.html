@@ -5,9 +5,12 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Tables / General - NiceAdmin Bootstrap Template</title>
+  <title>Liste des Produits du Fournisseur</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
+  
+  <!-- Ajouter Bootstrap ici (si ce n'est pas déjà fait) -->
+  
 </head>
 
 <body>
@@ -16,35 +19,41 @@
 
   <main id="main" class="main">
     <div class="pagetitle">
+      <h1 class="text-center">Liste des Produits du Fournisseur</h1>
     </div><!-- End Page Title -->
 
     <section class="section">
       <div class="row">
         <div class="col-lg-12">
-          <div class="card">
+          <div class="card shadow-sm border-0">
             <div class="card-body">
-              <h5 class="card-title">Liste des Produits du Fournisseur</h5>
+              
 
               <!-- Table des produits -->
               <div class="container">
-                <h2>Produits du Fournisseur</h2>
+                <h5 class="card-title">Produits du Fournisseur</h5>
                 <table class="table">
                   <thead>
                     <tr>
                       <th scope="col">#</th>
                       <th scope="col">Référence du Produit</th>
                       <th scope="col">Nom du Produit</th>
-                      
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let produit of produits">
-                      <th scope="row">{{ produit.idProduit }}</th>
+                    <tr *ngFor="let produit of produits; let i = index">
+                      <th scope="row">{{ i + 1 }}</th>
                       <td>{{ produit.reference }}</td> 
                       <td>{{ produit.nom }}</td> 
                     </tr>
                   </tbody>
                 </table>
+              </div>
+              <!-- Bouton Retour -->
+              <div class="mb-3">
+                <button class="btn btn-secondary" (click)="goBack()">
+                  <i class="bi bi-arrow-return-left"></i> Retour
+                </button>
               </div>
               <!-- Fin Table des produits -->
             </div>
@@ -55,6 +64,9 @@
   </main><!-- End #main -->
 
   <app-footer></app-footer>
+
+  <!-- Bootstrap JS (si nécessaire) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

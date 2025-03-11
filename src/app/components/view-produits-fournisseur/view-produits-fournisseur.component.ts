@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProduitService } from 'src/app/services/produit.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class ViewProduitsFournisseurComponent implements OnInit{
 
   constructor(
     private route: ActivatedRoute,
-    private produitService: ProduitService
+    private produitService: ProduitService, private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -29,5 +29,8 @@ export class ViewProduitsFournisseurComponent implements OnInit{
         console.error('Erreur lors de la récupération des produits', error);
       }
     );
+  }
+  goBack() {
+    this.router.navigate(['/fournisseurs']);  // Naviguer vers la page précédente
   }
 }
