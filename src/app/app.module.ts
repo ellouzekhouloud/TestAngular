@@ -15,6 +15,10 @@ import { ProduitsComponent } from './components/produits/produits.component';
 import { AddProduitComponent } from './components/add-produit/add-produit.component';
 import { ViewProduitsFournisseurComponent } from './components/view-produits-fournisseur/view-produits-fournisseur.component';
 
+import { PersonnelsComponent } from './components/personnels/personnels.component';
+import { AddPersonnelComponent } from './components/add-personnel/add-personnel.component';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+
 
 
 @NgModule({
@@ -29,6 +33,9 @@ import { ViewProduitsFournisseurComponent } from './components/view-produits-fou
     ProduitsComponent,
     AddProduitComponent,
     ViewProduitsFournisseurComponent,
+    
+    PersonnelsComponent,
+         AddPersonnelComponent,
    
    
   ],
@@ -37,7 +44,8 @@ import { ViewProduitsFournisseurComponent } from './components/view-produits-fou
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxIntlTelInputModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

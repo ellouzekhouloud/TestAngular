@@ -1232,3 +1232,19 @@ h6 {
   font-size: 13px;
   color: #012970;
 }
+
+.main {
+  min-height: calc(100vh - 60px); /* 100% de la hauteur de l'écran - hauteur estimée du footer */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Le footer reste en bas uniquement si le contenu est court */
+.footer {
+  margin-top: auto; /* Pousse le footer vers le bas quand le contenu est insuffisant */
+  padding: 20px 0;
+  font-size: 14px;
+  transition: all 0.3s;
+  border-top: 1px solid #cddfff;
+  text-align: center;
+}

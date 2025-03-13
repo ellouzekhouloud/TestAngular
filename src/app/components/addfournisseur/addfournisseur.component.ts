@@ -9,6 +9,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class AddfournisseurComponent {
   fournisseurForm: FormGroup;
+  
 
   constructor(private fb: FormBuilder, private fournisseurService: FournisseurService) {
     this.fournisseurForm = this.fb.group({
@@ -24,7 +25,7 @@ export class AddfournisseurComponent {
       this.fournisseurService.addFournisseur(this.fournisseurForm.value).subscribe(
         response => {
           console.log('Fournisseur ajouté avec succès !', response);
-          this.fournisseurForm.reset(); // Réinitialiser le formulaire après ajout
+          this.fournisseurForm.reset(); 
         },
         error => {
           console.error('Erreur lors de l’ajout du fournisseur', error);

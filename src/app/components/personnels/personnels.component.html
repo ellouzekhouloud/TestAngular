@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Liste des Personnels - Gestion du Personnel</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <style>
+    /* Modifier le bouton Modifier avec un bleu foncé */
+    .btn-primary {
+      background-color: #0056b3; /* Bleu foncé */
+      border-color: #0056b3; /* Bleu foncé */
+    }
+
+    /* Remplacer btn-danger par un gris clair pour le bouton Supprimer */
+    .btn-danger {
+      background-color: #6c757d; /* Gris clair */
+      border-color: #6c757d; /* Gris clair */
+    }
+
+    /* Ajouter un effet de survol pour les boutons */
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Optionnel : changer la couleur de fond du tableau pour un meilleur contraste */
+    table {
+      background-color: #f8f9fa;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <app-header></app-header>
+  <app-sidebar></app-sidebar>
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Liste des Personnels</h1>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste des Personnels</h5>
+
+              <!-- Table des Personnels -->
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Adresse</th>
+                    <th scope="col">Téléphone</th>
+                    <th scope="col">Poste</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let personnel of personnels ; let i = index">
+                    <th scope="row">{{ i + 1 }}</th>
+                    <td>{{ personnel.nom }}</td>
+                    <td>{{ personnel.email }}</td>
+                    <td>{{ personnel.adresse }}</td>
+                    <td>{{ personnel.telephone }}</td>
+                    <td>{{ personnel.poste }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" (click)="editPersonnel(personnel)">
+                          <i class="bi bi-pencil"></i> 
+                          </button>
+                          
+                      <button type="button" class="btn btn-danger" (click)="deletePersonnel(personnel.id)">
+                        <i class="bi bi-trash"></i> 
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- End Table des Personnels -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <app-footer></app-footer>
+
+</body>
+
+</html>
+

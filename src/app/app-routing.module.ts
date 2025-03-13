@@ -6,6 +6,8 @@ import { AddfournisseurComponent } from './components/addfournisseur/addfourniss
 import { ProduitsComponent } from './components/produits/produits.component';
 import { AddProduitComponent } from './components/add-produit/add-produit.component';
 import { ViewProduitsFournisseurComponent } from './components/view-produits-fournisseur/view-produits-fournisseur.component';
+import { PersonnelsComponent } from './components/personnels/personnels.component';
+import { AddPersonnelComponent } from './components/add-personnel/add-personnel.component';
 
 
 const routes: Routes = [
@@ -15,6 +17,8 @@ const routes: Routes = [
   { path: 'produits', component: ProduitsComponent },
   { path: 'ajouterproduit', component: AddProduitComponent },
   { path: 'fournisseurs/:id/produits', component: ViewProduitsFournisseurComponent },
+  { path: 'personnels', component: PersonnelsComponent },
+  { path: 'ajouterpersonnel', component: AddPersonnelComponent },
  
 ];
 

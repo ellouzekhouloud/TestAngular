@@ -23,7 +23,7 @@ export interface Produit {
   description: string;
   prix: number;
   imagePath: string | null;
-  fournisseur: Fournisseur; // Fournisseur complet
+  fournisseur: Fournisseur; 
   caracteristiques: Caracteristique[];
 }
 

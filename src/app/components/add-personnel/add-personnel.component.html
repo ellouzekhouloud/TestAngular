@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Ajouter Personnel</title>
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <app-header></app-header>
+  <app-sidebar></app-sidebar>
+
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Ajouter Personnel</h1>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Formulaire d'ajout de personnel</h5>
+
+              <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
+                
+                <div class="row">
+                  <!-- Nom -->
+                  <div class="col-md-6 mb-3">
+                    <label for="nom" class="form-label">Nom</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" id="nom" class="form-control" formControlName="nom" required placeholder="Entrer le nom">
+                    </div>
+                  </div>
+
+                  <!-- Prénom -->
+                  <div class="col-md-6 mb-3">
+                    <label for="prenom" class="form-label">Prénom</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" id="prenom" class="form-control" formControlName="prenom" required placeholder="Entrer le prénom">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <!-- Email -->
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
+                      <input type="email" id="email" class="form-control" formControlName="email" required placeholder="Example@domaine.com">
+                    </div>
+                  </div>
+
+                  <!-- Téléphone -->
+                  <div class="col-md-6 mb-3">
+                    <label for="telephone" class="form-label">Téléphone</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                      <input type="text" id="telephone" class="form-control" formControlName="telephone" required placeholder="Entrer numéro">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <!-- Adresse -->
+                  <div class="col-md-6 mb-3">
+                    <label for="adresse" class="form-label">Adresse</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                      <input type="text" id="adresse" class="form-control" formControlName="adresse" required placeholder="Entrer adresse">
+                    </div>
+                  </div>
+
+                  <!-- Poste -->
+                  <div class="col-md-6 mb-3">
+                    <label for="poste" class="form-label">Poste</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
+                      <input type="text" id="poste" class="form-control" formControlName="poste" required placeholder="Entrer le poste">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center mt-4">
+                  <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-person-add"></i> Ajouter Personnel
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main><!-- End #main -->
+
+  <app-footer></app-footer>
+
+</body>
+
+</html>
