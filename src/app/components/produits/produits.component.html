@@ -61,50 +61,56 @@
             <div class="card-body">
               <h5 class="card-title">Liste des Produits</h5>
 
+              <div class="d-flex justify-content-end mb-3">
+                <div class="search-bar">
+                  <form class="search-form d-flex align-items-center">
+                    <input type="text" class="form-control" [(ngModel)]="searchQuery" (input)="searchProduits()" name="query" placeholder="Recherche...">
+                  </form>
+                </div>
+              </div>
               <!-- Default Table -->
               <table class="table">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Référence</th>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Prix</th>
-                    <th scope="col">Image</th>
                     <th scope="col">Fournisseur</th>
-                    <th scope="col">Caractéristiques</th>
+                    <th scope="col">Désignation</th>
+                    <th scope="col">Référence</th>
+                    <th scope="col">Plan 2D/3D</th>
+                    <th scope="col">Fiche technique</th>
+                    <th scope="col">Famille</th>
+                    
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let produit of produits; let i = index">
+                  <tr *ngFor="let produit of filteredProduits; let i = index">
                     <th scope="row">{{ i + 1 }}</th>
-                    <td>{{ produit.reference }}</td>
-                    <td>{{ produit.nom }}</td>
-                    <td>{{ produit.description }}</td>
-                    <td>{{ produit.prix | currency:'EUR' }}</td>
-                    <td>
-                      <img *ngIf="produit.imagePath" [src]="'http://localhost:8080' + produit.imagePath" alt="Image produit" width="100">
-                    </td>
                     <td>{{ produit.fournisseur.nomFournisseur }}</td>
+                    <td>{{ produit.nom }}</td>
+                    <td>{{ produit.reference }}</td>
                     <td>
-                      <ul>
-                        <li *ngFor="let carac of produit.caracteristiques">
-                          <strong>{{ carac.nom }}:</strong> {{ carac.valeur }}
-                        </li>
-                      </ul>
+                      <img *ngIf="produit.imagePath" [src]="'http://localhost:8080' + produit.imagePath" alt="Plan 2D/3D" width="100">
                     </td>
+                    <td>
+                      <a *ngIf="produit.ficheTechniquePath" [href]="'http://localhost:8080' + produit.ficheTechniquePath" target="_blank">
+                        Voir la fiche technique
+                      </a>
+                    </td>
+                    <td>{{ produit.famille?.nomFamille }}</td>
+                   
                     <td>
                       <button type="button" class="btn btn-primary">
-                        <i class="bi bi-pencil"></i> <!-- Icône pour la modification -->
+                        <i class="bi bi-pencil"></i>
                       </button>
                       <button type="button" class="btn btn-danger" (click)="supprimerProduit(produit.idProduit)">
-                        <i class="bi bi-trash"></i> <!-- Icône pour la suppression -->
+                        <i class="bi bi-trash"></i>
                       </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
+              
               <!-- End Default Table Example -->
             </div>
           </div>

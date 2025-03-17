@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface Personnel {
   id: number;
   nom: string;
+  prenom:string
   email: string;
   adresse: string;
   telephone: string;

@@ -20,7 +20,6 @@ import { AddPersonnelComponent } from './components/add-personnel/add-personnel.
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,11 +32,12 @@ import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
     ProduitsComponent,
     AddProduitComponent,
     ViewProduitsFournisseurComponent,
-    
+
     PersonnelsComponent,
-         AddPersonnelComponent,
-   
-   
+    AddPersonnelComponent,
+    
+
+
   ],
   imports: [
     BrowserModule,

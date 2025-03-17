@@ -59,6 +59,7 @@
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
                     <th scope="col">Email</th>
                     <th scope="col">Adresse</th>
                     <th scope="col">Téléphone</th>
@@ -70,14 +71,15 @@
                   <tr *ngFor="let personnel of personnels ; let i = index">
                     <th scope="row">{{ i + 1 }}</th>
                     <td>{{ personnel.nom }}</td>
+                    <td>{{ personnel.prenom }}</td>
                     <td>{{ personnel.email }}</td>
                     <td>{{ personnel.adresse }}</td>
                     <td>{{ personnel.telephone }}</td>
                     <td>{{ personnel.poste }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" (click)="editPersonnel(personnel)">
-                          <i class="bi bi-pencil"></i> 
-                          </button>
+                      <button type="button" class="btn btn-primary" (click)="openEditModal(personnel)" data-bs-toggle="modal" data-bs-target="#editPersonnelModal">
+                        <i class="bi bi-pencil"></i> 
+                      </button>
                           
                       <button type="button" class="btn btn-danger" (click)="deletePersonnel(personnel.id)">
                         <i class="bi bi-trash"></i> 
@@ -93,6 +95,47 @@
         </div>
       </div>
     </section>
+
+    <!-- Modal pour Modifier un Personnel -->
+<div class="modal fade" id="editPersonnelModal" tabindex="-1" aria-labelledby="editPersonnelModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg"> 
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editPersonnelModalLabel">Modifier Personnel</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editPersonnelForm" (ngSubmit)="onUpdatePersonnel()">
+          <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <input type="text" class="form-control" formControlName="nom">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Prénom</label>
+            <input type="text" class="form-control" formControlName="prenom">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Adresse</label>
+            <input type="text" class="form-control" formControlName="adresse">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Téléphone</label>
+            <input type="text" class="form-control" formControlName="telephone">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Poste</label>
+            <input type="text" class="form-control" formControlName="poste">
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
   </main><!-- End #main -->
 

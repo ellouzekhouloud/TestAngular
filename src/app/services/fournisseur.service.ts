@@ -6,6 +6,7 @@ import { Produit } from './produit.service';
 export interface Fournisseur {
   idFournisseur: number;
   nomFournisseur: string;
+  certificat: string;
   email: string;
   adresse: string;
   telephone: string;

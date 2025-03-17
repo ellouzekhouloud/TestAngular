@@ -14,6 +14,7 @@ export class AddfournisseurComponent {
   constructor(private fb: FormBuilder, private fournisseurService: FournisseurService) {
     this.fournisseurForm = this.fb.group({
       nomFournisseur: ['', Validators.required],
+      certificat: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       adresse: ['', Validators.required],
       telephone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]]

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ProduitService } from 'src/app/services/produit.service';
 import { FournisseurService } from 'src/app/services/fournisseur.service'; // Service pour récupérer les fournisseurs
 import { HttpClient } from '@angular/common/http';
+import { FamilleService } from 'src/app/services/famille.service';
 
 @Component({
   selector: 'app-add-produit',
@@ -14,11 +15,14 @@ export class AddProduitComponent implements OnInit {
   produitForm!: FormGroup;
   fournisseurs: any[] = [];
   imagePath: string | ArrayBuffer | null = null;
+  ficheTechniquePath: string | ArrayBuffer | null = null;
+  familles: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private produitService: ProduitService,
     private fournisseurService: FournisseurService,
+    private familleService : FamilleService,
     private router: Router,
     private http: HttpClient
   ) {}
@@ -28,16 +32,21 @@ export class AddProduitComponent implements OnInit {
     this.produitForm = this.fb.group({
       reference: ['', Validators.required],
       nom: ['', Validators.required],
-      description: ['', Validators.required],
-      prix: [null, [Validators.required, Validators.min(0)]],
       imagePath: [''],
+      ficheTechniquePath: [''],
       fournisseur: [null, Validators.required],
+      famille: [null, Validators.required],
       caracteristiques: this.fb.array([]),
+
     });
 
     // Récupérer la liste des fournisseurs
     this.fournisseurService.getFournisseurs().subscribe((fournisseurs) => {
       this.fournisseurs = fournisseurs;
+    });
+    // Récupérer toutes les familles
+    this.familleService.getAllFamilles().subscribe(familles => {
+      this.familles = familles;
     });
   }
 
@@ -79,6 +88,34 @@ export class AddProduitComponent implements OnInit {
       );
     }
   }
+  // upload ficheTechnique
+  onFicheTechniqueUpload(event: any) {
+    const file = event.target.files[0];
+  
+    // Vérifier si un produit est sélectionné
+    
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      this.http.post(`http://localhost:8080/api/produits/uploadFicheTechnique`, formData, { responseType: 'text' })
+        .subscribe(
+          (responseText) => {
+            try {
+              const response = JSON.parse(responseText);
+              console.log('Réponse backend parsée:', response);
+              this.produitForm.patchValue({ ficheTechniquePath: response.ficheTechniquePath });
+              this.ficheTechniquePath = 'http://localhost:8080' + response.ficheTechniquePath;
+            } catch (e) {
+              console.error("Erreur lors du parsing de la réponse", e);
+            }
+          },
+          (error) => {
+            console.error('Erreur lors de l\'upload de la fiche technique', error);
+          }
+        );
+    }
+  }
   
 
   // Soumettre le formulaire
@@ -87,14 +124,19 @@ export class AddProduitComponent implements OnInit {
       const produit = {
         reference: this.produitForm.value.reference,
         nom: this.produitForm.value.nom,
-        description: this.produitForm.value.description,
-        prix: this.produitForm.value.prix,
+        //description: this.produitForm.value.description,
+        //prix: this.produitForm.value.prix,
         imagePath: this.produitForm.value.imagePath, // Vous pouvez envoyer un chemin d'image ou l'image elle-même
         fournisseur: {
           idFournisseur: this.produitForm.value.fournisseur
         },
-        caracteristiques: this.produitForm.value.caracteristiques
+        ficheTechniquePath: this.produitForm.value.ficheTechniquePath,
+        caracteristiques: this.produitForm.value.caracteristiques,
+        famille: {
+          idFamille: this.produitForm.value.famille // Correction ici
+        }
       };
+      
 
       // Envoyer le produit au backend
       this.produitService.addProduit(produit).subscribe(
@@ -104,6 +146,7 @@ export class AddProduitComponent implements OnInit {
         },
         (error) => {
           console.error('Erreur lors de l\'ajout du produit:', error);
+          
         }
       );
     }

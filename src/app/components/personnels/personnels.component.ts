@@ -1,4 +1,6 @@
+
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Personnel, PersonnelService } from 'src/app/services/personnel.service';
 
 @Component({
@@ -9,8 +11,19 @@ import { Personnel, PersonnelService } from 'src/app/services/personnel.service'
 export class PersonnelsComponent implements OnInit {
   personnels: Personnel[] = [];
   selectedPersonnel: Personnel | null = null;
+  editPersonnelForm: FormGroup;
+    selectedPersonnelId: number | null = null;
 
-  constructor(private personnelService: PersonnelService) {}
+  constructor(private personnelService: PersonnelService,private fb: FormBuilder) {
+    this.editPersonnelForm = this.fb.group({
+          nom: ['', Validators.required],
+          prenom: ['', Validators.required],
+          email: ['', [Validators.required, Validators.email]],
+          adresse: ['', Validators.required],
+          telephone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+          poste: ['', Validators.required],
+        });
+  }
 
   ngOnInit(): void {
     this.getPersonnels();
@@ -22,22 +35,9 @@ export class PersonnelsComponent implements OnInit {
     });
   }
 
-  // Méthode pour afficher le formulaire d'édition d'un personnel
-  editPersonnel(personnel: Personnel): void {
-    this.selectedPersonnel = { ...personnel };  // Cloner l'objet pour éviter la modification directe
-  }
+  
 
-  // Méthode pour enregistrer les modifications du personnel
-  savePersonnel(): void {
-    if (this.selectedPersonnel) {
-      this.personnelService.updatePersonnel(this.selectedPersonnel.id, this.selectedPersonnel).subscribe(() => {
-        // Remise à jour de la liste des personnels après modification
-        this.getPersonnels();
-        this.selectedPersonnel = null;  // Réinitialisation du formulaire
-      });
-    }
-  }
-
+  
   // Méthode pour supprimer un personnel
   deletePersonnel(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer ce personnel ?')) {
@@ -46,4 +46,35 @@ export class PersonnelsComponent implements OnInit {
       });
     }
   }
+
+  // Ouvrir le modal et remplir le formulaire avec les données du fournisseur
+    openEditModal(personnel: Personnel): void {
+      this.selectedPersonnelId = personnel.id;
+      this.editPersonnelForm.setValue({
+        nom: personnel.nom,
+        prenom: personnel.prenom,
+        email: personnel.email,
+        adresse: personnel.adresse,
+        telephone: personnel.telephone,
+        poste: personnel.poste,
+      });
+    }
+  
+    // Enregistrer les modifications
+    onUpdatePersonnel(): void {
+      if (this.selectedPersonnelId && this.editPersonnelForm.valid) {
+        this.personnelService.updatePersonnel(this.selectedPersonnelId, this.editPersonnelForm.value)
+          .subscribe(updatePersonnel => {
+            // Mise à jour de la liste des fournisseurs
+            this.personnels = this.personnels.map(p =>
+              p.id === this.selectedPersonnelId ? updatePersonnel : p
+            );
+  
+            // Fermer le modal
+            document.getElementById('editPersonnelModal')?.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            document.querySelector('.modal-backdrop')?.remove();
+          });
+      }
+    }
 }

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface Fournisseur {
   idFournisseur: number;
   nomFournisseur: string;
+  certificat: string;
   email: string;
   adresse: string;
   telephone: string;
@@ -18,13 +19,15 @@ export interface Caracteristique {
 
 export interface Produit {
   idProduit: number;
-  référence: string | null;
+  reference: string | null;
   nom: string;
   description: string;
   prix: number;
   imagePath: string | null;
+  ficheTechniquePath: string | null;
   fournisseur: Fournisseur; 
   caracteristiques: Caracteristique[];
+  famille?: { nomFamille: string };
 }
 
 @Injectable({
@@ -52,6 +55,11 @@ export class ProduitService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post(`${this.apiUrl}/uploadImage/${idProduit}`, formData);
+  }
+  uploadFicheTechnique(idProduit: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/uploadFicheTechnique/${idProduit}`, formData);
   }
 
   getFournisseurs(): Observable<any[]> {
