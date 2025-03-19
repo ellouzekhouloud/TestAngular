@@ -8,6 +8,10 @@ import { AddProduitComponent } from './components/add-produit/add-produit.compon
 import { ViewProduitsFournisseurComponent } from './components/view-produits-fournisseur/view-produits-fournisseur.component';
 import { PersonnelsComponent } from './components/personnels/personnels.component';
 import { AddPersonnelComponent } from './components/add-personnel/add-personnel.component';
+import { LoginComponent } from './components/login/login.component';
+import { HeaderControleComponent } from './pages/header-controle/header-controle.component';
+import { ControleurComponent } from './pages/controleur/controleur.component';
+
 
 
 const routes: Routes = [
@@ -19,6 +23,11 @@ const routes: Routes = [
   { path: 'fournisseurs/:id/produits', component: ViewProduitsFournisseurComponent },
   { path: 'personnels', component: PersonnelsComponent },
   { path: 'ajouterpersonnel', component: AddPersonnelComponent },
+  { path: 'login', component: LoginComponent},
+  //{ path: '**', redirectTo: 'dashboard' }, // Redirection en cas de route inexistante
+  { path: 'headercontrole', component: HeaderControleComponent},
+  { path: 'controle', component: ControleurComponent},
+  
  
 ];
 

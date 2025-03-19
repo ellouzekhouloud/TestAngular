@@ -18,6 +18,9 @@ import { ViewProduitsFournisseurComponent } from './components/view-produits-fou
 import { PersonnelsComponent } from './components/personnels/personnels.component';
 import { AddPersonnelComponent } from './components/add-personnel/add-personnel.component';
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { LoginComponent } from './components/login/login.component';
+import { ControleurComponent } from './pages/controleur/controleur.component';
+import { HeaderControleComponent } from './pages/header-controle/header-controle.component';
 
 
 @NgModule({
@@ -35,6 +38,10 @@ import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 
     PersonnelsComponent,
     AddPersonnelComponent,
+    LoginComponent,
+    ControleurComponent,
+    HeaderControleComponent,
+
     
 
 

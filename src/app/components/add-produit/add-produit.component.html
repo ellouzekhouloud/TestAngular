@@ -104,7 +104,34 @@
                     </select>
                   </div>
                 </div>
-
+                <!-- Ajout de caractéristiques dynamiques -->
+                <div class="mb-3">
+                  <label class="form-label">Caractéristiques</label>
+                  <div formArrayName="caracteristiques">
+                    <div *ngFor="let caracteristique of caracteristiques.controls; let i = index" [formGroupName]="i">
+                      <div class="row mb-2">
+                        <div class="col-md-4">
+                          <input type="text" class="form-control" placeholder="Nom" formControlName="nom" required>
+                        </div>
+                        <div class="col-md-4">
+                          <input type="text" class="form-control" placeholder="Valeur" formControlName="valeur"
+                            required>
+                        </div>
+                        <div class="col-md-3">
+                          <input type="text" class="form-control" placeholder="Tolérance" formControlName="tolerance"
+                            required>
+                        </div>
+                        <div class="col-md-1">
+                          <button type="button" class="btn btn-danger" (click)="removeCaracteristique(i)"><i
+                              class="bi bi-trash"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-success mt-2" (click)="addCaracteristique()">
+                    <i class="bi bi-plus-lg"></i> Ajouter Caractéristique
+                  </button>
+                </div>
 
 
                 <!-- Bouton de soumission -->

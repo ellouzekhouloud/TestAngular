@@ -59,11 +59,11 @@
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Nom</th>
-                    <th scope="col">Prénom</th>
+                    <th scope="col">Prenom</th>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Qualifications</th>
                     <th scope="col">Email</th>
-                    <th scope="col">Adresse</th>
-                    <th scope="col">Téléphone</th>
-                    <th scope="col">Poste</th>
+                    <th scope="col">Mot de Passe</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -72,10 +72,11 @@
                     <th scope="row">{{ i + 1 }}</th>
                     <td>{{ personnel.nom }}</td>
                     <td>{{ personnel.prenom }}</td>
+                    <td>{{ personnel.matricule }}</td>
+                    <td>{{ personnel.qualifications }}</td>
                     <td>{{ personnel.email }}</td>
-                    <td>{{ personnel.adresse }}</td>
-                    <td>{{ personnel.telephone }}</td>
-                    <td>{{ personnel.poste }}</td>
+                    <td>{{ personnel.motDePasse | slice:0:8 }}****</td>
+
                     <td>
                       <button type="button" class="btn btn-primary" (click)="openEditModal(personnel)" data-bs-toggle="modal" data-bs-target="#editPersonnelModal">
                         <i class="bi bi-pencil"></i> 
@@ -114,21 +115,24 @@
             <label class="form-label">Prénom</label>
             <input type="text" class="form-control" formControlName="prenom">
           </div>
+
+          <div class="mb-3">
+            <label class="form-label">Matricule</label>
+            <input type="text" class="form-control" formControlName="matricule">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Qualifications</label>
+            <input type="text" class="form-control" formControlName="qualifications">
+          </div>
+
           <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="email" class="form-control" formControlName="email">
           </div>
+          
           <div class="mb-3">
-            <label class="form-label">Adresse</label>
-            <input type="text" class="form-control" formControlName="adresse">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Téléphone</label>
-            <input type="text" class="form-control" formControlName="telephone">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Poste</label>
-            <input type="text" class="form-control" formControlName="poste">
+            <label class="form-label">Mot De Passe</label>
+            <input type="password" class="form-control" formControlName="motDePasse">
           </div>
           <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
         </form>

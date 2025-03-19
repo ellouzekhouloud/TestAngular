@@ -59,10 +59,15 @@ export class AddProduitComponent implements OnInit {
   addCaracteristique(): void {
     const caracteristique = this.fb.group({
       nom: ['', Validators.required],
-      valeur: ['', Validators.required]
+      valeur: ['', Validators.required],
+      tolerance: ['', Validators.required] // Ajout du champ tolérance
     });
     this.caracteristiques.push(caracteristique);
   }
+  // Supprimer une caractéristique
+removeCaracteristique(index: number): void {
+  this.caracteristiques.removeAt(index);
+}
 
   // Gérer le changement de l'image
   onImageUpload(event: any) {

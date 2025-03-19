@@ -19,9 +19,9 @@ export class PersonnelsComponent implements OnInit {
           nom: ['', Validators.required],
           prenom: ['', Validators.required],
           email: ['', [Validators.required, Validators.email]],
-          adresse: ['', Validators.required],
-          telephone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-          poste: ['', Validators.required],
+          matricule: ['', Validators.required],
+          qualifications: ['', Validators.required],
+          motDePasse: ['', Validators.required],
         });
   }
 
@@ -54,9 +54,9 @@ export class PersonnelsComponent implements OnInit {
         nom: personnel.nom,
         prenom: personnel.prenom,
         email: personnel.email,
-        adresse: personnel.adresse,
-        telephone: personnel.telephone,
-        poste: personnel.poste,
+        matricule: personnel.matricule,
+        qualifications: personnel.qualifications,
+        motDePasse: personnel.motDePasse,
       });
     }
   

@@ -12,16 +12,28 @@ export class AddPersonnelComponent {
   personnelForm: FormGroup;
   successMessage: string = ''; // Message de succès
   errorMessage: string = ''; // Message d'erreur
+  showPassword: boolean = false; // Contrôle de visibilité du mot de passe
 
   constructor(private fb: FormBuilder, private personnelService: PersonnelService, private router: Router) {
     this.personnelForm = this.fb.group({
-      nom: ['', Validators.required],
-      prenom: ['', Validators.required],
+      nom: ['', [Validators.required, Validators.minLength(2), this.noWhitespaceValidator]],
+      prenom: ['', [Validators.required, Validators.minLength(2), this.noWhitespaceValidator]],
+      matricule: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(10)]],
+      qualifications: ['', [Validators.required, this.noWhitespaceValidator]],
       email: ['', [Validators.required, Validators.email]],
-      adresse: ['', Validators.required],
-      telephone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      poste: ['', Validators.required]
+      motDePasse: ['', [Validators.required, Validators.minLength(6)]]
     });
+  }
+
+  // Fonction pour valider qu'un champ ne contient pas que des espaces
+  noWhitespaceValidator(control: any) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    return !isWhitespace ? null : { 'whitespace': true };
+  }
+
+  // Fonction pour basculer la visibilité du mot de passe
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   onSubmit() {

@@ -7,9 +7,9 @@ export interface Personnel {
   nom: string;
   prenom:string
   email: string;
-  adresse: string;
-  telephone: string;
-  poste: string;
+  matricule: string;
+  qualifications: string;
+  motDePasse: string;
 }
 
 
