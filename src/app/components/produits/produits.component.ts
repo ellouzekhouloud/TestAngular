@@ -39,6 +39,7 @@ export class ProduitsComponent implements OnInit {
         () => {
           // Mise à jour de la liste des produits après suppression
           this.produits = this.produits.filter(produit => produit.idProduit !== idProduit);
+          this.filteredProduits = this.filteredProduits.filter(p=> p.idProduit !== idProduit);
           console.log('Produit supprimé avec succès');
         },
         (error) => {
@@ -64,5 +65,8 @@ export class ProduitsComponent implements OnInit {
       );
     }
 
+  }
+  gererPlanDeControle(idProduit: number) {
+    this.router.navigate(['/plans-de-controle', idProduit]);
   }
 }

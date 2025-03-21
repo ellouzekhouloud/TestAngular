@@ -21,6 +21,9 @@ import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { LoginComponent } from './components/login/login.component';
 import { ControleurComponent } from './pages/controleur/controleur.component';
 import { HeaderControleComponent } from './pages/header-controle/header-controle.component';
+import { PlansDeControleComponent } from './components/plans-de-controle/plans-de-controle.component';
+
+
 
 
 @NgModule({
@@ -41,6 +44,9 @@ import { HeaderControleComponent } from './pages/header-controle/header-controle
     LoginComponent,
     ControleurComponent,
     HeaderControleComponent,
+    PlansDeControleComponent,
+    
+
 
     
 

@@ -37,7 +37,9 @@
                     <tr>
                       <th scope="col">#</th>
                       <th scope="col">Référence du Produit</th>
-                      <th scope="col">Nom du Produit</th>
+                      <th scope="col">Désignation</th>
+                      <th scope="col">MOQ</th>
+                      <th scope="col">Plan 2D/3D</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -45,6 +47,10 @@
                       <th scope="row">{{ i + 1 }}</th>
                       <td>{{ produit.reference }}</td> 
                       <td>{{ produit.nom }}</td> 
+                      <td>{{ produit.moq }}</td>
+                      <td>
+                        <img *ngIf="produit.imagePath" [src]="'http://localhost:8080' + produit.imagePath" alt="Plan 2D/3D" width="100">
+                      </td>
                     </tr>
                   </tbody>
                 </table>

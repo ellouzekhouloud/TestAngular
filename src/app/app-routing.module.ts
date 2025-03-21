@@ -11,6 +11,9 @@ import { AddPersonnelComponent } from './components/add-personnel/add-personnel.
 import { LoginComponent } from './components/login/login.component';
 import { HeaderControleComponent } from './pages/header-controle/header-controle.component';
 import { ControleurComponent } from './pages/controleur/controleur.component';
+import { PlansDeControleComponent } from './components/plans-de-controle/plans-de-controle.component';
+
+
 
 
 
@@ -27,6 +30,7 @@ const routes: Routes = [
   //{ path: '**', redirectTo: 'dashboard' }, // Redirection en cas de route inexistante
   { path: 'headercontrole', component: HeaderControleComponent},
   { path: 'controle', component: ControleurComponent},
+  { path: 'plans-de-controle/:idProduit', component: PlansDeControleComponent },
   
  
 ];

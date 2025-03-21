@@ -17,6 +17,7 @@ export class AddProduitComponent implements OnInit {
   imagePath: string | ArrayBuffer | null = null;
   ficheTechniquePath: string | ArrayBuffer | null = null;
   familles: any[] = [];
+  
 
   constructor(
     private fb: FormBuilder,
@@ -36,7 +37,8 @@ export class AddProduitComponent implements OnInit {
       ficheTechniquePath: [''],
       fournisseur: [null, Validators.required],
       famille: [null, Validators.required],
-      caracteristiques: this.fb.array([]),
+      moq: ['', Validators.required],
+      
 
     });
 
@@ -48,6 +50,10 @@ export class AddProduitComponent implements OnInit {
     this.familleService.getAllFamilles().subscribe(familles => {
       this.familles = familles;
     });
+  }
+/** 
+  ajouterCaracteristique() {
+    this.router.navigate(['/ajoutercaracteristique']);  // Remplacez par la route de votre page de caractéristiques
   }
 
   // Getter pour l'array des caractéristiques
@@ -64,11 +70,14 @@ export class AddProduitComponent implements OnInit {
     });
     this.caracteristiques.push(caracteristique);
   }
+
+  
   // Supprimer une caractéristique
 removeCaracteristique(index: number): void {
   this.caracteristiques.removeAt(index);
 }
 
+*/
   // Gérer le changement de l'image
   onImageUpload(event: any) {
     const file = event.target.files[0];
@@ -136,10 +145,12 @@ removeCaracteristique(index: number): void {
           idFournisseur: this.produitForm.value.fournisseur
         },
         ficheTechniquePath: this.produitForm.value.ficheTechniquePath,
-        caracteristiques: this.produitForm.value.caracteristiques,
+        
+       
         famille: {
           idFamille: this.produitForm.value.famille // Correction ici
-        }
+        },
+        moq: this.produitForm.value.moq,
       };
       
 

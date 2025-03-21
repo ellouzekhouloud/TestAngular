@@ -11,11 +11,7 @@ export interface Fournisseur {
   telephone: string;
 }
 
-export interface Caracteristique {
-  idCaracteristique: number;
-  nom: string;
-  valeur: string;
-}
+
 
 export interface Produit {
   idProduit: number;
@@ -26,7 +22,8 @@ export interface Produit {
   imagePath: string | null;
   ficheTechniquePath: string | null;
   fournisseur: Fournisseur; 
-  caracteristiques: Caracteristique[];
+ 
+  moq: number;
   famille?: { nomFamille: string };
 }
 
