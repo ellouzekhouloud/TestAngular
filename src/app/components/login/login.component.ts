@@ -18,8 +18,23 @@ export class LoginComponent {
     this.authService.login(this.email, this.motDePasse).subscribe(
       (response) => {
         console.log(response);
-        alert('Connexion réussie !');
-        this.router.navigate(['/dashboard']); 
+        if (response.role) {
+          localStorage.setItem('role', response.role); 
+
+          switch (response.role) {
+            case 'ADMIN':
+              this.router.navigate(['/dashboard']);
+              break;
+            case 'RESPONSABLE_RECEPTION':
+              this.router.navigate(['/controle']);
+              break;
+            case 'CONTROLEUR':
+              this.router.navigate(['/controle']);
+              break;
+            default:
+              this.router.navigate(['/login']); 
+          }
+        }
       },
       (error) => {
         console.error(error);
@@ -27,4 +42,5 @@ export class LoginComponent {
       }
     );
   }
+ 
 }

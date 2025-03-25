@@ -7,7 +7,7 @@ import { HeaderComponent } from './layouts/header/header.component';
 import { SidebarComponent } from './layouts/sidebar/sidebar.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FournisseursComponent } from './components/fournisseurs/fournisseurs.component';
 import { AddfournisseurComponent } from './components/addfournisseur/addfournisseur.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,8 +20,9 @@ import { AddPersonnelComponent } from './components/add-personnel/add-personnel.
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { LoginComponent } from './components/login/login.component';
 import { ControleurComponent } from './pages/controleur/controleur.component';
-import { HeaderControleComponent } from './pages/header-controle/header-controle.component';
+
 import { PlansDeControleComponent } from './components/plans-de-controle/plans-de-controle.component';
+import { AuthInterceptor } from './AuthInterceptor';
 
 
 
@@ -43,7 +44,7 @@ import { PlansDeControleComponent } from './components/plans-de-controle/plans-d
     AddPersonnelComponent,
     LoginComponent,
     ControleurComponent,
-    HeaderControleComponent,
+    
     PlansDeControleComponent,
     
 
@@ -60,7 +61,11 @@ import { PlansDeControleComponent } from './components/plans-de-controle/plans-d
     ReactiveFormsModule,
     NgxIntlTelInputModule,
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

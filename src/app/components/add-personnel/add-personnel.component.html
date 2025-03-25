@@ -28,14 +28,15 @@
               <h5 class="card-title">Formulaire d'ajout de personnel</h5>
 
               <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
-                
+
                 <div class="row">
                   <!-- Nom -->
                   <div class="col-md-6 mb-3">
                     <label for="nom" class="form-label">Nom</label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-person"></i></span>
-                      <input type="text" id="nom" class="form-control" formControlName="nom" required placeholder="Entrer le nom">
+                      <input type="text" id="nom" class="form-control" formControlName="nom" required
+                        placeholder="Entrer le nom">
                     </div>
                   </div>
 
@@ -44,7 +45,8 @@
                     <label for="prenom" class="form-label">Prénom</label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-person"></i></span>
-                      <input type="text" id="prenom" class="form-control" formControlName="prenom" required placeholder="Entrer le prénom">
+                      <input type="text" id="prenom" class="form-control" formControlName="prenom" required
+                        placeholder="Entrer le prénom">
                     </div>
                   </div>
                 </div>
@@ -56,7 +58,8 @@
                     <label for="telephone" class="form-label">Matricule</label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-hash"></i></span>
-                      <input type="text" id="text" class="form-control" formControlName="matricule" required placeholder="Entrer matricule">
+                      <input type="text" id="text" class="form-control" formControlName="matricule" required
+                        placeholder="Entrer matricule">
                     </div>
                   </div>
 
@@ -65,11 +68,12 @@
                     <label for="email" class="form-label">Qualifications</label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-award"></i></span>
-                      <input type="text" id="qualifications" class="form-control" formControlName="qualifications" required placeholder="">
+                      <input type="text" id="qualifications" class="form-control" formControlName="qualifications"
+                        required placeholder="">
                     </div>
                   </div>
 
-                  
+
                 </div>
 
                 <div class="row">
@@ -78,7 +82,8 @@
                     <label for="email" class="form-label">Email</label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
-                      <input type="email" id="email" class="form-control" formControlName="email" required placeholder="Example@domaine.com">
+                      <input type="email" id="email" class="form-control" formControlName="email" required
+                        placeholder="Example@domaine.com">
                     </div>
                   </div>
 
@@ -87,14 +92,27 @@
                     <label for="motDePasse" class="form-label">Mot de passe</label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                      <input [type]="showPassword ? 'text' : 'password'" id="motDePasse" class="form-control" formControlName="motDePasse" required placeholder="Mot de passe sécurisé">
+                      <input [type]="showPassword ? 'text' : 'password'" id="motDePasse" class="form-control"
+                        formControlName="motDePasse" required placeholder="Mot de passe sécurisé">
                       <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
                         <i [ngClass]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                       </button>
                     </div>
                   </div>
                 </div>
-
+                <!-- Role -->
+<div class="col-md-6 mb-3">
+  <label for="role" class="form-label">Rôle</label>
+  <div class="input-group">
+    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+    <select id="role" class="form-control" formControlName="role" required>
+      <option value="" disabled selected>Choisir un rôle</option>
+      
+      <option value="RESPONSABLE_RECEPTION">Responsable Réception</option>
+      <option value="CONTROLEUR">Contrôleur</option>
+    </select>
+  </div>
+</div>
                 <div class="text-center mt-4">
                   <button type="submit" class="btn btn-primary w-100">
                     <i class="bi bi-person-add"></i> Ajouter Personnel

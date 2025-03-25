@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -11,8 +11,6 @@ export interface Fournisseur {
   telephone: string;
 }
 
-
-
 export interface Produit {
   idProduit: number;
   reference: string | null;
@@ -21,8 +19,7 @@ export interface Produit {
   prix: number;
   imagePath: string | null;
   ficheTechniquePath: string | null;
-  fournisseur: Fournisseur; 
- 
+  fournisseur: Fournisseur;
   moq: number;
   famille?: { nomFamille: string };
 }
@@ -35,34 +32,57 @@ export class ProduitService {
 
   constructor(private http: HttpClient) {}
 
+  // Fonction pour récupérer les headers avec le token JWT
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token'); 
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+ 
   getProduits(): Observable<Produit[]> {
-    return this.http.get<Produit[]>(`${this.apiUrl}/all`);
+    return this.http.get<Produit[]>(`${this.apiUrl}/all`, { headers: this.getHeaders() });
   }
 
-  // Ajouter un produit
+ 
   addProduit(produit: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/add`, produit);
+    return this.http.post<any>(`${this.apiUrl}/add`, produit, { headers: this.getHeaders() });
   }
 
+  
   deleteProduit(idProduit: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/delete/${idProduit}`);
+    return this.http.delete<void>(`${this.apiUrl}/delete/${idProduit}`, { headers: this.getHeaders() });
   }
 
+  
   uploadImage(idProduit: number, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(`${this.apiUrl}/uploadImage/${idProduit}`, formData);
+  
+    const headers = this.getHeaders(); 
+  
+    return this.http.post(`${this.apiUrl}/uploadImage/${idProduit}`, formData, { headers: headers });
   }
+  
   uploadFicheTechnique(idProduit: number, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(`${this.apiUrl}/uploadFicheTechnique/${idProduit}`, formData);
+  
+    const headers = this.getHeaders(); 
+  
+    return this.http.post(`${this.apiUrl}/uploadFicheTechnique/${idProduit}`, formData, { headers: headers });
+  }
+  
+
+  
+  getFournisseurs(): Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:8080/api/fournisseurs', { headers: this.getHeaders() });
   }
 
-  getFournisseurs(): Observable<any[]> {
-    return this.http.get<any[]>('http://localhost:8080/api/fournisseurs');
-  }
+ 
   getProduitsByFournisseur(id: number): Observable<Produit[]> {
-    return this.http.get<Produit[]>(`${this.apiUrl}/fournisseur/${id}`);
+    return this.http.get<Produit[]>(`${this.apiUrl}/fournisseur/${id}`, { headers: this.getHeaders() });
   }
 }

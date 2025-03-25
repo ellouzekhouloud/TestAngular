@@ -22,6 +22,7 @@ export class PersonnelsComponent implements OnInit {
           matricule: ['', Validators.required],
           qualifications: ['', Validators.required],
           motDePasse: ['', Validators.required],
+          role: ['', Validators.required],
         });
   }
 

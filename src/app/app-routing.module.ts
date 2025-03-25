@@ -9,30 +9,28 @@ import { ViewProduitsFournisseurComponent } from './components/view-produits-fou
 import { PersonnelsComponent } from './components/personnels/personnels.component';
 import { AddPersonnelComponent } from './components/add-personnel/add-personnel.component';
 import { LoginComponent } from './components/login/login.component';
-import { HeaderControleComponent } from './pages/header-controle/header-controle.component';
 import { ControleurComponent } from './pages/controleur/controleur.component';
 import { PlansDeControleComponent } from './components/plans-de-controle/plans-de-controle.component';
-
-
-
+import { AuthGuard } from './auth.guard'; 
 
 
 const routes: Routes = [
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'ajouterfournisseurs', component: AddfournisseurComponent },
-  { path: 'fournisseurs', component: FournisseursComponent },
-  { path: 'produits', component: ProduitsComponent },
-  { path: 'ajouterproduit', component: AddProduitComponent },
-  { path: 'fournisseurs/:id/produits', component: ViewProduitsFournisseurComponent },
-  { path: 'personnels', component: PersonnelsComponent },
-  { path: 'ajouterpersonnel', component: AddPersonnelComponent },
-  { path: 'login', component: LoginComponent},
-  //{ path: '**', redirectTo: 'dashboard' }, // Redirection en cas de route inexistante
-  { path: 'headercontrole', component: HeaderControleComponent},
-  { path: 'controle', component: ControleurComponent},
-  { path: 'plans-de-controle/:idProduit', component: PlansDeControleComponent },
-  
- 
+  { path: 'login', component: LoginComponent }, // ✅ Accessible sans connexion
+
+  // 🔒 Routes protégées par AuthGuard
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'ajouterfournisseurs', component: AddfournisseurComponent, canActivate: [AuthGuard] },
+  { path: 'fournisseurs', component: FournisseursComponent, canActivate: [AuthGuard] },
+  { path: 'produits', component: ProduitsComponent, canActivate: [AuthGuard] },
+  { path: 'ajouterproduit', component: AddProduitComponent, canActivate: [AuthGuard] },
+  { path: 'fournisseurs/:id/produits', component: ViewProduitsFournisseurComponent, canActivate: [AuthGuard] },
+  { path: 'personnels', component: PersonnelsComponent, canActivate: [AuthGuard] },
+  { path: 'ajouterpersonnel', component: AddPersonnelComponent, canActivate: [AuthGuard] },
+  { path: 'controle', component: ControleurComponent, canActivate: [AuthGuard] },
+  { path: 'plans-de-controle/:idProduit', component: PlansDeControleComponent, canActivate: [AuthGuard] },
+
+  // 🔄 Redirection vers `/login` si la route n'existe pas
+  { path: '**', redirectTo: '/login' } 
 ];
 
 @NgModule({
