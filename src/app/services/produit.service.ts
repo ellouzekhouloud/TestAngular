@@ -45,7 +45,7 @@ export class ProduitService {
   getProduits(): Observable<Produit[]> {
     return this.http.get<Produit[]>(`${this.apiUrl}/all`, { headers: this.getHeaders() });
   }
-
+ 
  
   addProduit(produit: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/add`, produit, { headers: this.getHeaders() });

@@ -67,6 +67,9 @@ export class ProduitsComponent implements OnInit {
 
   }
   gererPlanDeControle(idProduit: number) {
-    this.router.navigate(['/plans-de-controle', idProduit]);
+    const selectedProduit = this.filteredProduits.find(prod => prod.idProduit === idProduit);
+    if (selectedProduit) {
+      this.router.navigate(['/plans-de-controle', idProduit], { state: { produit: selectedProduit } });
+    }
   }
 }

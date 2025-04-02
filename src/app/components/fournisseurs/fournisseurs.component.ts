@@ -93,20 +93,48 @@ export class FournisseursComponent implements OnInit {
   }
 
   // Ajoutez la méthode printFournisseurs()
-printFournisseurs(): void {
-  const printContent = document.getElementById('fournisseursTable')?.outerHTML;
-  const newWindow = window.open('', '', 'height=500, width=800');
-  if (newWindow && printContent) {
-    newWindow.document.write('<html><head><title>Liste des Fournisseurs</title>');
-    newWindow.document.write('<style>table { width: 100%; border-collapse: collapse; } th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }</style>');
-    newWindow.document.write('</head><body>');
-    newWindow.document.write('<h1>Liste des Fournisseurs</h1>');
-    newWindow.document.write(printContent); // Injecter le contenu de la table
-    newWindow.document.write('</body></html>');
-    newWindow.document.close(); // Nécessaire pour Firefox
-    newWindow.print(); // Lancer l'impression
+  printFournisseurs() {
+    const printContent = document.getElementById('fournisseursTable')?.outerHTML;
+    const newWindow = window.open('', '', 'height=500,width=800');
+    if (newWindow && printContent) {
+      // Définir la date de création (ici la date du jour)
+      const creationDate = new Date().toLocaleDateString();
+  
+      newWindow.document.write('<html><head><title>Panel des Fournisseurs</title>');
+      newWindow.document.write('<style>');
+      newWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; }');
+      newWindow.document.write('.header, .footer { display: flex; justify-content: space-between; align-items: center; }');
+      newWindow.document.write('.header { margin-bottom: 20px; }');
+      newWindow.document.write('.footer { margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; }');
+      newWindow.document.write('table { width: 100%; border-collapse: collapse; }');
+      newWindow.document.write('th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }');
+      newWindow.document.write('</style>');
+      newWindow.document.write('</head><body>');
+  
+      // En-tête personnalisé
+      newWindow.document.write('<div class="header">');
+      newWindow.document.write('<div class="logo"><img src="assets/img/logo2.png" alt="Logo de la Société" style="height:50px;"></div>');
+     
+
+      newWindow.document.write('<div class="title"><h1>Panel De Fournisseurs</h1></div>');
+      newWindow.document.write('<div class="date"><span>' + creationDate + '</span></div>');
+      newWindow.document.write('</div>');
+  
+      // Contenu de la table
+      newWindow.document.write(printContent);
+  
+      // Pied de page personnalisé
+      newWindow.document.write('<div class="footer">');
+      newWindow.document.write('<div class="emetteur">Emetteur</div>');
+      newWindow.document.write('<div class="visa">VISA</div>');
+      newWindow.document.write('</div>');
+  
+      newWindow.document.write('</body></html>');
+      newWindow.document.close(); // Nécessaire pour Firefox
+      newWindow.print(); // Lancer l'impression
+    }
   }
-}
+
 
 
 }

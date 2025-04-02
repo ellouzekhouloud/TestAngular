@@ -23,6 +23,7 @@ import { ControleurComponent } from './pages/controleur/controleur.component';
 
 import { PlansDeControleComponent } from './components/plans-de-controle/plans-de-controle.component';
 import { AuthInterceptor } from './AuthInterceptor';
+import { ScanneComponent } from './pages/scanne/scanne.component';
 
 
 
@@ -46,6 +47,7 @@ import { AuthInterceptor } from './AuthInterceptor';
     ControleurComponent,
     
     PlansDeControleComponent,
+         ScanneComponent,
     
 
 

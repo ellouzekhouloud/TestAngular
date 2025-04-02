@@ -12,6 +12,7 @@ import { LoginComponent } from './components/login/login.component';
 import { ControleurComponent } from './pages/controleur/controleur.component';
 import { PlansDeControleComponent } from './components/plans-de-controle/plans-de-controle.component';
 import { AuthGuard } from './auth.guard'; 
+import { ScanneComponent } from './pages/scanne/scanne.component';
 
 
 const routes: Routes = [
@@ -28,7 +29,7 @@ const routes: Routes = [
   { path: 'ajouterpersonnel', component: AddPersonnelComponent, canActivate: [AuthGuard] },
   { path: 'controle', component: ControleurComponent, canActivate: [AuthGuard] },
   { path: 'plans-de-controle/:idProduit', component: PlansDeControleComponent, canActivate: [AuthGuard] },
-
+  { path: 'scanner', component: ScanneComponent, canActivate: [AuthGuard] },
   // 🔄 Redirection vers `/login` si la route n'existe pas
   { path: '**', redirectTo: '/login' } 
 ];

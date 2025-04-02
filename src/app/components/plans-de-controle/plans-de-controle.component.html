@@ -155,20 +155,33 @@
                             </div>
 
 
-                           
-                            <div class="d-flex mb-3">
-                                <button class="btn btn-secondary" (click)="goBack()">
+                            <div class="d-flex justify-content-start">
+                                <button class="btn btn-secondary btn-retour" (click)="goBack()">
                                     <i class="bi bi-arrow-return-left"></i> Retour
                                 </button>
                             </div>
-
+                            
                             <div class="d-flex justify-content-end mb-3">
                                 <!-- Bouton Ajouter un Plan de Contrôle -->
                                 <button (click)="openModal()" class="btn btn-info">Ajouter un Plan de Contrôle</button>
                             </div>
-                           
+                            <!-- Card with an image on left -->
+                            <div class="card mb-3" id="planControleCard">
+                                <div class="row g-0">
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <p class="card-title mt-4"> Désignation du composant : {{ produit.nom }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <img *ngIf="produit.imagePath" [src]="'http://localhost:8080' + produit.imagePath"
+                                            class="img-fluid rounded-start" alt="Image du produit">
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- Default Table -->
-                            <table class="table">
+                            <table id="planControleTable" class="table">
                                 <thead class="table-light">
                                     <tr>
                                         <th scope="col">#</th>
@@ -195,10 +208,12 @@
 
                                         <td>
 
-                                            <button type="button" class="btn btn-primary" (click)="modifierPlan(plan)">
+                                            <button type="button" class="btn btn-primary"
+                                                (click)="openModifyModal(plan)">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <button type="button" class="btn btn-danger"(click)="supprimerPlan(plan.id)">
+                                            <button type="button" class="btn btn-danger"
+                                                (click)="supprimerPlan(plan.id)">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </td>
@@ -212,6 +227,57 @@
                 </div>
             </div>
         </section>
+        <!-- Modal pour modifier un plan de contrôle -->
+        <div *ngIf="isModalModifyOpen" class="modal fade show d-block" id="modifyPlanModal" tabindex="-1"
+            aria-labelledby="modifyPlanModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modifyPlanModalLabel">Modifier un Plan de Contrôle</h5>
+                        <button type="button" class="btn-close" (click)="closeModifyModal()"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form #modifyPlanForm="ngForm">
+                            <table class="table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Caractéristique</th>
+                                        <th scope="col">Donnée Technique</th>
+                                        <th scope="col">Tolérance (+/-)</th>
+                                        <th scope="col">Fréquence et Taille de Prélèvement</th>
+                                        <th scope="col">Moyen de Contrôle</th>
+                                        <th scope="col">Méthode de Contrôle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" [(ngModel)]="selectedPlan.caracteristique"
+                                                name="caracteristique" class="form-control" required></td>
+                                        <td><input type="text" [(ngModel)]="selectedPlan.donneeTechnique"
+                                                name="donneeTechnique" class="form-control" required></td>
+                                        <td><input type="text" [(ngModel)]="selectedPlan.tolerance" name="tolerance"
+                                                class="form-control" required></td>
+                                        <td><input type="text" [(ngModel)]="selectedPlan.frequenceEtTailleDePrelevement"
+                                                name="frequence" class="form-control" required></td>
+                                        <td><input type="text" [(ngModel)]="selectedPlan.moyenDeControle"
+                                                name="moyenDeControle" class="form-control" required></td>
+                                        <td><input type="text" [(ngModel)]="selectedPlan.methodeDeControle"
+                                                name="methodeDeControle" class="form-control" required></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeModifyModal()">Fermer</button>
+                        <button type="button" class="btn btn-primary" (click)="modifierPlan()">Enregistrer les
+                            changements</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </main><!-- End #main -->
 

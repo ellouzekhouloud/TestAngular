@@ -12,8 +12,11 @@ export class PlansDeControleComponent {
   plans: any[] = [];
   planDeControleLignes: any[] = [
     { caracteristique: '', donneeTechnique: '', tolerance: '', frequenceEtTailleDePrelevement: '', moyenDeControle: '', methodeDeControle: '' }
-  ]; 
-  isModalOpen: boolean = false; // Initialisation à false par défaut
+  ];
+  selectedPlan: any = {};  // Plan sélectionné pour modification
+  isModalOpen: boolean = false;
+  isModalModifyOpen: boolean = false; // Contrôle du modal de modification
+  produit: any = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -23,6 +26,7 @@ export class PlansDeControleComponent {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
+      this.produit = history.state.produit;
       this.idProduit = params['idProduit'];
       this.chargerPlansDeControle();
     });
@@ -35,19 +39,27 @@ export class PlansDeControleComponent {
   }
 
   openModal() {
-    console.log("Ouverture du modal");
-    this.isModalOpen = true;  // Ouvrir le modal
+    this.isModalOpen = true;
   }
 
   closeModal() {
-    console.log("Fermeture du modal");
     this.isModalOpen = false;
     this.resetLignes();
   }
 
+  openModifyModal(plan: any) {
+    this.selectedPlan = { ...plan };  // Clone the selected plan to edit
+    this.isModalModifyOpen = true;
+  }
+
+  closeModifyModal() {
+    this.isModalModifyOpen = false;
+    this.selectedPlan = {};  // Reset the selected plan
+  }
+
   ajouterLigne() {
     this.planDeControleLignes.push({
-      caracteristique: '', donneeTechnique: '', tolerance: '', frequenceEtTailleDePrelevement: '', 
+      caracteristique: '', donneeTechnique: '', tolerance: '', frequenceEtTailleDePrelevement: '',
       moyenDeControle: '', methodeDeControle: ''
     });
   }
@@ -64,44 +76,51 @@ export class PlansDeControleComponent {
 
   enregistrerPlan() {
     const plan = {
-      idProduit: this.idProduit, 
-      lignes: this.planDeControleLignes 
+      idProduit: this.idProduit,
+      lignes: this.planDeControleLignes
     };
-    
-    console.log('Données envoyées au backend:', plan);
-    
+
     this.planService.ajouterPlan(plan).subscribe(
       () => {
-        this.closeModal(); 
-        this.chargerPlansDeControle(); 
+        this.closeModal();
+        this.chargerPlansDeControle();
       },
       error => {
         console.error('Erreur lors de l\'ajout du plan:', error);
       }
     );
   }
-  modifierPlan(plan: any) {
-    console.log("Modification du plan", plan);
-    // Copie du plan à modifier dans les lignes du plan de contrôle
-    this.planDeControleLignes = [...plan.lignes];  // Assure-toi que "plan.lignes" contient les données à modifier
-    this.isModalOpen = true; // Ouvre le modal
+
+  modifierPlan() {
+    this.planService.modifierPlan(this.selectedPlan).subscribe(
+      () => {
+        this.closeModifyModal();
+        this.chargerPlansDeControle();
+      },
+      error => {
+        console.error('Erreur lors de la modification du plan:', error);
+      }
+    );
+  }
+
+  supprimerPlan(id: number) {
+    if (confirm("Êtes-vous sûr de vouloir supprimer ce plan ?")) {
+      this.planService.supprimerPlan(id).subscribe(
+        () => {
+          this.chargerPlansDeControle();
+        },
+        error => {
+          console.error('Erreur lors de la suppression du plan:', error);
+        }
+      );
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['/produits']);
+  }
+
+ 
+  
 }
 
-supprimerPlan(id: number) {
-  if (confirm("Êtes-vous sûr de vouloir supprimer ce plan ?")) {
-      this.planService.supprimerPlan(id).subscribe(
-          () => {
-              console.log("Plan supprimé avec succès");
-              this.chargerPlansDeControle(); // Recharger la liste des plans après suppression
-          },
-          error => {
-              console.error("Erreur lors de la suppression du plan", error);
-          }
-      );
-  }
-}
-  
-  goBack() {
-    this.router.navigate(['/produits']); 
-  }
-}
