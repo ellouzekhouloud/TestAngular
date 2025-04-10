@@ -10,6 +10,7 @@ import { LoginService } from 'src/app/services/login.service';
 export class HeaderComponent implements OnInit {
   role!: string| null;
   nom!: string | null;
+  activePath: string = '';
   constructor(private loginService: LoginService, private router: Router) {}
 
   ngOnInit(): void {

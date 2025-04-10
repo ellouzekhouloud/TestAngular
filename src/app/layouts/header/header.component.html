@@ -17,21 +17,30 @@
     </form>
   </div><!-- End Search Bar -->
 
-  <!-- Tabs for RESPONSABLE_RECEPTION -->
-  <div class="tabs-container" *ngIf="role === 'RESPONSABLE_RECEPTION'">
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/ajout-bl']" routerLinkActive="active">
-          <i class="bi bi-file-earmark-plus"></i> Ajout BL
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/historique']" routerLinkActive="active">
-          <i class="bi bi-clock-history"></i> Historique
-        </a>
-      </li>
-    </ul>
-  </div>
+ <!-- Tabs for RESPONSABLE_RECEPTION -->
+<div class="tabs-container" *ngIf="role === 'RESPONSABLE_RECEPTION'">
+  <ul class="nav nav-pills">
+    
+    <!-- Dropdown pour Ajout BL -->
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle"  data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+        <i class="bi bi-file-earmark" ></i>  BL  
+      </a>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" [routerLink]="['/addBL']" routerLinkActive="active">Créer un BL</a></li>
+        <li><a class="dropdown-item" [routerLink]="['/ListBL']" routerLinkActive="active">Liste des BL</a></li>
+      </ul>
+    </li>
+
+    <!-- Historique -->
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/historique']" routerLinkActive="active">
+        <i class="bi bi-clock-history"></i> Historique
+      </a>
+    </li>
+
+  </ul>
+</div>
 
   <!-- Tabs for CONTROLEUR -->
   <div class="tabs-container" *ngIf="role === 'CONTROLEUR'">

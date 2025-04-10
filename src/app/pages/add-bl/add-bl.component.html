@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 1200px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0056b3;
+        }
+        .form-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+        .form-group label {
+            flex: 0.2;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+        }
+        .description-field {
+            flex: 3;
+        }
+        .btn {
+            width: 100%;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .produit-section {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+        }
+        .produit-group {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .produit-group .form-group {
+            margin-bottom: 10px;
+        }
+        .produit-group .remove-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .produit-group .remove-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <app-header></app-header>
+    <main>
+        <div class="container">
+            <form [formGroup]="blForm" (ngSubmit)="onSubmit()">
+                
+                    <h1>Créer un Bon de Livraison</h1>
+                    
+                    <!-- Première ligne : Date, Fournisseur, NumBL, NumClient -->
+                    <div class="form-group">
+                        <label for="dateReception">Date</label>
+                        <input type="date" id="dateReception" formControlName="dateReception" class="form-control" required>
+                        <label for="idFournisseur">Fournisseur</label>
+                        <select id="idFournisseur" formControlName="idFournisseur" class="form-select" required>
+                            <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.idFournisseur">
+                                {{ fournisseur.nomFournisseur }}
+                            </option>
+                        </select>
+                        <label for="numBL">Numéro BL</label>
+                        <input type="text" id="numBL" formControlName="numBL" class="form-control" required>
+                        <label for="numClient">Numéro Client</label>
+                        <input type="text" id="numClient" formControlName="numClient" class="form-control" required>
+                    </div>
+                    
+                    <!-- Deuxième ligne : Référence, Référence Interne, Description -->
+                    <div class="form-group">
+                        <label for="reference">Référence</label>
+                        <input type="text" id="reference" formControlName="reference" class="form-control" required>
+                        <label for="referenceInterne">Référence Interne</label>
+                        <input type="text" id="referenceInterne" formControlName="referenceInterne" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" formControlName="description" class="form-control description-field" required></textarea>
+                    </div>
+                    
+                    
+                    <button type="button" (click)="addProduit()" class="btn btn-secondary">Ajouter un produit</button>
+                    <div formArrayName="produits" class="produit-section">
+                        <div *ngFor="let produit of produitsFormArray.controls; let i = index" [formGroupName]="i" class="produit-group">
+                          <div class="form-group">
+                            <label for="idProduit" class="form-label">Produit</label>
+                            <select id="idProduit" formControlName="idProduit" class="form-select" required>
+                              <option *ngFor="let produit of produits" [value]="produit.idProduit">
+                                {{ produit.nom }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label for="quantité" class="form-label">Quantité</label>
+                            <input type="number" id="quantité" formControlName="quantité" class="form-control" min="1" required>
+                          </div>
+                          <button type="button" (click)="removeProduit(i)" class="remove-btn">Supprimer ce produit</button>
+                        </div>
+                      </div>
+                    <button type="submit" [disabled]="!blForm.valid" class="btn btn-primary">Créer le Bon de Livraison</button>
+                </form>
+        </div>            
+    </main>
+</body>
+</html>

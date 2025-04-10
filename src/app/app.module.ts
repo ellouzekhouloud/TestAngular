@@ -1,3 +1,6 @@
+
+
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -24,6 +27,10 @@ import { ControleurComponent } from './pages/controleur/controleur.component';
 import { PlansDeControleComponent } from './components/plans-de-controle/plans-de-controle.component';
 import { AuthInterceptor } from './AuthInterceptor';
 import { ScanneComponent } from './pages/scanne/scanne.component';
+import { AddBlComponent } from './pages/add-bl/add-bl.component';
+import { ListBlComponent } from './pages/list-bl/list-bl.component';
+import { NgChartsModule } from 'ng2-charts';
+
 
 
 
@@ -48,6 +55,8 @@ import { ScanneComponent } from './pages/scanne/scanne.component';
     
     PlansDeControleComponent,
          ScanneComponent,
+         AddBlComponent,
+         ListBlComponent,
     
 
 
@@ -62,6 +71,11 @@ import { ScanneComponent } from './pages/scanne/scanne.component';
     FormsModule,
     ReactiveFormsModule,
     NgxIntlTelInputModule,
+    NgChartsModule
+   
+    
+    
+ 
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
