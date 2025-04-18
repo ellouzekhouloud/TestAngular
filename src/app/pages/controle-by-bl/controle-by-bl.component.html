@@ -1,0 +1,44 @@
+<div class="container">
+    <app-header></app-header>
+
+    <!-- Section Scan -->
+    <div class="search-section">
+        <input type="text" [(ngModel)]="referenceProduit" placeholder="Entrer la référence du produit"
+            class="input-ref" />
+        <button (click)="rechercherBL()" class="btn-search">
+            Rechercher
+        </button>
+    </div>
+
+    <!-- Affichage résultat -->
+    <div *ngIf="blProduits.length > 0" class="result-bl">
+        <h4>BL Produits pour {{ referenceProduit }} :</h4>
+        <div class="row">
+            <div class="col-md-4" *ngFor="let bl of blProduits">
+                <div class="card custom-card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Numéro BL : {{ bl.numBL }}</h5>
+                        <div class="card-info">
+                            <div class="info-item">
+                                <span class="label">Date :</span>
+                                <span class="value">{{ bl.dateReception }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Quantité :</span>
+                                <span class="value">{{ bl.quantite }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Status :</span>
+                                <span class="value">{{ bl.status }}</span>
+                            </div>
+                            <div class="mt-3 text-end">
+                                <button class="btn btn-sm btn-primary"(click)="allerAuControle(bl.idProduit, bl.quantite, bl.numBL)">Contrôler</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

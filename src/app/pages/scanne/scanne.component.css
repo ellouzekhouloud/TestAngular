@@ -208,3 +208,23 @@
         }
 
   
+
+.btn-group .btn {
+    border-radius: 5px;
+    padding: 8px 12px;
+}
+
+.btn-group .btn i {
+    margin-right: 5px; /* Espacement entre l'icône et le texte */
+}
+
+.input-group {
+    margin-top: 5px;
+}
+.btn.active {
+    border: 2px solid #ccc;
+}
+
+input[type="radio"] {
+    display: none; /* Masquer les boutons radio par défaut */
+}

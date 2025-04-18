@@ -15,6 +15,9 @@ import { AuthGuard } from './auth.guard';
 import { ScanneComponent } from './pages/scanne/scanne.component';
 import { AddBlComponent } from './pages/add-bl/add-bl.component';
 import { ListBlComponent } from './pages/list-bl/list-bl.component';
+import { ControleByBlComponent } from './pages/controle-by-bl/controle-by-bl.component';
+import { ControleProduitComponent } from './pages/controle-produit/controle-produit.component';
+import { ControleComponent } from './pages/controle/controle.component';
 
 
 const routes: Routes = [
@@ -34,6 +37,9 @@ const routes: Routes = [
   { path: 'scanner', component: ScanneComponent, canActivate: [AuthGuard] },
   { path: 'addBL', component: AddBlComponent, canActivate: [AuthGuard] },
   { path: 'ListBL', component: ListBlComponent, canActivate: [AuthGuard] },
+  { path: 'controles-en-cours', component: ControleByBlComponent, canActivate: [AuthGuard] },
+  { path: 'controle-produit/:id', component: ControleProduitComponent, canActivate: [AuthGuard] },
+  { path: 'controler/:id', component: ControleComponent, canActivate: [AuthGuard] },
   // 🔄 Redirection vers `/login` si la route n'existe pas
   { path: '**', redirectTo: '/login' } 
 ];

@@ -30,6 +30,9 @@ import { ScanneComponent } from './pages/scanne/scanne.component';
 import { AddBlComponent } from './pages/add-bl/add-bl.component';
 import { ListBlComponent } from './pages/list-bl/list-bl.component';
 import { NgChartsModule } from 'ng2-charts';
+import { ControleByBlComponent } from './pages/controle-by-bl/controle-by-bl.component';
+
+import { ControleComponent } from './pages/controle/controle.component';
 
 
 
@@ -57,6 +60,9 @@ import { NgChartsModule } from 'ng2-charts';
          ScanneComponent,
          AddBlComponent,
          ListBlComponent,
+         ControleByBlComponent,
+       
+         ControleComponent,
     
 
 

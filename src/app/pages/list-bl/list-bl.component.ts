@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-bl',
@@ -10,9 +11,14 @@ export class ListBlComponent {
   blList: any[] = [];
   filteredBL: any[] = [];
   searchQuery: string = '';
+  selectedProduits: any[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private router: Router) {}
 
+  
+openProduitModal(bl: any): void {
+  this.selectedProduits = bl.produits;
+}
   ngOnInit(): void {
     this.getBL();
   }
@@ -101,4 +107,5 @@ export class ListBlComponent {
       document.querySelector('.modal-backdrop')?.remove();
     }
   }
+ 
 }
