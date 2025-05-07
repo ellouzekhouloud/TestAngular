@@ -21,14 +21,18 @@
 
     /* Modifier le bouton Modifier avec un bleu foncé */
     .btn-primary {
-      background-color: #0056b3; /* Bleu foncé */
-      border-color: #0056b3; /* Bleu foncé */
+      background-color: #0056b3;
+      /* Bleu foncé */
+      border-color: #0056b3;
+      /* Bleu foncé */
     }
 
     /* Remplacer btn-danger par un gris clair pour le bouton Supprimer */
     .btn-danger {
-      background-color: #6c757d; /* Gris clair */
-      border-color: #6c757d; /* Gris clair */
+      background-color: #6c757d;
+      /* Gris clair */
+      border-color: #6c757d;
+      /* Gris clair */
     }
 
     /* Ajouter un effet de survol pour les boutons */
@@ -62,12 +66,21 @@
               <h5 class="card-title">Liste des Produits</h5>
 
               <div class="d-flex justify-content-end mb-3">
+                <!-- Button to Open the Modal -->
+                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal"
+                  data-bs-target="#addProduitModal" (click)="openAddProductModal()">
+                  <i class="bi bi-bag-plus me-2"></i> Ajouter un produit
+                </button>
+              </div>
+              <div class="d-flex justify-content-end mb-3">
                 <div class="search-bar">
                   <form class="search-form d-flex align-items-center">
-                    <input type="text" class="form-control" [(ngModel)]="searchQuery" (input)="searchProduits()" name="query" placeholder="Recherche...">
+                    <input style="width: 330px;" type="text" class="form-control" [(ngModel)]="searchQuery"
+                      (input)="searchProduits()" name="query" placeholder="Recherche par Fournisseur et Référence">
                   </form>
                 </div>
               </div>
+
               <!-- Default Table -->
               <table class="table">
                 <thead class="table-light">
@@ -84,26 +97,28 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let produit of filteredProduits; let i = index">
-                    <th scope="row">{{ i + 1 }}</th>
+                  <tr *ngFor="let produit of getPaginatedProduit(); let i = index">
+                    <th>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</th>
                     <td>{{ produit.fournisseur.nomFournisseur }}</td>
                     <td>{{ produit.nom }}</td>
                     <td>{{ produit.reference }}</td>
                     <td>
-                      <img *ngIf="produit.imagePath" [src]="'http://localhost:8080' + produit.imagePath" alt="Plan 2D/3D" width="100">
+                      <img *ngIf="produit.imagePath" [src]="'http://localhost:8080' + produit.imagePath"
+                        alt="Plan 2D/3D" width="100">
                     </td>
                     <td>
-                      <a *ngIf="produit.ficheTechniquePath" [href]="'http://localhost:8080' + produit.ficheTechniquePath" target="_blank">
+                      <a *ngIf="produit.ficheTechniquePath"
+                        [href]="'http://localhost:8080' + produit.ficheTechniquePath" target="_blank">
                         Voir la fiche technique
                       </a>
                     </td>
                     <td>{{ produit.famille?.nomFamille }}</td>
                     <td>{{ produit.moq }}</td>
                     <td>
-                      <button (click)="gererPlanDeControle(produit.idProduit)" type="button" class="btn btn-info" >
+                      <button (click)="gererPlanDeControle(produit.idProduit)" type="button" class="btn btn-info">
                         <i class="bi bi-file-earmark"></i>
                       </button>
-                     
+
                       <button type="button" class="btn btn-primary">
                         <i class="bi bi-pencil"></i>
                       </button>
@@ -114,17 +129,167 @@
                   </tr>
                 </tbody>
               </table>
-              
+              <!-- PAGINATION -->
+              <nav class="d-flex justify-content-end mt-3">
+                <ul class="pagination pagination-sm">
+
+                  <!-- Previous Button -->
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="changePage(currentPage - 1)">
+                      <i class="bi bi-chevron-left"></i>
+                    </button>
+                  </li>
+
+                  <!-- First page -->
+                  <li class="page-item" [class.active]="currentPage === 1">
+                    <button class="page-link" (click)="changePage(1)">1</button>
+                  </li>
+
+                  <!-- Dots before current page group -->
+                  <li class="page-item" *ngIf="currentPage > 4">
+                    <span class="page-link">...</span>
+                  </li>
+
+                  <!-- Pages around current page -->
+                  <li class="page-item" *ngFor="let page of paginationPages()" [class.active]="currentPage === page">
+                    <button class="page-link" (click)="changePage(page)">
+                      {{ page }}
+                    </button>
+                  </li>
+
+                  <!-- Dots after current page group -->
+                  <li class="page-item" *ngIf="currentPage < totalPages - 3">
+                    <span class="page-link">...</span>
+                  </li>
+
+                  <!-- Last page -->
+                  <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
+                    <button class="page-link" (click)="changePage(totalPages)">{{ totalPages }}</button>
+                  </li>
+
+                  <!-- Next Button -->
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button class="page-link" (click)="changePage(currentPage + 1)">
+                      <i class="bi bi-chevron-right"></i>
+                    </button>
+                  </li>
+
+                </ul>
+              </nav>
+
               <!-- End Default Table Example -->
             </div>
           </div>
         </div>
       </div>
     </section>
+    <!-- Modal Ajouter Produit -->
+    <div class="modal fade" id="addProduitModal" tabindex="-1" aria-labelledby="addProduitModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addProduitModalLabel">Ajouter un produit</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="produitForm" (ngSubmit)="onSubmit()">
+              <!-- LIGNE 1 : Référence et Designation -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="reference" class="form-label">Référence</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                    <input type="text" id="reference" class="form-control" formControlName="reference" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="nom" class="form-label">Désignation</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                    <input type="text" id="nom" class="form-control" formControlName="nom" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- LIGNE 2  : Fournisseur & Famille -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="fournisseur" class="form-label">Fournisseur</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-building"></i></span>
+                    <select id="fournisseur" class="form-control" formControlName="fournisseur" required>
+                      <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.idFournisseur">
+                        {{ fournisseur.nomFournisseur }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="famille" class="form-label">Famille</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-folder"></i></span>
+                    <select id="famille" class="form-control" formControlName="famille" required>
+                      <option *ngFor="let famille of familles" [value]="famille.idFamille">
+                        {{ famille.nomFamille }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- LIGNE 3 : Image -->
+              <div class="mb-3">
+                <label for="image" class="form-label">Plan 2D/3D</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-image"></i></span>
+                  <input type="file" id="image" class="form-control" (change)="onImageUpload($event)" #imageInput>
+                </div>
+                <div *ngIf="imagePath" class="mt-2">
+                  <img [src]="imagePath" alt="Aperçu du plan" class="img-thumbnail" width="100">
+                </div>
+              </div>
+              <!-- LIGNE 4 : FicheTechnique -->
+              <div class="mb-3">
+                <label for="ficheTechnique" class="form-label">Fiche Technique</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-file-earmark-text"></i></span>
+                  <input type="file" id="ficheTechnique" class="form-control" (change)="onFicheTechniqueUpload($event)"
+                    #ficheInput>
+                </div>
+                <div *ngIf="produitForm.value.ficheTechniquePath" class="mt-2">
+                  <a [href]="'http://localhost:8080' + produitForm.value.ficheTechniquePath" target="_blank">
+                    Voir la fiche technique
+                  </a>
+                </div>
+              </div>
+              <!-- LIGNE 5 : MOQ -->
+              <div class="mb-3">
+                <label for="moq" class="form-label">MOQ</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-graph-up"></i></span>
+                  <input type="number" id="moq" class="form-control" formControlName="moq" required>
+                </div>
+              </div>
+              <!-- Bouton Submit -->
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="bi bi-bag-plus me-2"></i> Ajouter le produit
+                </button>
+              </div>
+            </form>
+
+            <!-- Bouton caché pour fermeture programmatique -->
+            <button id="closeProduitModalBtn" type="button" class="d-none" data-bs-dismiss="modal"></button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </main><!-- End #main -->
 
   <app-footer></app-footer>
 
 </body>
+
 </html>

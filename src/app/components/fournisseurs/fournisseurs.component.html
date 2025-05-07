@@ -42,7 +42,6 @@
     table {
       background-color: #f8f9fa;
     }
-    
   </style>
 </head>
 
@@ -63,8 +62,13 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Panel des Fournisseurs</h5>
-
               <div class="d-flex justify-content-end mb-3">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFournisseurModal">
+                  <i class="bi bi-person-add"></i> Ajouter Fournisseur
+                </button>
+              </div>
+              <div class="d-flex justify-content-end mb-3">
+
                 <div class="search-bar">
                   <form class="search-form d-flex align-items-center">
                     <input type="text" class="form-control" [(ngModel)]="searchQuery" (input)="searchFournisseurs()"
@@ -92,8 +96,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let fournisseur of filteredFournisseurs; let i = index">
-                    <th scope="row">{{ i + 1 }}</th>
+                  <tr *ngFor="let fournisseur of getPaginatedFournisseur(); let i = index">
+                    <th scope="row">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</th>
                     <td>{{ fournisseur.nomFournisseur }}</td>
                     <td>{{ fournisseur.certificat }}</td>
                     <td>{{ fournisseur.email }}</td>
@@ -116,7 +120,53 @@
                   </tr>
                 </tbody>
               </table>
+              <!-- PAGINATION -->
+              <nav class="d-flex justify-content-end mt-3">
+                <ul class="pagination pagination-sm">
 
+                  <!-- Previous Button -->
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="changePage(currentPage - 1)">
+                      <i class="bi bi-chevron-left"></i>
+                    </button>
+                  </li>
+
+                  <!-- First page -->
+                  <li class="page-item" [class.active]="currentPage === 1">
+                    <button class="page-link" (click)="changePage(1)">1</button>
+                  </li>
+
+                  <!-- Dots before current page group -->
+                  <li class="page-item" *ngIf="currentPage > 4">
+                    <span class="page-link">...</span>
+                  </li>
+
+                  <!-- Pages around current page -->
+                  <li class="page-item" *ngFor="let page of paginationPages()" [class.active]="currentPage === page">
+                    <button class="page-link" (click)="changePage(page)">
+                      {{ page }}
+                    </button>
+                  </li>
+
+                  <!-- Dots after current page group -->
+                  <li class="page-item" *ngIf="currentPage < totalPages - 3">
+                    <span class="page-link">...</span>
+                  </li>
+
+                  <!-- Last page -->
+                  <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
+                    <button class="page-link" (click)="changePage(totalPages)">{{ totalPages }}</button>
+                  </li>
+
+                  <!-- Next Button -->
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button class="page-link" (click)="changePage(currentPage + 1)">
+                      <i class="bi bi-chevron-right"></i>
+                    </button>
+                  </li>
+
+                </ul>
+              </nav>
               <!-- End Default Table Example -->
             </div>
           </div>
@@ -124,6 +174,70 @@
       </div>
     </section>
 
+    <!-- Modal Ajouter Fournisseur -->
+    <div class="modal fade" id="addFournisseurModal" tabindex="-1" aria-labelledby="addFournisseurModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addFournisseurModalLabel">Ajouter Fournisseur</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="fournisseurForm" (ngSubmit)="onSubmit()">
+              <!-- Même contenu que dans le formulaire d’ajout -->
+              <div class="mb-3">
+                <label for="nomFournisseur" class="form-label">Nom (FR)</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input type="text" id="nomFournisseur" class="form-control" formControlName="nomFournisseur"
+                    placeholder="Entrer le nom" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="certificat" class="form-label">Certificat</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-patch-check"></i></span>
+                  <input type="text" id="certificat" class="form-control" formControlName="certificat"
+                    placeholder="Entrer certificat" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="emailFournisseur" class="form-label">Email</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
+                  <input type="email" id="emailFournisseur" class="form-control" formControlName="email"
+                    placeholder="Example@domaine.com" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="adresseFournisseur" class="form-label">Adresse</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                  <input type="text" id="adresseFournisseur" class="form-control" formControlName="adresse"
+                    placeholder="Entrer adresse" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="telephoneFournisseur" class="form-label">Téléphone</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                  <input type="text" id="telephoneFournisseur" class="form-control" formControlName="telephone"
+                    placeholder="Entrer numéro" required>
+                </div>
+              </div>
+              <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="bi bi-person-add"></i> Ajouter Fournisseur
+                </button>
+              </div>
+            </form>
+            <!-- Bouton caché pour fermer le modal -->
+            <button id="closeModalBtn" type="button" class="d-none" data-bs-dismiss="modal"></button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Modal pour Modifier un Fournisseur -->
     <div class="modal fade" id="editFournisseurModal" tabindex="-1" aria-labelledby="editFournisseurModalLabel"

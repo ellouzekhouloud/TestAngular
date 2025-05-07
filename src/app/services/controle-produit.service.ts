@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -75,5 +76,8 @@ getProduitByReference(reference: string): Observable<any> {
         );
     }
 
-
+    // Méthode pour récupérer les produits contrôlés pour un BL donné
+  getProduitsControles(blId: number): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl3}/${blId}/produits-controles-details`);
+  }
 }

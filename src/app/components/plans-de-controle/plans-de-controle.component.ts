@@ -40,11 +40,13 @@ export class PlansDeControleComponent {
 
   openModal() {
     this.isModalOpen = true;
+    document.body.classList.add('modal-open');
   }
 
   closeModal() {
     this.isModalOpen = false;
     this.resetLignes();
+    document.body.classList.remove('modal-open');
   }
 
   openModifyModal(plan: any) {

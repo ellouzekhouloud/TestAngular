@@ -18,28 +18,36 @@ import { ListBlComponent } from './pages/list-bl/list-bl.component';
 import { ControleByBlComponent } from './pages/controle-by-bl/controle-by-bl.component';
 
 import { ControleComponent } from './pages/controle/controle.component';
+import { ListeFichesDeRefusComponent } from './pages/liste-fiches-de-refus/liste-fiches-de-refus.component';
+import { ListeEtiquetteVerteComponent } from './pages/liste-etiquette-verte/liste-etiquette-verte.component';
+import { HistoriqueComponent } from './pages/historique/historique.component';
+import { FamilleComponent } from './components/famille/famille.component';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent }, // ✅ Accessible sans connexion
 
   // 🔒 Routes protégées par AuthGuard
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'ajouterfournisseurs', component: AddfournisseurComponent, canActivate: [AuthGuard] },
-  { path: 'fournisseurs', component: FournisseursComponent, canActivate: [AuthGuard] },
-  { path: 'produits', component: ProduitsComponent, canActivate: [AuthGuard] },
-  { path: 'ajouterproduit', component: AddProduitComponent, canActivate: [AuthGuard] },
-  { path: 'fournisseurs/:id/produits', component: ViewProduitsFournisseurComponent, canActivate: [AuthGuard] },
-  { path: 'personnels', component: PersonnelsComponent, canActivate: [AuthGuard] },
-  { path: 'ajouterpersonnel', component: AddPersonnelComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] , data: { role: 'ADMIN' }},
+  
+  { path: 'fournisseurs', component: FournisseursComponent, canActivate: [AuthGuard], data: { role: 'ADMIN' } },
+  { path: 'produits', component: ProduitsComponent, canActivate: [AuthGuard], data: { role: 'ADMIN' } },
+  { path: 'familles', component: FamilleComponent, canActivate: [AuthGuard], data: { role: 'ADMIN' } },
+  { path: 'fournisseurs/:id/produits', component: ViewProduitsFournisseurComponent, canActivate: [AuthGuard], data: { role: 'ADMIN' } },
+  { path: 'personnels', component: PersonnelsComponent, canActivate: [AuthGuard] , data: { role: 'ADMIN' }},
+  
   { path: 'controle', component: ControleurComponent, canActivate: [AuthGuard] },
-  { path: 'plans-de-controle/:idProduit', component: PlansDeControleComponent, canActivate: [AuthGuard] },
-  { path: 'scanner', component: ScanneComponent, canActivate: [AuthGuard] },
-  { path: 'addBL', component: AddBlComponent, canActivate: [AuthGuard] },
-  { path: 'ListBL', component: ListBlComponent, canActivate: [AuthGuard] },
+  { path: 'plans-de-controle/:idProduit', component: PlansDeControleComponent, canActivate: [AuthGuard], data: { role: 'ADMIN' } },
+  { path: 'scanner', component: ScanneComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] }},
+  { path: 'addBL', component: AddBlComponent, canActivate: [AuthGuard], data: { role: 'RESPONSABLE_RECEPTION' } },
+  { path: 'ListBL', component: ListBlComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },
   { path: 'controles-en-cours', component: ControleByBlComponent, canActivate: [AuthGuard] },
- 
-  { path: 'controler/:id', component: ControleComponent, canActivate: [AuthGuard] },
+  { path: 'controler/:id', component: ControleComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },
+  { path: 'etiquette', component: ListeEtiquetteVerteComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },
+  { path: 'fiches-refus', component: ListeFichesDeRefusComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },
+  { path: 'historique', component:HistoriqueComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },
+  { path: 'unauthorized', component: UnauthorizedComponent },
   // 🔄 Redirection vers `/login` si la route n'existe pas
   { path: '**', redirectTo: '/login' } 
 ];

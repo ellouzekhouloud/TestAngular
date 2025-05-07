@@ -13,4 +13,62 @@
     gap: 10px; 
 }
 
+   /* Personnaliser les couleurs des boutons */
+   .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
 
+/* Modifier le bouton Modifier avec un bleu foncé */
+.btn-primary {
+    background-color: #0056b3;
+    /* Bleu foncé */
+    border-color: #0056b3;
+    /* Bleu foncé */
+}
+
+/* Remplacer btn-danger par un gris clair pour le bouton Supprimer */
+.btn-danger {
+    background-color: #6c757d;
+    /* Gris clair */
+    border-color: #6c757d;
+    /* Gris clair */
+}
+
+/* Ajouter un effet de survol pour les boutons */
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* Optionnel : changer la couleur de fond du tableau pour un meilleur contraste */
+table {
+    background-color: #f8f9fa;
+}
+
+/* Pour le tableau dans le modal, ajouter une barre de défilement horizontale */
+.modal-body {
+    max-width: 100%;
+    overflow-x: auto;
+    /* Ajoute un scroll horizontal si nécessaire */
+}
+
+/* Limiter la taille des champs de saisie pour éviter qu'ils ne débordent */
+.form-control {
+    max-width: 100%;
+    /* S'assure que chaque champ s'ajuste bien */
+}
+
+/* Ajuster le modal pour une meilleure largeur sur les écrans plus petits */
+.modal-dialog {
+    max-width: 90%;
+    /* Réduit la largeur du modal pour les écrans plus petits */
+    width: auto;
+}
+
+.modal.fade.show {
+    display: block !important;
+}
+.modal-backdrop.show {
+    opacity: 0.5;
+    background-color: #000;
+}

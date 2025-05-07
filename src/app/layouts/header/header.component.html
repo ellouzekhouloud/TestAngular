@@ -19,23 +19,38 @@
 
  <!-- Tabs for RESPONSABLE_RECEPTION -->
 <div class="tabs-container" *ngIf="role === 'RESPONSABLE_RECEPTION'">
-  <ul class="nav nav-pills">
-    
-    <!-- Dropdown pour Ajout BL -->
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle"  data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
-        <i class="bi bi-file-earmark" ></i>  BL  
+  <ul class="nav nav-tabs nav-tabs-bordered">
+
+    <!-- Onglet pour Créer un BL -->
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/addBL']" routerLinkActive="active">
+        <i class="bi bi-clipboard-plus"></i> Créer un BL
       </a>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" [routerLink]="['/addBL']" routerLinkActive="active">Créer un BL</a></li>
-        <li><a class="dropdown-item" [routerLink]="['/ListBL']" routerLinkActive="active">Liste des BL</a></li>
-      </ul>
     </li>
 
-    <!-- Historique -->
+    <!-- Onglet pour Liste des BL -->
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/ListBL']" routerLinkActive="active">
+        <i class="bi bi-files"></i> Liste des BL
+      </a>
+    </li>
+
+    <!-- Onglet pour Historique -->
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['/historique']" routerLinkActive="active">
-        <i class="bi bi-clock-history"></i> Historique
+        <i class="ri-history-line"></i> Historique
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/fiches-refus']" routerLinkActive="active">
+        <i class="ri-file-warning-line"></i> Fiche de refus
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/etiquette']" routerLinkActive="active">
+        <i class="ri-price-tag-3-line"></i> Etiquette verte
       </a>
     </li>
 
@@ -43,30 +58,49 @@
 </div>
 
   <!-- Tabs for CONTROLEUR -->
-  <div class="tabs-container" *ngIf="role === 'CONTROLEUR'">
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/scanner']" routerLinkActive="active">
-          <i class="bi bi-upc-scan"></i> Scanner
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/controles-en-cours']" routerLinkActive="active">
-          <i class="bi bi-list-check"></i> Contrôles
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/historique']" routerLinkActive="active">
-          <i class="bi bi-clock-history"></i> Historique
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="dropdown-item" [routerLink]="['/ListBL']" routerLinkActive="active">
-          <i class="bi bi-clock-history"></i> Liste des BL
-        </a>
-      </li>
-    </ul>
-  </div>
+<div class="tabs-container" *ngIf="role === 'CONTROLEUR'">
+  <ul class="nav nav-tabs nav-tabs-bordered">
+<!--
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/scanner']" routerLinkActive="active">
+        <i class="bi bi-qr-code"></i> Scanner
+      </a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/controles-en-cours']" routerLinkActive="active">
+        <i class="bi bi-journal-check"></i> Contrôles
+      </a>
+    </li>
+-->
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/ListBL']" routerLinkActive="active">
+        <i class="bi bi-files"></i> Liste des BL
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/historique']" routerLinkActive="active">
+        <i class="ri-history-line"></i> Historique
+      </a>
+    </li>
+
+   
+
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/fiches-refus']" routerLinkActive="active">
+        <i class="ri-file-warning-line"></i> Fiche de refus
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/etiquette']" routerLinkActive="active">
+        <i class="ri-price-tag-3-line"></i> Etiquette verte
+      </a>
+    </li>
+
+  </ul>
+</div>
+
 
   <!-- Profile Section -->
   <nav class="header-nav ms-auto">
@@ -77,6 +111,41 @@
           <i class="bi bi-search"></i>
         </a>
       </li><!-- End Search Icon -->
+
+  <!-- Notification -->
+<li class="nav-item dropdown" *ngIf="role === 'CONTROLEUR' || role === 'RESPONSABLE_RECEPTION'">
+  <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+    <i class="bi bi-bell"></i>
+    <span *ngIf="unreadCount > 0" class="badge bg-primary badge-number">{{ unreadCount }}</span>
+  </a>
+
+  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications scrollable-notifs">
+    <li class="dropdown-header">
+      Vous avez {{ unreadCount }} notification(s) non lue(s)
+      <a ><span class="badge rounded-pill bg-primary p-2 ms-2">Tout voir</span></a>
+    </li>
+
+    <ng-container *ngFor="let notif of notifications; let last = last">
+      <li class="notification-item" (click)="markAsRead(notif.id)">
+        <i *ngIf="!notif.isRead" class="bi bi-info-circle text-primary"></i>
+        <i *ngIf="notif.isRead" class="bi bi-check-circle text-success"></i>
+        <div>
+          <h4>Notification</h4>
+          <p>{{ notif.message }}</p>
+          <p>{{ notif.timestamp | date: 'short' }}</p>
+          <p><small>À traiter</small></p>
+        </div>
+      </li>
+      <li *ngIf="!last"><hr class="dropdown-divider custom-divider"></li>
+    </ng-container>
+<!--
+    <li class="dropdown-footer">
+      <a href="#">Voir toutes les notifications</a>
+    </li>
+    -->
+  </ul>
+</li>
+
 
       <li class="nav-item dropdown pe-3">
         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">

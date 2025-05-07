@@ -28,4 +28,8 @@ export class FamilleService {
   getAllFamilles(): Observable<Famille[]> {
     return this.http.get<Famille[]>(this.apiUrl, { headers: this.getHeaders() });
   }
+
+  addFamille(famille: Partial<Famille>): Observable<Famille> {
+    return this.http.post<Famille>(this.apiUrl, famille);
+  }
 }

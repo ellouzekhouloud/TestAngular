@@ -2,235 +2,223 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrôle Qualité</title>
-<style>
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contrôle Qualité</title>
 
-</style>
 </head>
 
 <body>
-    <app-header></app-header>
-  
-    <div class="container">
-        
+  <app-header></app-header>
 
-        <div >
-            <h2>Contrôle des produits - BL n° {{ numBL }}</h2>
-          
-            <!-- Section pour entrer la référence produit -->
-            <div class="search-section card mb-4"  >
-                <div class="card-body">
-                  <h4 class="mb-3 text-primary">Rechercher un produit</h4>
-              
-                  <div class="form-group d-flex flex-column flex-md-row align-items-center">
-                    <input
-                      type="text"
-                      [(ngModel)]="referenceProduit"
-                      class="form-control search-input mb-2 mb-md-0 me-md-3"
-                      placeholder="Entrer la référence du produit"
-                    />
-                    <button class="btn btn-primary search-btn" (click)="rechercherProduit()">Rechercher</button>
-                  </div>
-                </div>
-              </div>
-          
-            <!-- Affichage du produit à contrôler -->
-            <div class="product-info card shadow-sm p-4 mb-4" *ngIf="produit">
-                <h4 class="mb-3 text-primary"><i class="bi bi-box-seam me-2"></i>Informations Produit</h4>
-                <div class="row mb-3">
-                  <div class="col-md-6 ">
-                    <div class="info-box">
-                      <label>Désignation</label>
-                      <p>{{ produit.nom }}</p>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="info-box">
-                      <label>Fournisseur</label>
-                      <p>{{ produit.fournisseur?.nomFournisseur }}</p>
-                    </div>
-                  </div>
-                  
-                </div>
-              
-              <!-- Plan de contrôle en fonction du type -->
-              <h3>Plan de Contrôle</h3>
-            <table class="plan-controle-table" *ngIf="plansDeControle.length > 0">
-                <thead>
-                    <tr>
-                        <th>Caractéristique</th>
-                        <th>Donnée Technique</th>
-                        <th>Tolérance</th>
-                        <th>Fréquence et Taille de Prélèvement</th>
-                        <th>Visuel</th>
-                        <th>Valeur Mesurée</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let plan of plansDeControle">
-                        <td>{{ plan.caracteristique }}</td>
-                        <td>{{ plan.donneeTechnique }}</td>
-                        <td>{{ plan.tolerance }}</td>
-                        <td>{{ plan.frequenceEtTailleDePrelevement }}</td>
+  <div class="container">
 
-                        <!-- Verrouiller la colonne Visuel si la tolérance est remplie (non vide et pas "-") -->
-                        <td>
-                            <select [(ngModel)]="plan.visuel" (change)="validateVisuel(plan)"
-                                [disabled]="plan.tolerance && plan.tolerance.trim() !== '' && plan.tolerance.trim() !== '-'">
-                                <option value="Conforme">Conforme</option>
-                                <option value="Non Conforme">Non Conforme</option>
-                            </select>
-                        </td>
 
-                        <!-- Verrouiller la colonne Valeur Mesurée si la tolérance est vide ou contient "-" -->
-                        <td>
-                            <input type="text" placeholder="Entrer la valeur" [(ngModel)]="plan.valeurMesuree"
-                                [ngClass]="{
+    <div>
+      <h2>Contrôle des produits - BL n° {{ numBL }}</h2>
+      <!-- Produits déjà contrôlés en haut -->
+      <div class="produits-controles card p-3 mb-4" *ngIf="produitsControles.length > 0">
+        <h6 class="text-success"><i class="bi bi-check-circle me-2"></i>Produits déjà contrôlés :</h6>
+        <ul class="mb-0">
+          <li *ngFor="let ref of produitsControles">{{ ref }}</li>
+        </ul>
+      </div>
+      <!-- Section pour entrer la référence produit -->
+      <div class="search-section card mb-4">
+        <div class="card-body">
+          <h4 class="mb-3 text-primary">Rechercher un produit</h4>
+
+          <div class="form-group d-flex flex-column flex-md-row align-items-center">
+            <input type="text" [(ngModel)]="referenceProduit" class="form-control search-input mb-2 mb-md-0 me-md-3"
+              placeholder="Entrer la référence du produit" />
+            <button class="btn btn-primary search-btn" (click)="rechercherProduit()">Rechercher</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Affichage du produit à contrôler -->
+      <div class="product-info card shadow-sm p-4 mb-4" *ngIf="produit">
+        <h4 class="mb-3 text-primary"><i class="bi bi-box-seam me-2"></i>Informations Produit</h4>
+        <div class="row mb-3">
+          <div class="col-md-6 ">
+            <div class="info-box">
+              <label>Désignation</label>
+              <p>{{ produit.nom }}</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-box">
+              <label>Fournisseur</label>
+              <p>{{ produit.fournisseur?.nomFournisseur }}</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Plan de contrôle en fonction du type -->
+        <h3>Plan de Contrôle</h3>
+        <table class="plan-controle-table" *ngIf="plansDeControle.length > 0">
+          <thead>
+            <tr>
+              <th>Caractéristique</th>
+              <th>Donnée Technique</th>
+              <th>Tolérance</th>
+              <th>Fréquence et Taille de Prélèvement</th>
+              <th>Visuel</th>
+              <th>Valeur Mesurée</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let plan of plansDeControle">
+              <td>{{ plan.caracteristique }}</td>
+              <td>{{ plan.donneeTechnique }}</td>
+              <td>{{ plan.tolerance }}</td>
+              <td>{{ plan.frequenceEtTailleDePrelevement }}</td>
+
+              <!-- Verrouiller la colonne Visuel si la tolérance est remplie (non vide et pas "-") -->
+              <td>
+                <select [(ngModel)]="plan.visuel" (change)="validateVisuel(plan)"
+                  [disabled]="plan.tolerance && plan.tolerance.trim() !== '' && plan.tolerance.trim() !== '-'">
+                  <option value="Conforme">Conforme</option>
+                  <option value="Non Conforme">Non Conforme</option>
+                </select>
+              </td>
+
+              <!-- Verrouiller la colonne Valeur Mesurée si la tolérance est vide ou contient "-" -->
+              <td>
+                <input type="text" placeholder="Entrer la valeur" [(ngModel)]="plan.valeurMesuree" [ngClass]="{
                                        'valid': plan.isValid === true, 
                                        'invalid': plan.isValid === false
                                    }" (input)="validateValue(plan)"
-                                [disabled]="!plan.tolerance || plan.tolerance.trim() === '-'">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
- <!-- Affichage de la quantité -->
- <div class="form-group row mt-3">
-    <label for="quantiteProduit" class="col-lg-3 col-form-label">Quantité du produit</label>
-    <div class="col-lg-6">
-      <!-- Affichage de la quantité -->
-      <div class="input-group">
-        <input type="number" id="quantiteProduit" [(ngModel)]="quantiteProduit"
-          class="form-control form-control-sm" [disabled]="true" placeholder="Quantité" readonly>
+                  [disabled]="!plan.tolerance || plan.tolerance.trim() === '-'">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Affichage de la quantité -->
+        <div class="form-group row mt-3">
+          <label for="quantiteProduit" class="col-lg-3 col-form-label">Quantité du produit</label>
+          <div class="col-lg-6">
+            <!-- Affichage de la quantité -->
+            <div class="input-group">
+              <input type="number" id="quantiteProduit" [(ngModel)]="quantiteProduit"
+                class="form-control form-control-sm" [disabled]="true" placeholder="Quantité" readonly>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <!-- Sélection de la validation : Tick Vert ou Croix Rouge -->
+            <div class="btn-group" role="group" aria-label="Validation Quantité">
+              <label class="btn btn-success btn-sm" [class.active]="quantiteStatus === 'valid'">
+                <input type="radio" name="quantiteValidation" [(ngModel)]="quantiteStatus" value="valid"
+                  (change)="onValidationChange('valid')">
+                <i class="bi bi-check-circle"></i>
+              </label>
+
+              <label class="btn btn-danger btn-sm" [class.active]="quantiteStatus === 'invalid'">
+                <input type="radio" name="quantiteValidation" [(ngModel)]="quantiteStatus" value="invalid"
+                  (change)="onValidationChange('invalid')">
+                <i class="bi bi-x-circle"></i>
+              </label>
+            </div>
+          </div>
+        </div>
+
+
       </div>
-    </div>
-    <div class="col-lg-3">
-      <!-- Sélection de la validation : Tick Vert ou Croix Rouge -->
-      <div class="btn-group" role="group" aria-label="Validation Quantité">
-        <label class="btn btn-success btn-sm" [class.active]="quantiteStatus === 'valid'">
-          <input type="radio" name="quantiteValidation" [(ngModel)]="quantiteStatus" value="valid"
-            (change)="onValidationChange('valid')">
-          <i class="bi bi-check-circle"></i>
-        </label>
-  
-        <label class="btn btn-danger btn-sm" [class.active]="quantiteStatus === 'invalid'">
-          <input type="radio" name="quantiteValidation" [(ngModel)]="quantiteStatus" value="invalid"
-            (change)="onValidationChange('invalid')">
-          <i class="bi bi-x-circle"></i>
-        </label>
-      </div>
-    </div>
-  </div>
-  
-            
-            </div>
-            <!-- Bouton Suivant -->
-<button *ngIf="produit && plansDeControle.length > 0" type="button" class="btn-suivant mt-3"
-    (click)="verifierEtAfficherModal()">Valider le contrôle</button>
+      <!-- Bouton Suivant -->
+      <button *ngIf="produit && plansDeControle.length > 0" type="button" class="btn-suivant mt-3"
+        (click)="verifierEtAfficherModal()">Passer à la validation</button>
 
-<!-- Modal de Validation -->
-<div id="validationModal" class="modal" [ngClass]="{ 'show': showValidationModal }">
-    <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h3>Validation du Contrôle</h3>
+      <!-- Modal de Validation -->
+      <div id="validationModal" class="modal" [ngClass]="{ 'show': showValidationModal }">
+        <div class="modal-content">
+          <span class="close" (click)="closeModal()">&times;</span>
+          <h3>Validation du Contrôle</h3>
 
-        <form>
+          <form>
             <div class="form-group">
-                <label>Référence Produit</label>
-                <input type="text" [value]="produit?.reference" disabled>
+              <label>Référence Produit</label>
+              <input type="text" [value]="produit?.reference" disabled>
             </div>
 
             <div class="form-group">
-                <label>Fournisseur</label>
-                <input type="text" [value]="produit?.fournisseur?.nomFournisseur" disabled>
+              <label>Fournisseur</label>
+              <input type="text" [value]="produit?.fournisseur?.nomFournisseur" disabled>
             </div>
 
             <div class="form-group">
-                <label>Vérificateur</label>
-                <input type="text" [value]="verificateur" disabled>
+              <label>Vérificateur</label>
+              <input type="text" [value]="verificateur" disabled>
             </div>
 
             <div class="form-group">
-                <label>Numéro BL</label>
-                <input type="text" [(ngModel)]="numBL" name="numBL" class="form-control" readonly>
+              <label>Numéro BL</label>
+              <input type="text" [(ngModel)]="numBL" name="numBL" class="form-control" readonly>
             </div>
 
             <div class="form-group">
-                <label>Date de Contrôle</label>
-                <input type="text" [value]="dateDeControle" disabled>
+              <label>Date de Contrôle</label>
+              <input type="text" [value]="dateDeControle" disabled>
             </div>
 
             <button type="button" class="btn btn-success" (click)="enregistrerControle()">Enregistrer</button>
-        </form>
-    </div>
-</div>
+          </form>
+        </div>
+      </div>
 
-<!-- Modal de Fiche de Refus -->
-<div id="refusModal" class="modal" [ngClass]="{ 'show': showRefusModal }">
-    <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h3>Fiche de Refus</h3>
+      <!-- Modal de Fiche de Refus -->
+      <div id="refusModal" class="modal" [ngClass]="{ 'show': showRefusModal }">
+        <div class="modal-content">
+          <span class="close" (click)="closeModal()">&times;</span>
+          <h3>Fiche de Refus</h3>
 
-        <form>
+          <form>
             <div class="form-group">
-                <label>Référence Produit</label>
-                <input type="text" [value]="produit?.reference" disabled>
+              <label>Référence Produit</label>
+              <input type="text" [value]="produit?.reference" disabled>
             </div>
 
             <div class="form-group">
-                <label>Fournisseur</label>
-                <input type="text" [value]="produit?.fournisseur?.nomFournisseur" disabled>
+              <label>Fournisseur</label>
+              <input type="text" [value]="produit?.fournisseur?.nomFournisseur" disabled>
             </div>
 
             <div class="form-group">
-                <label>Raison du Refus</label>
-                <textarea [(ngModel)]="raisonRefus" name="raisonRefus" class="form-control" required></textarea>
-            </div>
-            <div class="mb-3">
-                <p>
-                  quantité non conforme 
-                  <input type="number" class="form-control d-inline-block w-auto mx-1" [(ngModel)]="quantiteIncorrecte" name="quantiteIncorrecte" style="display:inline; width: 100px;">
-                  au lieu de {{ quantiteProduit }}
-                </p>
-              </div>
-
-            <div class="form-group">
-                <label>Vérificateur</label>
-                <input type="text" [value]="verificateur" disabled>
+              <label>Raison du Refus</label>
+              <p *ngIf="quantiteStatus === 'invalid'">
+                Quantité non conforme
+                <input type="number" class="form-control d-inline-block w-auto mx-1" [(ngModel)]="quantiteIncorrecte"
+                  name="quantiteIncorrecte" style="display:inline; width: 100px;">
+                au lieu de {{ quantiteProduit }}
+              </p>
+              <textarea [(ngModel)]="raisonRefus" name="raisonRefus" class="form-control" required></textarea>
             </div>
 
             <div class="form-group">
-                <label>Numéro BL</label>
-                <input type="text" [(ngModel)]="numBL" name="numBL" readonly class="form-control">
+              <label>Vérificateur</label>
+              <input type="text" [value]="verificateur" disabled>
+            </div>
+
+            <div class="form-group">
+              <label>Numéro BL</label>
+              <input type="text" [(ngModel)]="numBL" name="numBL" readonly class="form-control">
             </div>
             <div class="form-group">
-                <label>Date de Contrôle</label>
-                <input type="text" [value]="dateDeControle" disabled>
+              <label>Date de Contrôle</label>
+              <input type="text" [value]="dateDeControle" disabled>
             </div>
 
             <button type="button" class="btn btn-danger" (click)="enregistrerRefus()">Enregistrer Refus</button>
-        </form>
-    </div>
-</div>
-       
-        
+          </form>
+        </div>
+      </div>
 
-            <!-- Affichage des produits déjà contrôlés -->
-            <div class="mt-4" *ngIf="produit">
-                <h6>Produits déjà contrôlés :</h6>
-                <ul *ngIf="produitsControles.length > 0; else aucunControle">
-                  <li *ngFor="let ref of produitsControles">{{ ref }}</li>
-                </ul>
-                <ng-template #aucunControle>
-                  <p>Aucun produit contrôlé pour l’instant.</p>
-                </ng-template>
-            </div>
-          </div>
-          
+
+
+     
     </div>
+
+  </div>
 
 </body>
 

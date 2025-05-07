@@ -5,17 +5,36 @@
     border-bottom: 1px solid #e1e4e8;
     padding: 10px 30px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: "Open Sans", sans-serif;
+    font-size: 15px;
+    
   }
 
   /* Logo */
-  .logo-img {
-    width: 30px;
-    height: auto;
-    margin-right: 10px;
+  .logo {
+    line-height: 1;
   }
-
+  
+  @media (min-width: 1200px) {
+    .logo {
+      width: 280px;
+    }
+  }
+  
+  .logo img {
+    max-height: 26px;
+    margin-right: 6px;
+  }
+  
+  .logo span {
+    font-size: 26px;
+    font-weight: 700;
+    color: #012970;
+    font-family: "Nunito", sans-serif;
+  }
   .text-dark {
     color: #333;
+    font-family: "Open Sans", sans-serif;
   }
 
   /* Search Bar */
@@ -109,3 +128,31 @@
     cursor: pointer;
   }
 
+.dropdown-header{
+  white-space: normal; /* Permet de casser les mots si nécessaire */
+  word-wrap: break-word; /* Permet au texte de passer à la ligne suivante si trop long */
+  overflow: hidden; /* Cache le texte qui dépasse */
+  text-overflow: ellipsis; /* Affiche des "..." si le texte dépasse */
+}
+
+.nav-tabs-bordered {
+  border-bottom: none; /* Supprime la bordure sous les tabs */
+}
+
+.nav-tabs .nav-item .nav-link {
+  border: none; /* Enlève la bordure des éléments des onglets */
+}
+.scrollable-notifs {
+  max-height: 500px; /* Tu peux ajuster selon la taille souhaitée */
+  overflow-y: auto;
+  max-width: 700px;
+}
+.custom-divider {
+  margin: 0.3rem 0;
+  border-color: #e0e0e0; /* Couleur plus douce que par défaut */
+  opacity: 0.6;
+}
+.badge-number {
+  font-size: 0.75rem;
+  padding: 4px 6px;
+}

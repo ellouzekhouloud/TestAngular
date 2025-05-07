@@ -2,196 +2,237 @@
 <html lang="en">
 
 <head>
-    <style>
-       
-        .badge-status {
-            padding: 0.35em 0.65em;
-            font-size: 0.9em;
-            border-radius: 0.5em;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3em;
-            transition: all 0.3s ease-in-out;
-          }
-          
-          .badge-pret {
-            background-color: #f8d7da; /* Rouge clair */
-            color: #721c24;
-          }
-          
-          .badge-termine {
-            background-color: #d4edda; /* Vert clair */
-            color: #155724;
-          }
-          
-          /* Effet hover */
-          .badge-status:hover {
-            filter: brightness(1.1);
-            cursor: default;
-            transform: scale(1.02);
-          }
-          
-          /* Icônes */
-          .badge-status i {
-            font-size: 1em;
-          }
+  <style>
+    .badge-status {
+      padding: 0.35em 0.65em;
+      font-size: 0.9em;
+      border-radius: 0.5em;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3em;
+      transition: all 0.3s ease-in-out;
+    }
 
-          .icon-button {
-            background: none;
-            border: none;
-            color: #0d6efd;
-            font-size: 1rem;
-            cursor: pointer;
-          }
-        
-          .icon-button:hover {
-            color: #0a58ca;
-            transform: scale(1.1);
-            transition: all 0.2s ease-in-out;
-          }
+    .badge-pret {
+      background-color: #f8d7da;
+      /* Rouge clair */
+      color: #721c24;
+    }
 
-    </style>
+    .badge-termine {
+      background-color: #d4edda;
+      /* Vert clair */
+      color: #155724;
+    }
+
+    /* Effet hover */
+    .badge-status:hover {
+      filter: brightness(1.1);
+      cursor: default;
+      transform: scale(1.02);
+    }
+
+    /* Icônes */
+    .badge-status i {
+      font-size: 1em;
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      color: #0d6efd;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .icon-button:hover {
+      color: #0a58ca;
+      transform: scale(1.1);
+      transition: all 0.2s ease-in-out;
+    }
+  </style>
 </head>
 
 <body>
-    <app-header></app-header>
-    <main>
-        <div class="container mt-4">
-            <div class="pagetitle">
-                <h1>Liste des Bons de Livraison</h1>
+  <app-header></app-header>
+  <main>
+    <div class="container mt-4">
+      <div class="pagetitle">
+        <h1>Liste des Bons de Livraison</h1>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Bons de livraison</h5>
+
+          <div class="d-flex justify-content-end mb-3">
+            <div class="search-bar">
+              <form class="search-form d-flex align-items-center" (ngSubmit)="searchBL()">
+                <input type="text" name="search" [(ngModel)]="searchQuery" (input)="searchBL()"
+                  placeholder="Recherche..." aria-label="Recherche">
+              </form>
             </div>
+          </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Bons de livraison</h5>
-
-                    <div class="d-flex justify-content-end mb-3">
-                        <div class="search-bar">
-                            <form class="search-form d-flex align-items-center" (ngSubmit)="searchBL()">
-                                <input type="text" name="search" [(ngModel)]="searchQuery" (input)="searchBL()"
-                                    placeholder="Recherche..." aria-label="Recherche">
-                            </form>
-                        </div>
-                    </div>
-
-                    <table class="table">
-                        <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Numéro BL</th>
-                                <th>Date de réception</th>
-                                <th>Fournisseur</th>
-                                <th>Numéro Client</th>
-                                <th>Référence</th>
-                                <th>Référence Interne</th>
-                                <th>Description</th>
-                                <th>Produits</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let bl of filteredBL; let i = index">
-                                <th>{{ i + 1 }}</th>
-                                <td>{{ bl.numBL }}</td>
-                                <td>{{ bl.dateReception | date }}</td>
-                                <td>{{ bl.fournisseur.nomFournisseur }}</td>
-                                <td>{{ bl.numClient }}</td>
-                                <td>{{ bl.reference }}</td>
-                                <td>{{ bl.referenceInterne }}</td>
-                                <td>{{ bl.description }}</td>
-                                <td>
-                                   
-                                    <button 
-                                      class="icon-button" 
-                                      data-bs-toggle="modal" 
-                                      data-bs-target="#produitModal" 
-                                      (click)="openProduitModal(bl)">
-                                      🔍
-                                    </button>
-                                  </td>
-                                  
-                                <td>
-                                    <span 
-                                      class="badge-status"
-                                      [ngClass]="{
-                                        'badge-pret': bl.status === 'PRET',
-                                        'badge-termine': bl.status === 'TERMINE'
-                                      }">
-                                      <i 
-                                        [ngClass]="{
-                                          'bi-exclamation-circle': bl.status === 'PRET',
-                                          'bi-check-circle': bl.status === 'TERMINE'
-                                        }"></i>
-                                      {{ bl.status }}
-                                    </span>
-                                  </td>
-                                <td>
-                                    <!-- Bouton "Contrôler" visible uniquement si le statut est "PRÊT" -->
-                                    <button *ngIf="bl.status === 'PRET'" type="button" class="btn btn-warning"
-                                    [routerLink]="['/controler', bl.id]" title="Contrôler">
-                                    <i class="bi bi-toggle-on"></i>
-                                </button>
-                                <button type="button" class="btn btn-primary" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button type="button" class="btn btn-danger" (click)="supprimerBL(bl.idBL)" title="Supprimer">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-
-
-
-
-        </div>
-<!-- MODAL : Détails des produits -->
-<div class="modal fade" id="produitModal" tabindex="-1" aria-labelledby="produitModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content shadow rounded-3">
-
-        <!-- Entête du modal avec bleu NiceAdmin -->
-        <div class="modal-header" style="background-color: #4e73df; border-bottom: 1px solid #c1c4c7;">
-          <h5 class="modal-title text-white" id="produitModalLabel">Détails des Produits</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-        </div>
-
-        <!-- Corps du modal avec fond blanc et bordure fine -->
-        <div class="modal-body" style="background-color: #f8f9fc;">
-          <table class="table table-bordered table-hover align-middle">
+          <table class="table">
             <thead class="table-light">
               <tr>
-                <th>Désignation</th>
-                <th>Quantité</th>
+                <th>#</th>
+                <th>Numéro BL</th>
+                <th>Date de réception</th>
+                <th>Fournisseur</th>
+                <th>Numéro Client</th>
+                <th>Référence</th>
+                <th>Référence Interne</th>
+                <th>Description</th>
+                <th>Produits</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let produit of selectedProduits">
-                <td>{{ produit.produit.nom }}</td>
-                <td>{{ produit.quantite }}</td>
+              <tr *ngFor="let bl of getPaginatedBL(); let i = index">
+                <th>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</th>
+
+                <td>{{ bl.numBL }}</td>
+                <td>{{ bl.dateReception | date }}</td>
+                <td>{{ bl.fournisseur.nomFournisseur }}</td>
+                <td>{{ bl.numClient }}</td>
+                <td>{{ bl.reference }}</td>
+                <td>{{ bl.referenceInterne }}</td>
+                <td>{{ bl.description }}</td>
+                <td>
+
+                  <button class="icon-button" data-bs-toggle="modal" data-bs-target="#produitModal"
+                    (click)="openProduitModal(bl)">
+                    🔍
+                  </button>
+                </td>
+
+                <td>
+                  <span class="badge-status" [ngClass]="{
+                                        'badge-pret': bl.status === 'PRET',
+                                        'badge-termine': bl.status === 'TERMINE'
+                                      }">
+                    <i [ngClass]="{
+                                          'bi-exclamation-circle': bl.status === 'PRET',
+                                          'bi-check-circle': bl.status === 'TERMINE'
+                                        }"></i>
+                    {{ bl.status }}
+                  </span>
+                </td>
+                <td>
+                  <!-- Bouton "Contrôler" visible uniquement si le statut est "PRÊT" -->
+                  <button *ngIf="bl.status === 'PRET'" type="button" class="btn btn-warning"
+                    (click)="demarrerControleEtNaviguer(bl.id)" title="Contrôler">
+                    <i class="bi bi-toggle-on"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" title="Modifier">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button type="button" class="btn btn-danger" (click)="supprimerBL(bl.idBL)" title="Supprimer">
+                    <i class="bi bi-trash"></i>
+                  </button>
+
+                </td>
               </tr>
             </tbody>
           </table>
-        </div>
+          <!-- PAGINATION -->
+          <nav class="d-flex justify-content-end mt-3">
+            <ul class="pagination pagination-sm">
 
-        <!-- Pied de modal -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+              <!-- Previous Button -->
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="changePage(currentPage - 1)">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+              </li>
+
+              <!-- First page -->
+              <li class="page-item" [class.active]="currentPage === 1">
+                <button class="page-link" (click)="changePage(1)">1</button>
+              </li>
+
+              <!-- Dots before current page group -->
+              <li class="page-item" *ngIf="currentPage > 4">
+                <span class="page-link">...</span>
+              </li>
+
+              <!-- Pages around current page -->
+              <li class="page-item" *ngFor="let page of paginationPages()" [class.active]="currentPage === page">
+                <button class="page-link" (click)="changePage(page)">
+                  {{ page }}
+                </button>
+              </li>
+
+              <!-- Dots after current page group -->
+              <li class="page-item" *ngIf="currentPage < totalPages - 3">
+                <span class="page-link">...</span>
+              </li>
+
+              <!-- Last page -->
+              <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
+                <button class="page-link" (click)="changePage(totalPages)">{{ totalPages }}</button>
+              </li>
+
+              <!-- Next Button -->
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <button class="page-link" (click)="changePage(currentPage + 1)">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+
+
+
+    </div>
+    <!-- MODAL : Détails des produits -->
+    <div class="modal fade" id="produitModal" tabindex="-1" aria-labelledby="produitModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow rounded-3">
+
+          <!-- Entête du modal avec bleu NiceAdmin -->
+          <div class="modal-header" style="background-color: #4e73df; border-bottom: 1px solid #c1c4c7;">
+            <h5 class="modal-title text-white" id="produitModalLabel">Détails des Produits</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+
+          <!-- Corps du modal avec fond blanc et bordure fine -->
+          <div class="modal-body" style="background-color: #f8f9fc;">
+            <table class="table table-bordered table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Désignation</th>
+                  <th>Quantité</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let produit of selectedProduits">
+                  <td>{{ produit.produit.nom }}</td>
+                  <td>{{ produit.quantite }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pied de modal -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          </div>
         </div>
       </div>
     </div>
-</div>
 
 
 
-    </main>
+  </main>
 </body>
 
 </html>

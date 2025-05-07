@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ChargeTrackerService } from 'src/app/services/charge-tracker.service';
+import { ChargeService } from 'src/app/services/charge.service';
 
 @Component({
   selector: 'app-list-bl',
@@ -13,9 +15,44 @@ export class ListBlComponent {
   searchQuery: string = '';
   selectedProduits: any[] = [];
 
-  constructor(private http: HttpClient,private router: Router) {}
+  // Pagination
+currentPage: number = 1;
+itemsPerPage: number = 4;
 
-  
+  constructor(private http: HttpClient,private router: Router,private chargeService: ChargeService,
+    private chargeTracker: ChargeTrackerService,
+  ) {}
+
+ 
+// Méthode pour récupérer les BL de la page actuelle
+getPaginatedBL(): any[] {
+  const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  const endIndex = startIndex + this.itemsPerPage;
+  return this.filteredBL.slice(startIndex, endIndex);
+}
+
+get totalPages(): number {
+  return Math.ceil(this.filteredBL.length / this.itemsPerPage);
+}
+
+changePage(page: number): void {
+  if (page >= 1 && page <= this.totalPages) {
+    this.currentPage = page;
+  }
+
+}
+paginationPages(): number[] {
+  const pages: number[] = [];
+  const start = Math.max(2, this.currentPage - 1);
+  const end = Math.min(this.totalPages - 1, this.currentPage + 1);
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+}
+
 openProduitModal(bl: any): void {
   this.selectedProduits = bl.produits;
 }
@@ -107,5 +144,24 @@ openProduitModal(bl: any): void {
       document.querySelector('.modal-backdrop')?.remove();
     }
   }
- 
-}
+  demarrerControleEtNaviguer(blId: number): void {
+    const personnelId = this.chargeTracker.getPersonnelId();
+
+  if (!personnelId) {
+    alert("Aucun ID personnel trouvé !");
+    return;
+  }
+
+  this.chargeService.demarrerControle(personnelId, blId).subscribe({
+    next: (res) => {
+      console.log("✅ Contrôle démarré :", res);
+      this.chargeTracker.setChargeId(res.id);  // Enregistrer l’ID de charge
+      this.router.navigate(['/controler', blId]);
+    },
+    error: (err) => {
+      console.error("❌ Erreur au démarrage du contrôle :", err);
+      alert("Erreur lors du démarrage du contrôle.");
+    }
+  });
+
+}}

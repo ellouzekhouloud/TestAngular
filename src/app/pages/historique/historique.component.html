@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+    .badge-status {
+      padding: 0.35em 0.65em;
+      font-size: 0.9em;
+      border-radius: 0.5em;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3em;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .badge-pret {
+      background-color: #f8d7da;
+      /* Rouge clair */
+      color: #721c24;
+    }
+
+    .badge-termine {
+      background-color: #d4edda;
+      /* Vert clair */
+      color: #155724;
+    }
+
+    /* Effet hover */
+    .badge-status:hover {
+      filter: brightness(1.1);
+      cursor: default;
+      transform: scale(1.02);
+    }
+
+    /* Icônes */
+    .badge-status i {
+      font-size: 1em;
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      color: #0d6efd;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .icon-button:hover {
+      color: #0a58ca;
+      transform: scale(1.1);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        z-index: 1050;
+      }
+      
+      .modal-dialog {
+        max-width: 600px;
+        margin: 1.75rem auto;
+      }
+  </style>
+</head>
+
+<body>
+  <app-header></app-header>
+  <main>
+    <div class="container mt-4">
+      <div class="pagetitle">
+        <h1>Liste des Contrôles</h1>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Contrôles effectués</h5>
+
+          <div class="d-flex justify-content-end mb-3">
+            <div class="search-bar">
+                <form class="search-form d-flex align-items-center">
+                  <input  style="width: 400px;" type="text" name="search" [(ngModel)]="searchTerm" placeholder="Rechercher par référence, date ou vérificateur..."
+                    aria-label="Recherche">
+                </form>
+              </div>
+          </div>
+          <div class="table-responsive">
+          <table class="table ">
+            <thead class="table-light">
+              <tr >
+                <th>#</th>
+                <th>Référence</th>
+                <th>Fournisseur</th>
+                <th>Verificateur</th>
+                <th>Date du Contrôle</th>
+                <th>Numéro BL</th>
+                <th>Quantité </th>
+                <th>Quantité Incorrecte</th>
+                <th>Résultats du Contrôle</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let controle of getPaginatedControle() ;let i = index">
+                <th>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</th>
+                <td>{{ controle.reference }}</td>
+                <td>{{ controle.fournisseur }}</td>
+                <td>{{ controle.verificateur }}</td>
+                <td>{{ controle.dateDeControle }}</td>
+                <td>{{ controle.numBL }}</td>
+                <td>{{ controle.quantite }}</td>
+                <td>{{ controle.quantiteIncorrecte }}</td>
+                <td>
+                    <button class="icon-button" data-bs-toggle="modal" (click)="openModal(controle.resultatsControle)">
+                      🔍
+                    </button>
+                  </td>
+              </tr>
+            </tbody>
+          </table>
+          <div *ngIf="showModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.5);">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                
+                <div class="modal-header">
+                  <h5 class="modal-title">Détails du Contrôle</h5>
+                  <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+                </div>
+          
+                <div class="modal-body">
+                  <ul class="mb-0">
+                    <li *ngFor="let resultat of selectedControle">
+                      <ng-container *ngIf="!resultat.valeurMesuree">
+                        Visuel : {{ resultat.visuel }}
+                      </ng-container>
+                      <ng-container *ngIf="resultat.valeurMesuree">
+                        Valeur mesurée : {{ resultat.valeurMesuree }}
+                      </ng-container>
+                    </li>
+                  </ul>
+                </div>
+          
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" (click)="closeModal()">Fermer</button>
+                </div>
+          
+              </div>
+            </div>
+          </div>
+          
+          </div>
+
+         
+           <!-- PAGINATION -->
+           <nav class="d-flex justify-content-end mt-3">
+            <ul class="pagination pagination-sm">
+          
+              <!-- Previous Button -->
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="changePage(currentPage - 1)">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+              </li>
+          
+              <!-- First page -->
+              <li class="page-item" [class.active]="currentPage === 1">
+                <button class="page-link" (click)="changePage(1)">1</button>
+              </li>
+          
+              <!-- Dots before current page group -->
+              <li class="page-item" *ngIf="currentPage > 4">
+                <span class="page-link">...</span>
+              </li>
+          
+              <!-- Pages around current page -->
+              <li class="page-item" *ngFor="let page of paginationPages()" [class.active]="currentPage === page">
+                <button class="page-link" (click)="changePage(page)">
+                  {{ page }}
+                </button>
+              </li>
+          
+              <!-- Dots after current page group -->
+              <li class="page-item" *ngIf="currentPage < totalPages - 3">
+                <span class="page-link">...</span>
+              </li>
+          
+              <!-- Last page -->
+              <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
+                <button class="page-link" (click)="changePage(totalPages)">{{ totalPages }}</button>
+              </li>
+          
+              <!-- Next Button -->
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <button class="page-link" (click)="changePage(currentPage + 1)">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+          
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+
+
+
+    </div>
+    
+
+
+
+  </main>
+</body>
+
+</html>

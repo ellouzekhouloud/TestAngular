@@ -1,93 +1,145 @@
-body {
+ /* Empêcher que le formulaire soit caché sous le header */
+ body {
     background-color: #f4f4f4;
     font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
-}
-.container {
+    padding: 0;
+  }
+
+  main {
+    padding-top: 100px; /* Augmenter le padding pour éviter que le contenu soit caché sous le header */
+  }
+
+  .container {
     background: white;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 90%;
-    max-width: 1200px;
-    padding-top: 70px;
-}
-h1 {
+    margin: 0 auto; /* Centrer le formulaire */
+  }
+
+  h3 {
     text-align: center;
     margin-bottom: 20px;
     color: #0056b3;
-}
-.form-group {
+  }
+
+  .form-group {
     display: flex;
     gap: 20px;
     margin-bottom: 15px;
     align-items: center;
-    flex-wrap: nowrap;
-}
-.form-group label {
+    flex-wrap: wrap;
+  }
+
+  .form-group label {
     flex: 0.2;
     font-weight: bold;
     white-space: nowrap;
-}
-.form-control, .form-select {
+  }
+
+  .form-control, .form-select {
     border-radius: 8px;
     flex: 1;
     padding: 12px;
     font-size: 16px;
-}
-.description-field {
+  }
+
+  .description-field {
     flex: 3;
-}
-.btn {
+  }
+
+  .btn {
     width: 100%;
     border-radius: 8px;
     padding: 12px;
     font-size: 16px;
     transition: 0.3s;
-}
-.btn-primary {
+  }
+
+  .btn-primary {
     background-color: #007bff;
     border: none;
-}
-.btn-primary:hover {
+  }
+
+  .btn-primary:hover {
     background-color: #0056b3;
-}
-.btn-secondary {
+  }
+
+  .btn-secondary {
     background-color: #6c757d;
     border: none;
-}
-.btn-secondary:hover {
+  }
+
+  .btn-secondary:hover {
     background-color: #5a6268;
-}
-.produit-section {
+  }
+
+  .produit-section {
     margin-top: 20px;
     padding-top: 10px;
-    border-top: 2px solid #ddd;
-}
-.produit-group {
+   
+  }
+
+  .produit-group {
     margin-bottom: 15px;
     padding: 15px;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.produit-group .form-group {
+  }
+
+  .produit-group .form-group {
     margin-bottom: 10px;
+  }
+
+  .produit-group .form-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
+
+
+
 .produit-group .remove-btn {
-    background-color: #dc3545;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 5px;
+    background-color: transparent;
     border: none;
+    color: #dc3545;
     cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
+    font-size: 20px;
+    transition: 0.3s;
 }
+
 .produit-group .remove-btn:hover {
-    background-color: #c82333;
+    color: #c82333;
 }
+
+/* Pour l'icône de la poubelle */
+.produit-group .remove-btn i {
+    font-size: 20px; /* Ajuste la taille de l'icône */
+}
+
+
+
+  /* Pour ajouter une meilleure flexibilité à l'interface */
+  @media (max-width: 768px) {
+    .form-group {
+      flex-direction: column; /* Disposer les champs sur une colonne en petit écran */
+    }
+  }
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .icon-field {
+    flex: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px; /* pour l’aligner verticalement avec les champs */
+  }
+  

@@ -51,33 +51,7 @@ export class AddProduitComponent implements OnInit {
       this.familles = familles;
     });
   }
-/** 
-  ajouterCaracteristique() {
-    this.router.navigate(['/ajoutercaracteristique']);  // Remplacez par la route de votre page de caractéristiques
-  }
 
-  // Getter pour l'array des caractéristiques
-  get caracteristiques(): FormArray {
-    return this.produitForm.get('caracteristiques') as FormArray;
-  }
-
-  // Ajouter une caractéristique
-  addCaracteristique(): void {
-    const caracteristique = this.fb.group({
-      nom: ['', Validators.required],
-      valeur: ['', Validators.required],
-      tolerance: ['', Validators.required] // Ajout du champ tolérance
-    });
-    this.caracteristiques.push(caracteristique);
-  }
-
-  
-  // Supprimer une caractéristique
-removeCaracteristique(index: number): void {
-  this.caracteristiques.removeAt(index);
-}
-
-*/
   // Gérer le changement de l'image
   onImageUpload(event: any) {
     const file = event.target.files[0];

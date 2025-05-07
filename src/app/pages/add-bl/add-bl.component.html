@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <style>
-      
+     
     </style>
 </head>
 <body>
@@ -10,58 +10,64 @@
     <main>
         <div class="container">
             <form [formGroup]="blForm" (ngSubmit)="onSubmit()">
+                <h3>Créer un Bon de Livraison</h3>
                 
-                    <h1>Créer un Bon de Livraison</h1>
-                    
-                    <!-- Première ligne : Date, Fournisseur, NumBL, NumClient -->
-                    <div class="form-group">
-                        <label for="dateReception">Date</label>
-                        <input type="date" id="dateReception" formControlName="dateReception" class="form-control" required>
-                        <label for="idFournisseur">Fournisseur</label>
-                        <select id="idFournisseur" formControlName="idFournisseur" class="form-select" required>
-                            <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.idFournisseur">
-                                {{ fournisseur.nomFournisseur }}
-                            </option>
-                        </select>
-                        <label for="numBL">Numéro BL</label>
-                        <input type="text" id="numBL" formControlName="numBL" class="form-control" required>
-                        <label for="numClient">Numéro Client</label>
-                        <input type="text" id="numClient" formControlName="numClient" class="form-control" required>
-                    </div>
-                    
-                    <!-- Deuxième ligne : Référence, Référence Interne, Description -->
-                    <div class="form-group">
-                        <label for="reference">Référence</label>
-                        <input type="text" id="reference" formControlName="reference" class="form-control" required>
-                        <label for="referenceInterne">Référence Interne</label>
-                        <input type="text" id="referenceInterne" formControlName="referenceInterne" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea id="description" formControlName="description" class="form-control description-field" required></textarea>
-                    </div>
-                    
-                    
-                    <button type="button" (click)="addProduit()" class="btn btn-secondary">Ajouter un produit</button>
-                    <div formArrayName="produits" class="produit-section">
-                        <div *ngFor="let produit of produitsFormArray.controls; let i = index" [formGroupName]="i" class="produit-group">
-                          <div class="form-group">
-                            <label for="idProduit" class="form-label">Produit</label>
-                            <select id="idProduit" formControlName="idProduit" class="form-select" required>
-                              <option *ngFor="let produit of produits" [value]="produit.idProduit">
-                                {{ produit.nom }}
-                              </option>
-                            </select>
-                          </div>
-                          <div class="form-group">
-                            <label for="quantité" class="form-label">Quantité</label>
-                            <input type="number" id="quantité" formControlName="quantité" class="form-control" min="1" required>
-                          </div>
-                          <button type="button" (click)="removeProduit(i)" class="remove-btn">Supprimer ce produit</button>
+                <!-- Première ligne : Date, Fournisseur, NumBL, NumClient -->
+                <div class="form-group">
+                    <label for="dateReception">Date</label>
+                    <input type="date" id="dateReception" formControlName="dateReception" class="form-control" required>
+                    <label for="idFournisseur">Fournisseur</label>
+                    <select id="idFournisseur" formControlName="idFournisseur" class="form-select" required>
+                        <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.idFournisseur">
+                            {{ fournisseur.nomFournisseur }}
+                        </option>
+                    </select>
+                    <label for="numBL">Numéro BL</label>
+                    <input type="text" id="numBL" formControlName="numBL" class="form-control" required>
+                    <label for="numClient">Numéro Client</label>
+                    <input type="text" id="numClient" formControlName="numClient" class="form-control" required>
+                </div>
+                
+                <!-- Deuxième ligne : Référence, Référence Interne, Description -->
+                <div class="form-group">
+                    <label for="reference">Référence</label>
+                    <input type="text" id="reference" formControlName="reference" class="form-control" required>
+                    <label for="referenceInterne">Référence Interne</label>
+                    <input type="text" id="referenceInterne" formControlName="referenceInterne" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" formControlName="description" class="form-control description-field" required></textarea>
+                </div>
+                
+                <button type="button" (click)="addProduit()" class="btn btn-secondary">Ajouter un produit</button>
+                <div formArrayName="produits" class="produit-section">
+                  <div *ngFor="let produit of produitsFormArray.controls; let i = index" [formGroupName]="i" class="produit-group">
+                    <div class="form-group row">
+                        <div class="form-field">
+                          <label for="idProduit" class="form-label">Produit</label>
+                          <select id="idProduit" formControlName="idProduit" class="form-select" required>
+                            <option *ngFor="let produit of produits" [value]="produit.idProduit">{{ produit.nom }}</option>
+                          </select>
+                        </div>
+                      
+                        <div class="form-field">
+                          <label for="quantité" class="form-label">Quantité</label>
+                          <input type="number" id="quantité" formControlName="quantité" class="form-control" min="1" required>
+                        </div>
+                      
+                        <div class="form-field icon-field">
+                          <button type="button" (click)="removeProduit(i)" class="remove-btn" aria-label="Supprimer produit">
+                            <i class="bi bi-trash"></i>
+                          </button>
                         </div>
                       </div>
-                    <button type="submit" [disabled]="!blForm.valid" class="btn btn-primary">Créer le Bon de Livraison</button>
-                </form>
+                      
+                  </div>
+              </div>
+              
+                <button type="submit" [disabled]="!blForm.valid" class="btn btn-primary">Créer le Bon de Livraison</button>
+            </form>
         </div>            
     </main>
 </body>

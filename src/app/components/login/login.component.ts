@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/login.service';
+import { NotificationSocketService } from 'src/app/services/notification-socket.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,9 @@ export class LoginComponent {
   motDePasse: string = '';
   messageErreur: string = '';
 
-  constructor(private authService: LoginService, private router: Router) { }
+  constructor(private authService: LoginService, private router: Router,
+    private webSocketService: NotificationSocketService
+  ) { }
 
   onSubmit(): void {
     this.authService.login(this.email, this.motDePasse).subscribe(
@@ -20,6 +23,7 @@ export class LoginComponent {
         console.log(response);
         if (response.role) {
           localStorage.setItem('role', response.role); 
+          this.webSocketService.connect();
 
           switch (response.role) {
             case 'ADMIN':

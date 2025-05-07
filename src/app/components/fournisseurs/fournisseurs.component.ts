@@ -13,10 +13,23 @@ export class FournisseursComponent implements OnInit {
   fournisseurs: Fournisseur[] = [];
   editFournisseurForm: FormGroup;
   selectedFournisseurId: number | null = null;
-  filteredFournisseurs: Fournisseur[] = []; // Liste filtrée
-  searchQuery: string = ''; // Variable pour le champ de recherche
+  filteredFournisseurs: Fournisseur[] = []; 
+  searchQuery: string = ''; 
+  fournisseurForm: FormGroup;
+  successMessage: string = '';
+     // Pagination
+currentPage: number = 1;
+itemsPerPage: number = 4;
 
   constructor(private FournisseurService: FournisseurService, private ProduitService: ProduitService, private fb: FormBuilder) {
+    this.fournisseurForm = this.fb.group({
+      nomFournisseur: ['', Validators.required],
+      certificat: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      adresse: ['', Validators.required],
+      telephone: ['', [Validators.required, Validators.pattern(/^[\d\s()+-]+$/)]]
+    });
+    
     this.editFournisseurForm = this.fb.group({
       nomFournisseur: ['', Validators.required],
       certificat: ['', Validators.required],
@@ -26,8 +39,69 @@ export class FournisseursComponent implements OnInit {
     });
   }
 
+  // Méthode pour récupérer les BL de la page actuelle
+  getPaginatedFournisseur(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredFournisseurs.slice(startIndex, endIndex);
+  }
+  
+  get totalPages(): number {
+    return Math.ceil(this.filteredFournisseurs.length / this.itemsPerPage);
+  }
+  
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  
+  }
+  paginationPages(): number[] {
+    const pages: number[] = [];
+    const start = Math.max(2, this.currentPage - 1);
+    const end = Math.min(this.totalPages - 1, this.currentPage + 1);
+  
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+  
+    return pages;
+  }
+
   ngOnInit(): void {
     this.getFournisseurs();
+  }
+
+  
+  ngAfterViewInit(): void {
+    const modalElement = document.getElementById('addFournisseurModal');
+    if (modalElement) {
+      modalElement.addEventListener('hidden.bs.modal', () => {
+        this.fournisseurForm.reset(); 
+      });
+    }
+  }
+
+  onSubmit() {
+    if (this.fournisseurForm.valid) {
+      this.FournisseurService.addFournisseur(this.fournisseurForm.value).subscribe(
+        response => {
+          window.alert("✅ Fournisseur ajouté avec succès !");
+          this.fournisseurForm.reset();
+          this.getFournisseurs();
+          setTimeout(() => {
+            const closeBtn = document.getElementById('closeModalBtn') as HTMLElement;
+            if (closeBtn) closeBtn.click();
+          }, 100);
+        },
+        error => {
+          console.error('Erreur lors de l’ajout du fournisseur', error);
+          window.alert("❌ Une erreur est survenue lors de l’ajout !");
+        }
+      );
+    } else {
+      window.alert("⚠️ Veuillez remplir tous les champs obligatoires !");
+    }
   }
 
   getFournisseurs(): void {

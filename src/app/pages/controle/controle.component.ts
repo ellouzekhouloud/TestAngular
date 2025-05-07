@@ -1,9 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BLProduit, BlService } from 'src/app/services/bl.service';
+import { ChargeTrackerService } from 'src/app/services/charge-tracker.service';
+import { ChargeService } from 'src/app/services/charge.service';
 import { ControleProduitService } from 'src/app/services/controle-produit.service';
 import { EtiquetteVerteService } from 'src/app/services/etiquette-verte.service';
 import { FicheDeRefusService } from 'src/app/services/fiche-de-refus.service';
+import { Produit } from 'src/app/services/produit.service';
 
 import { ScanneService } from 'src/app/services/scanne.service';
 
@@ -42,7 +46,9 @@ export class ControleComponent {
   constructor(
     private route: ActivatedRoute,
     private blService: BlService, private scanneService: ScanneService, private controleProduitService: ControleProduitService,
-    private router: Router,private ficheDeRefusService: FicheDeRefusService,private etiquetteService: EtiquetteVerteService
+    private router: Router, private ficheDeRefusService: FicheDeRefusService, private etiquetteService: EtiquetteVerteService,
+    private http: HttpClient, private chargeService: ChargeService,
+    private chargeTracker: ChargeTrackerService,
   ) {
     this.verificateur = this.getUtilisateurConnecte();
     this.dateDeControle = new Date().toISOString().split('T')[0];
@@ -63,7 +69,15 @@ export class ControleComponent {
         this.numBL = blData.numBL;
         this.produitsDuBL = blData.produits;
 
-
+        // Appeler le service pour récupérer les produits contrôlés
+        this.controleProduitService.getProduitsControles(this.idBL!).subscribe(
+          (produits) => {
+            this.produitsControles = produits;
+          },
+          (error) => {
+            console.error('Erreur lors de la récupération des produits contrôlés:', error);
+          }
+        );
 
       });
     }
@@ -71,10 +85,17 @@ export class ControleComponent {
   }
 
   rechercherProduit(): void {
+
     if (this.referenceProduit) {
+      // ✅ Vérifie si ce produit est déjà contrôlé
+      if (this.produitsControles.includes(this.referenceProduit)) {
+        window.alert("⚠️ Ce produit a déjà été contrôlé !");
+        return; // ⛔ Stop ici, on ne fait pas de requêtes inutiles
+      }
+
       this.scanneService.getProduitByReference(this.referenceProduit).subscribe((data) => {
         this.produit = data;
-
+        console.log("Produit récupéré :", this.produit); // ⬅️ Vérifie que `moq` est bien là
         // Récupérer le plan de contrôle
         this.scanneService.getPlanDeControleByReference(this.referenceProduit).subscribe((plan) => {
           this.plansDeControle = plan;
@@ -134,7 +155,7 @@ export class ControleComponent {
   verifierEtAfficherModal() {
     if (this.quantiteStatus === 'invalid') {
       this.quantiteIncorrecte = 0;
-      
+
     } else {
       this.raisonRefus = ''; // Réinitialise si ce n’est pas une non-conformité
     }
@@ -146,7 +167,7 @@ export class ControleComponent {
       // Cas Visuel obligatoire si tolérance vide
       if (isToleranceEmpty && plan.visuel !== 'Conforme') {
         isAllValid = false;
-        
+
         break;
       }
 
@@ -167,7 +188,7 @@ export class ControleComponent {
       this.showValidationModal = true;
     } else {
       this.showRefusModal = true;
-     
+
     }
   }
 
@@ -186,6 +207,7 @@ export class ControleComponent {
       dateDeControle: this.dateDeControle,
       produit: { idProduit: this.produit.idProduit },
       quantite: this.quantiteProduit ? this.quantiteProduit : 0,
+      quantiteIncorrecte: this.quantiteIncorrecte ? this.quantiteIncorrecte : 0,
       quantiteStatus: this.quantiteStatus,
       resultatsControle: this.plansDeControle.map(plan => ({
         planDeControle: {
@@ -195,7 +217,7 @@ export class ControleComponent {
         valeurMesuree: plan.valeurMesuree
       }))
     };
-    
+
 
     if (avecRefus && this.raisonRefus) {
       data.raisonRefus = this.raisonRefus;
@@ -217,10 +239,8 @@ export class ControleComponent {
         window.alert("✅ Contrôle enregistré avec succès !");
         this.produitsControles.push(this.produit.reference);
         this.imprimerEtiquette();
-        this.resetForm();
-        this.passerAuProduitSuivant(); // 🔄
-        this.closeModal();
-       
+        
+
       },
       error: (error) => {
         console.error("Erreur lors de l'enregistrement du contrôle :", error);
@@ -240,14 +260,10 @@ export class ControleComponent {
           console.log("Produit marqué comme contrôlé");
         });
         this.produitsControles.push(this.produit.reference);
-        this.printFicheDeRefus();
-        this.imprimerFicheDeRefus();
-        this.resetForm();
-       
-        this.passerAuProduitSuivant(); // 🔄
-        this.closeModal();
 
-        
+        this.imprimerFicheDeRefus();
+
+
       },
       error: (error) => {
         console.error("Erreur lors de l'enregistrement de la fiche de refus :", error);
@@ -266,7 +282,7 @@ export class ControleComponent {
     this.produitsRestants = this.produitsRestants.filter(
       p => p.reference !== this.produit.reference
     );
-  
+
     if (this.produitsRestants.length > 0) {
       // ✅ Décaler l'affichage pour éviter l'empilement
       setTimeout(() => {
@@ -277,6 +293,16 @@ export class ControleComponent {
     } else {
       this.controleProduitService.verifierBLTermine(this.idBL!).subscribe(response => {
         if (response === true) {
+          // 🔁 Appel pour terminer le calcul de charge
+          const chargeId = this.chargeTracker.getChargeId();
+          if (chargeId) {
+            this.chargeService.terminerControle(chargeId).subscribe({
+              next: () => console.log("✅ Calcul de charge terminé."),
+              error: (err) => console.error("❌ Erreur en terminant le calcul de charge :", err)
+            });
+          } else {
+            console.warn("Aucun ID de charge trouvé dans le stockage.");
+          }
           setTimeout(() => {
             window.alert("🎉 Tous les produits sont contrôlés, le BL est terminé !");
             this.router.navigate(['/ListBL']);
@@ -304,12 +330,12 @@ export class ControleComponent {
     this.showValidationModal = false;
     this.showRefusModal = false;
     this.raisonRefus = '';
-    this.quantiteIncorrecte= 0 ;
+    this.quantiteIncorrecte = 0;
   }
 
 
   imprimerFicheDeRefus() {
-    
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
 
     const ficheDeRefusData = {
       reference: this.produit.reference,
@@ -317,17 +343,125 @@ export class ControleComponent {
       verificateur: this.verificateur,
       numBL: this.numBL,
       dateDeControle: this.dateDeControle,
-      motifRefus: 'Non Conforme', // Exemple de motif de refus
-      raisonRefus : this.raisonRefus
-      
-
+      motifRefus: 'Non Conforme',
+      raison: this.raisonRefus,
+      quantiteIncorrecte: this.quantiteIncorrecte,
+      quantiteProduit: this.quantiteProduit,
+      quantiteStatus: this.quantiteStatus
     };
-  
-    // 1. Sauvegarder la fiche de refus dans la base
+
     this.ficheDeRefusService.saveFicheDeRefus(ficheDeRefusData).subscribe({
       next: (response) => {
         console.log('Fiche de Refus sauvegardée avec succès', response);
-        this.printFicheDeRefus(); // 2. Imprimer la fiche
+        const numero = response.numeroFiche;
+        this.remplirContenuEtImprimer(printWindow, numero, ficheDeRefusData);
+
+        // ✅ Déplacer le reset ICI après impression
+        this.resetForm();
+        this.passerAuProduitSuivant();
+        this.closeModal();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la sauvegarde', error);
+        if (printWindow) {
+          printWindow.close();
+        }
+      }
+    });
+  }
+
+  remplirContenuEtImprimer(printWindow: Window | null, numero: number, data: any) {
+    const moq = this.produit?.moq;
+    const quantite = this.quantiteProduit;
+
+    if (moq == null || quantite == null || moq <= 0 || quantite <= 0) {
+      console.error('MOQ ou quantité non définie ou invalide', { moq, quantite });
+      return;
+    }
+
+    const nombreFiches = Math.ceil(quantite / moq);
+    if (!printWindow) return;
+
+    const quantiteNonConforme = data.quantiteStatus === 'invalid'
+      ? `<p><strong>Quantité non conforme :</strong> ${data.quantiteIncorrecte} au lieu de ${data.quantiteProduit}</p>`
+      : '';
+
+    let printContent = `
+      <html>
+      <head>
+        <title>Fiche de Refus</title>
+        <style>
+          body { font-family: Arial, sans-serif; text-align: center; }
+          .ficheRefus { 
+            border: 2px solid black; 
+            padding: 20px; 
+            margin: 50px auto; 
+            width: 80%; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+            page-break-after: always;
+          }
+          h2 { color: red; }
+        </style>
+      </head>
+      <body>
+    `;
+
+    for (let i = 1; i <= nombreFiches; i++) {
+      printContent += `
+        <div class="ficheRefus">
+          <h2>Fiche de Refus N° ${numero}</h2>
+          <p><strong>Référence :</strong> ${data.reference}</p>
+          <p><strong>Fournisseur :</strong> ${data.fournisseur}</p>
+          <p><strong>Vérificateur :</strong> ${data.verificateur}</p>
+          <p><strong>Numéro BL :</strong> ${data.numBL}</p>
+          <p><strong>Date de Contrôle :</strong> ${data.dateDeControle}</p>
+          <p><strong>Motif de Refus :</strong> ❌ ${data.motifRefus}</p>
+          <p><strong>Raison :</strong> ${data.raison}</p>
+          ${quantiteNonConforme}
+        </div>
+      `;
+    }
+
+    printContent += `
+        <script>
+          window.onload = function() {
+            window.focus();
+            window.print();
+            window.close();
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+  }
+
+
+  imprimerEtiquette() {
+    // 1. Ouvre la fenêtre d'impression IMMÉDIATEMENT pour éviter le blocage navigateur
+    const printWindow = window.open('', '', 'width=800,height=600');
+  
+    const etiquetteData = {
+      reference: this.produit.reference,
+      fournisseur: this.produit.fournisseur?.nomFournisseur,
+      verificateur: this.verificateur,
+      numBL: this.numBL,
+      dateDeControle: this.dateDeControle,
+      resultat: 'Conforme'
+    };
+  
+    // 2. Sauvegarde dans la base
+    this.etiquetteService.saveEtiquette(etiquetteData).subscribe({
+      next: (response) => {
+        console.log('Étiquette sauvegardée avec succès', response);
+        // 3. Une fois sauvegardée, imprimer
+        this.printEtiquette(printWindow); // 👈 envoie la fenêtre déjà ouverte
+        this.resetForm();
+        this.passerAuProduitSuivant();
+        this.closeModal();
       },
       error: (error) => {
         console.error('Erreur lors de la sauvegarde', error);
@@ -335,97 +469,69 @@ export class ControleComponent {
     });
   }
   
-  printFicheDeRefus() {
-    //const nombreFiches = localStorage.getItem('nombreFichesDeRefus') || '0';  // 🔥 récupérer depuis localStorage
-
-    const printContent = `
+  printEtiquette(printWindow: Window | null) {
+    const moq = this.produit?.moq;
+    const quantite = this.quantiteProduit;
+  
+    if (moq == null || quantite == null || moq <= 0 || quantite <= 0) {
+      console.error('MOQ ou quantité non définie ou invalide', { moq, quantite });
+      return;
+    }
+  
+    const nombreEtiquettes = Math.ceil(quantite / moq);
+  
+    let printContent = `
       <html>
       <head>
-        <title>Fiche de Refus N° </title>
-
+        <title>Étiquette de Contrôle</title>
         <style>
           body { font-family: Arial, sans-serif; text-align: center; }
-          .ficheRefus { border: 2px solid black; padding: 10px; margin: 20px; display: inline-block; }
+          .etiquette { 
+            border: 2px solid black; 
+            padding: 10px; 
+            margin: 20px; 
+            display: inline-block; 
+            background-color: #28a745;
+            color: white;
+            width: 300px;
+            height: 200px;
+          }
         </style>
       </head>
       <body>
-        <div class="ficheRefus">
-          <h2>Fiche de Refus N° </h2>
-          <p><strong>Référence:</strong> ${this.produit.reference}</p>
-          <p><strong>Fournisseur:</strong> ${this.produit.fournisseur?.nomFournisseur}</p>
-          <p><strong>Vérificateur:</strong> ${this.verificateur}</p>
+    `;
+  
+    for (let i = 1; i <= nombreEtiquettes; i++) {
+      printContent += `
+        <div class="etiquette">
+          <h2>✅ Étiquette de Contrôle</h2>
           <p><strong>Numéro BL:</strong> ${this.numBL}</p>
           <p><strong>Date de Contrôle:</strong> ${this.dateDeControle}</p>
-          <p><strong>Motif de Refus:</strong> ❌ Non Conforme</p>
+          <p><strong>Vérificateur:</strong> ${this.verificateur}</p>
         </div>
-        <script>window.print();</script>
+      `;
+    }
+  
+    printContent += `
+        <script>
+          window.onload = function() {
+            window.focus();
+            window.print();
+            window.close();
+          };
+        </script>
       </body>
       </html>
     `;
   
-    const printWindow = window.open('', '', 'width=800,height=600');
+    // Remplir la fenêtre ouverte plus tôt
     if (printWindow) {
+      printWindow.document.open(); // s'assurer que c’est prêt
       printWindow.document.write(printContent);
       printWindow.document.close();
     }
-    
-  }
-
-  
-  
-imprimerEtiquette() {
-  const etiquetteData = {
-    reference: this.produit.reference,
-    fournisseur: this.produit.fournisseur?.nomFournisseur,
-    verificateur: this.verificateur,
-    numBL: this.numBL,
-    dateDeControle: this.dateDeControle,
-    resultat: 'Conforme'
-  };
-
-  // 1. Envoyer les données à la base
-  this.etiquetteService.saveEtiquette(etiquetteData).subscribe({
-    next: (response) => {
-      console.log('Étiquette sauvegardée avec succès', response);
-      this.printEtiquette(); // 2. Puis imprimer
-    },
-    error: (error) => {
-      console.error('Erreur lors de la sauvegarde', error);
-    }
-  });
-}
-
-printEtiquette() {
-  const printContent = `
-    <html>
-    <head>
-      <title>Étiquette de Contrôle</title>
-      <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .etiquette { border: 2px solid black; padding: 10px; margin: 20px; display: inline-block; 
-        background-color: #28a745; /* Vert */
-          color: white; /* Texte en blanc pour contraster */}
-      </style>
-    </head>
-    <body>
-      <div class="etiquette">
-        <h2>Étiquette de Contrôle</h2>
-        <p><strong>Numéro BL:</strong> ${this.numBL! +1}</p>
-        <p><strong>Date de Contrôle:</strong> ${this.dateDeControle}</p>
-        <p><strong>Vérificateur:</strong> ${this.verificateur}</p>
-      </div>
-      <script>window.print();</script>
-    </body>
-    </html>
-  `;
-
-  const printWindow = window.open('', '', 'width=800,height=600');
-  if (printWindow) {
-    printWindow.document.write(printContent);
-    printWindow.document.close();
   }
   
-}
- 
+  
 
 }

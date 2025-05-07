@@ -33,7 +33,11 @@ import { NgChartsModule } from 'ng2-charts';
 import { ControleByBlComponent } from './pages/controle-by-bl/controle-by-bl.component';
 
 import { ControleComponent } from './pages/controle/controle.component';
-
+import { ListeFichesDeRefusComponent } from './pages/liste-fiches-de-refus/liste-fiches-de-refus.component';
+import { ListeEtiquetteVerteComponent } from './pages/liste-etiquette-verte/liste-etiquette-verte.component';
+import { HistoriqueComponent } from './pages/historique/historique.component';
+import { FamilleComponent } from './components/famille/famille.component';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 
 
@@ -63,6 +67,11 @@ import { ControleComponent } from './pages/controle/controle.component';
          ControleByBlComponent,
        
          ControleComponent,
+                 ListeFichesDeRefusComponent,
+                 ListeEtiquetteVerteComponent,
+                 HistoriqueComponent,
+                 FamilleComponent,
+                 UnauthorizedComponent,
     
 
 
@@ -77,8 +86,7 @@ import { ControleComponent } from './pages/controle/controle.component';
     FormsModule,
     ReactiveFormsModule,
     NgxIntlTelInputModule,
-    NgChartsModule
-   
+    NgChartsModule,
     
     
  

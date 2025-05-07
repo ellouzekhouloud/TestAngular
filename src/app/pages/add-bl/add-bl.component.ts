@@ -56,7 +56,7 @@ export class AddBlComponent implements OnInit {
   addProduit(): void {
     const produitFormGroup = this.fb.group({
       idProduit: [null, Validators.required],
-      quantité: [0, [Validators.required, Validators.min(1)]]
+      quantité: [null, [Validators.required, Validators.min(1)]]
     });
     this.produitsFormArray.push(produitFormGroup);
   }
