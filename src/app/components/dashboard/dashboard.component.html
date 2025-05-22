@@ -18,7 +18,7 @@
       <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item">Home</li>
           <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
@@ -29,12 +29,16 @@
     <section class="section dashboard">
       <div class="row">
 
-
         <!--  Total Produits -->
         <div class="col-lg-4 col-md-6">
           <div class="card info-card">
             <div class="card-body">
-              <h5 class="card-title">Total Produits</h5>
+              <h5 class="card-title">
+                Total Produits
+                <button class="btn btn-link float-end" (click)="openModal()" title="Options">
+                  <i class="bi bi-three-dots-vertical fs-5"></i>
+                </button>
+              </h5>
               <div class="d-flex align-items-center">
                 <div
                   class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white">
@@ -48,12 +52,50 @@
           </div>
         </div>
 
+        <!-- ✅ Modal Bootstrap -->
+        <div id="produitsModal" class="modal fade" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Répartition des Produits par Fournisseur</h5>
+                <button type="button" class="btn-close" (click)="closeModal()"></button>
+              </div>
+              <div class="modal-body">
+                <div class="table-responsive">
+                  <table class="table table-striped align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th scope="col">Fournisseur</th>
+                        <th scope="col" class="text-end">Nombre de Produits</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of produitsParFournisseur">
+                        <td>{{ item.fournisseur }}</td>
+                        <td class="text-end">{{ item.nombreProduits }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Fermer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
         <!--  Total Fournisseurs -->
         <div class="col-lg-4 col-md-6">
           <div class="card info-card">
             <div class="card-body">
-              <h5 class="card-title">Total Fournisseurs</h5>
+              <h5 class="card-title">
+                Total Fournisseurs
+                <button class="btn btn-link float-end" (click)="toggleDatePicker()">
+                  <i class="bi bi-calendar fs-5"></i>
+                </button>
+              </h5>
               <div class="d-flex align-items-center">
                 <div
                   class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white">
@@ -63,62 +105,195 @@
                   <h6>{{ stats.totalFournisseurs }}</h6>
                 </div>
               </div>
+
+              <!-- ✅ Date Picker Inline -->
+              <div *ngIf="showDatePicker" class="mt-3 border rounded p-3 bg-light">
+                <div class="row g-2 align-items-end">
+                  <div class="col">
+                    <label class="form-label">Date début</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                      <input type="date" class="form-control" [(ngModel)]="startDate" />
+                    </div>
+                  </div>
+                  <div class="col">
+                    <label class="form-label">Date fin</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-calendar-date-fill"></i></span>
+                      <input type="date" class="form-control" [(ngModel)]="endDate" />
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button class="btn btn-primary mt-3" (click)="applyDateFilter()">Rechercher</button>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
 
+        <!-- ✅ Modal Bootstrap -->
+        <div id="fournisseursModal" class="modal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+              <div class="modal-header flex-column align-items-start">
+                <h5 class="modal-title">Produits Non Conformes par Fournisseur</h5>
+                <div class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill mt-2 shadow-sm">
+                  <i class="bi bi-calendar-event me-1"></i> {{ selectedPeriod }}
+                </div>
+                <!-- ✅ Menu 3 points -->
+                <div class="dropdown position-absolute end-0 top-0 mt-2 me-5" title="Exporter en excel">
+                  <button class="btn btn-sm btn-light border-0" type="button" id="exportMenu" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportMenu">
+                    <li>
+                      <a class="dropdown-item" href="#" (click)="exportToExcel()">
+                        <i class="bi bi-file-earmark-excel text-success me-2"></i> Exporter Excel
+                      </a>
+                    </li>
+                  </ul>
+                </div>
 
-        <!--  Total Familles -->
-        <div class="col-lg-4 col-md-6">
-          <div class="card info-card">
-            <div class="card-body">
-              <h5 class="card-title">Total Familles</h5>
-              <div class="d-flex align-items-center">
-                <div
-                  class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning text-white">
-                  <i class="bi bi-tags"></i>
+                <button type="button" class="btn-close position-absolute end-0 top-0 mt-2 me-2"
+                  (click)="closeFournisseurModal()"></button>
+              </div>
+              <div class="modal-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover align-middle text-nowrap">
+                    <thead class="table-light text-center">
+                      <tr>
+                        <th scope="col">Fournisseur</th>
+                        <th scope="col">Incidents<br><small class="text-muted">(Produits Non Conformes)</small></th>
+                        <th scope="col">Nombre de BL</th>
+                        <th scope="col">PPm</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of produitsNonConformes">
+                        <td class="fw-semibold">{{ item.fournisseur }}</td>
+                        <td class="text-center text-danger fw-bold">{{ item.nonConformes }}</td>
+                        <td class="text-center">{{ item.nombreBL }}</td>
+                        <td class="text-center text-primary fw-bold">{{ item.ppm | number : '1.0-0' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <div class="ps-3">
-                  <h6>{{ stats.totalFamilles }}</h6>
-                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeFournisseurModal()">Fermer</button>
               </div>
             </div>
           </div>
         </div>
 
 
+        <div class="col-lg-4 col-md-6">
+          <app-dashboard-ppm></app-dashboard-ppm>
+        </div>
 
-        <!--  Produits par Famille -->
-        <div class="col-lg-6">
-          <div class="card">
+        <!-- Quantités par Fournisseur -->
+        <app-dashboard-chart [fournisseurs]="fournisseurs" [quantitesReceptionnees]="quantitesReceptionnees"
+          [quantitesNonConformes]="quantitesNonConformes" [typePeriode]="typePeriode"
+          (typePeriodeChange)="typePeriode = $event" [dateFiltre]="dateFiltre" (dateFiltreChange)="dateFiltre = $event"
+          [startDate]="startDate" (startDateChange)="startDate = $event" [endDate]="endDate"
+          (endDateChange)="endDate = $event" (filterChanged)="applyFilter()" />
+
+
+        <!--BL Conforme -->
+        <app-dashboard-blconforme></app-dashboard-blconforme>
+
+        <!-- BL Non Conformes -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
             <div class="card-body">
-              <h5 class="card-title">Produits par Famille</h5>
-              <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="'pie'">
-              </canvas>
+              <h5 class="card-title text-danger mb-4">
+                Bons de Livraison Non Conformes
+              </h5>
+
+              <!-- Filtres -->
+              <div class="row g-2 align-items-end mb-4">
+                <div class="col-md-4">
+                  <label class="form-label">Fournisseur</label>
+                  <select class="form-select" [(ngModel)]="fournisseur">
+                    <option value="">-- Sélectionner --</option>
+                    <option *ngFor="let f of fournisseurs" [value]="f">
+                      {{ f }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Date de contrôle</label>
+                  <input type="date" class="form-control" [(ngModel)]="date">
+                </div>
+
+                <div class="col-md-4 d-flex gap-2">
+                  <button class="btn btn-outline-primary w-50" (click)="applyFilters()">
+                    <i class="bi bi-funnel"></i> Filtrer
+                  </button>
+                  <button class="btn btn-outline-secondary w-50" (click)="clearFilters()">
+                    <i class="bi bi-x-circle"></i> Effacer
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tableau -->
+              <table class="table table-hover align-middle text-nowrap">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Numéro BL</th>
+                    <th>Référence</th>
+                    <th>Fournisseur</th>
+                    <th>Vérificateur</th>
+                    <th>Date de Contrôle</th>
+                    <th>Raison</th>
+                    <th>Qté Incorrecte</th>
+                    <th>Résultat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let bl of paginatedBls; let i = index">
+                    <td>{{ i + 1 + currentPage * pageSize }}</td>
+                    <td>{{ bl.numBL }}</td>
+                    <td>{{ bl.reference }}</td>
+                    <td>{{ bl.fournisseur }}</td>
+                    <td>{{ bl.verificateur }}</td>
+                    <td>{{ bl.dateDeControle | date: 'dd/MM/yyyy' }}</td>
+                    <td><span class="fw-bold fst-italic text-primary">{{ bl.raison }}</span></td>
+
+                    <td>{{ bl.quantiteIncorrecte }}</td>
+                    <td>
+                      <span class="badge bg-danger">
+                        {{ bl.motifRefus }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="paginatedBls.length === 0">
+                    <td colspan="9" class="text-center text-muted">
+                      Aucun bon de livraison non conforme trouvé.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Pagination -->
+              <div class="d-flex justify-content-center mt-4 gap-2">
+                <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="currentPage === 0"
+                  title="Page précédente">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-outline-primary" (click)="nextPage()"
+                  [disabled]="(currentPage + 1) * pageSize >= blsNonConformes.length" title="Page suivante">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
-        <!--  Produits par Fournisseur -->
-        <div class="col-lg-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Produits par Fournisseur</h5>
-              <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
-              </canvas>
-            </div>
-          </div>
-        </div>
-
-        <!--  Charge horaire des personnels -->
-<div class="col-lg-6">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Charge Horaire des Personnels</h5>
-      <canvas baseChart [data]="chargeChartData" [options]="chargeChartOptions" [type]="'bar'"></canvas>
-    </div>
-  </div>
-</div>
 
 
 

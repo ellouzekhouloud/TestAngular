@@ -21,7 +21,15 @@ itemsPerPage: number = 4;
 
   constructor(private http: HttpClient,private router: Router,private chargeService: ChargeService,
     private chargeTracker: ChargeTrackerService,
-  ) {}
+  ) {
+     const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state as { newBL?: any };
+
+    if (state?.newBL) {
+      this.blList.unshift(state.newBL);  // Ajout en début de liste
+      this.filteredBL = [...this.blList];
+    }
+  }
 
  
 // Méthode pour récupérer les BL de la page actuelle
@@ -63,9 +71,8 @@ openProduitModal(bl: any): void {
   getBL(): void {
     this.http.get<any[]>('http://localhost:8080/api/bl').subscribe(
       (data) => {
-        this.blList = data;
-        this.filteredBL = data; // Initialize filtered list
-  
+        this.blList = data.reverse(); // On inverse l'ordre pour avoir les plus récents en premier
+      this.filteredBL = [...this.blList];
         // Vérification des données récupérées
         console.log('Liste des BL récupérés:', this.blList);
   

@@ -55,9 +55,13 @@ export class ControleComponent {
   }
 
 
-  getUtilisateurConnecte(): string {
-    return localStorage.getItem('nom') ?? 'Utilisateur inconnu';
-  }
+ getUtilisateurConnecte(): string {
+  return (
+    localStorage.getItem('nom') || 
+    sessionStorage.getItem('nom') || 
+    'Utilisateur inconnu'
+  );
+}
 
   ngOnInit(): void {
     // Récupérer l'ID du BL depuis l'URL
@@ -349,6 +353,14 @@ export class ControleComponent {
       quantiteProduit: this.quantiteProduit,
       quantiteStatus: this.quantiteStatus
     };
+    const etiquetteData = {
+      reference: this.produit.reference,
+      fournisseur: this.produit.fournisseur?.nomFournisseur,
+      verificateur: this.verificateur,
+      numBL: this.numBL,
+      dateDeControle: this.dateDeControle,
+      resultat: 'Conforme'
+    };
 
     this.ficheDeRefusService.saveFicheDeRefus(ficheDeRefusData).subscribe({
       next: (response) => {
@@ -368,30 +380,45 @@ export class ControleComponent {
         }
       }
     });
+    this.etiquetteService.saveEtiquette(etiquetteData).subscribe({
+      next: (response) => {
+        // 3. Une fois sauvegardée, imprimer
+       
+        
+      },
+      error: (error) => {
+        console.error('Erreur lors de la sauvegarde', error);
+      }
+    });
   }
 
   remplirContenuEtImprimer(printWindow: Window | null, numero: number, data: any) {
     const moq = this.produit?.moq;
     const quantite = this.quantiteProduit;
-
+    const quantiteIncorrecte = this.quantiteIncorrecte;
+  
     if (moq == null || quantite == null || moq <= 0 || quantite <= 0) {
       console.error('MOQ ou quantité non définie ou invalide', { moq, quantite });
       return;
     }
-
-    const nombreFiches = Math.ceil(quantite / moq);
+   
+    const nombreFiches = Math.floor((quantite - quantiteIncorrecte) / moq);
+    const nombreEtiquettesRestantes = Math.ceil(quantiteIncorrecte / moq);
+    
+  
     if (!printWindow) return;
-
+  
     const quantiteNonConforme = data.quantiteStatus === 'invalid'
       ? `<p><strong>Quantité non conforme :</strong> ${data.quantiteIncorrecte} au lieu de ${data.quantiteProduit}</p>`
       : '';
-
+  
     let printContent = `
       <html>
       <head>
-        <title>Fiche de Refus</title>
+        <title>Impression</title>
         <style>
           body { font-family: Arial, sans-serif; text-align: center; }
+  
           .ficheRefus { 
             border: 2px solid black; 
             padding: 20px; 
@@ -400,12 +427,25 @@ export class ControleComponent {
             box-shadow: 0 0 10px rgba(0,0,0,0.1); 
             page-break-after: always;
           }
-          h2 { color: red; }
+          .etiquette { 
+            border: 2px solid black; 
+            padding: 10px; 
+            margin: 20px auto; 
+            display: inline-block; 
+            background-color: #28a745;
+            color: white;
+            width: 300px;
+            height: 200px;
+            page-break-after: always;
+          }
+  
+          h2 { color: white; }
         </style>
       </head>
       <body>
     `;
-
+  
+    // Fiches de refus
     for (let i = 1; i <= nombreFiches; i++) {
       printContent += `
         <div class="ficheRefus">
@@ -421,7 +461,19 @@ export class ControleComponent {
         </div>
       `;
     }
-
+  
+    // Étiquettes conformes restantes
+    for (let i = 1; i <= nombreEtiquettesRestantes; i++) {
+      printContent += `
+        <div class="etiquette">
+          <h2>✅ Étiquette de Contrôle</h2>
+          <p><strong>Numéro BL:</strong> ${this.numBL}</p>
+          <p><strong>Date de Contrôle:</strong> ${this.dateDeControle}</p>
+          <p><strong>Vérificateur:</strong> ${this.verificateur}</p>
+        </div>
+      `;
+    }
+  
     printContent += `
         <script>
           window.onload = function() {
@@ -433,12 +485,12 @@ export class ControleComponent {
       </body>
       </html>
     `;
-
+  
     printWindow.document.open();
     printWindow.document.write(printContent);
     printWindow.document.close();
   }
-
+  
 
   imprimerEtiquette() {
     // 1. Ouvre la fenêtre d'impression IMMÉDIATEMENT pour éviter le blocage navigateur
@@ -458,6 +510,7 @@ export class ControleComponent {
       next: (response) => {
         console.log('Étiquette sauvegardée avec succès', response);
         // 3. Une fois sauvegardée, imprimer
+       
         this.printEtiquette(printWindow); // 👈 envoie la fenêtre déjà ouverte
         this.resetForm();
         this.passerAuProduitSuivant();
@@ -531,7 +584,6 @@ export class ControleComponent {
       printWindow.document.close();
     }
   }
-  
   
 
 }

@@ -9,27 +9,7 @@
   <meta content="" name="description">
   <meta content="" name="keywords">
   <style>
-    /* Modifier le bouton Modifier avec un bleu foncé */
-    .btn-primary {
-      background-color: #0056b3; /* Bleu foncé */
-      border-color: #0056b3; /* Bleu foncé */
-    }
 
-    /* Remplacer btn-danger par un gris clair pour le bouton Supprimer */
-    .btn-danger {
-      background-color: #6c757d; /* Gris clair */
-      border-color: #6c757d; /* Gris clair */
-    }
-
-    /* Ajouter un effet de survol pour les boutons */
-    .btn:hover {
-      opacity: 0.9;
-    }
-
-    /* Optionnel : changer la couleur de fond du tableau pour un meilleur contraste */
-    table {
-      background-color: #f8f9fa;
-    }
   </style>
 
 </head>
@@ -54,7 +34,7 @@
               <h5 class="card-title">Liste des Personnels</h5>
               <div class="mb-3 text-end">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPersonnelModal">
-                  <i class="bi bi-person-add "></i>  Ajouter un personnel
+                  <i class="bi bi-person-add "></i> Ajouter un personnel
                 </button>
               </div>
               <!-- Table des Personnels -->
@@ -83,67 +63,78 @@
                     <td>{{ personnel.motDePasse | slice:0:8 }}****</td>
                     <td>{{ personnel.role }}</td>
                     <td>
-                      <button type="button" class="btn btn-primary" (click)="openEditModal(personnel)" data-bs-toggle="modal" data-bs-target="#editPersonnelModal">
-                        <i class="bi bi-pencil"></i> 
-                      </button>
-                          
-                      <button type="button" class="btn btn-danger" (click)="deletePersonnel(personnel.id)">
-                        <i class="bi bi-trash"></i> 
-                      </button>
+                      <div class="action-buttons d-flex flex-wrap gap-1">
+                        <button *ngIf="personnel.role !== 'ADMIN'" type="button" class="btn btn-sm btn-primary"
+                          (click)="openEditModal(personnel)" data-bs-toggle="modal" data-bs-target="#editPersonnelModal">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                    
+                        <button *ngIf="personnel.active && personnel.role !== 'ADMIN'"
+                          class="btn btn-sm btn-outline-warning"
+                          (click)="deactivatePersonnel(personnel.id)" title="Désactiver le compte">
+                          <i class="bi bi-person-lock"></i>
+                        </button>
+                    
+                        <span *ngIf="!personnel.active && personnel.role !== 'ADMIN'" class="badge bg-danger">
+                          <i class="bi bi-x-lg" title="Ce compte est désactivé"></i>
+
+                        </span>
+                      </div>
                     </td>
+                    
                   </tr>
                 </tbody>
               </table>
               <!-- End Table des Personnels -->
 
-              
-           <!-- PAGINATION -->
-           <nav class="d-flex justify-content-end mt-3">
-            <ul class="pagination pagination-sm">
-          
-              <!-- Previous Button -->
-              <li class="page-item" [class.disabled]="currentPage === 1">
-                <button class="page-link" (click)="changePage(currentPage - 1)">
-                  <i class="bi bi-chevron-left"></i>
-                </button>
-              </li>
-          
-              <!-- First page -->
-              <li class="page-item" [class.active]="currentPage === 1">
-                <button class="page-link" (click)="changePage(1)">1</button>
-              </li>
-          
-              <!-- Dots before current page group -->
-              <li class="page-item" *ngIf="currentPage > 4">
-                <span class="page-link">...</span>
-              </li>
-          
-              <!-- Pages around current page -->
-              <li class="page-item" *ngFor="let page of paginationPages()" [class.active]="currentPage === page">
-                <button class="page-link" (click)="changePage(page)">
-                  {{ page }}
-                </button>
-              </li>
-          
-              <!-- Dots after current page group -->
-              <li class="page-item" *ngIf="currentPage < totalPages - 3">
-                <span class="page-link">...</span>
-              </li>
-          
-              <!-- Last page -->
-              <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
-                <button class="page-link" (click)="changePage(totalPages)">{{ totalPages }}</button>
-              </li>
-          
-              <!-- Next Button -->
-              <li class="page-item" [class.disabled]="currentPage === totalPages">
-                <button class="page-link" (click)="changePage(currentPage + 1)">
-                  <i class="bi bi-chevron-right"></i>
-                </button>
-              </li>
-          
-            </ul>
-          </nav>
+
+              <!-- PAGINATION -->
+              <nav class="d-flex justify-content-end mt-3">
+                <ul class="pagination pagination-sm">
+
+                  <!-- Previous Button -->
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="changePage(currentPage - 1)">
+                      <i class="bi bi-chevron-left"></i>
+                    </button>
+                  </li>
+
+                  <!-- First page -->
+                  <li class="page-item" [class.active]="currentPage === 1">
+                    <button class="page-link" (click)="changePage(1)">1</button>
+                  </li>
+
+                  <!-- Dots before current page group -->
+                  <li class="page-item" *ngIf="currentPage > 4">
+                    <span class="page-link">...</span>
+                  </li>
+
+                  <!-- Pages around current page -->
+                  <li class="page-item" *ngFor="let page of paginationPages()" [class.active]="currentPage === page">
+                    <button class="page-link" (click)="changePage(page)">
+                      {{ page }}
+                    </button>
+                  </li>
+
+                  <!-- Dots after current page group -->
+                  <li class="page-item" *ngIf="currentPage < totalPages - 3">
+                    <span class="page-link">...</span>
+                  </li>
+
+                  <!-- Last page -->
+                  <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
+                    <button class="page-link" (click)="changePage(totalPages)">{{ totalPages }}</button>
+                  </li>
+
+                  <!-- Next Button -->
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button class="page-link" (click)="changePage(currentPage + 1)">
+                      <i class="bi bi-chevron-right"></i>
+                    </button>
+                  </li>
+
+                </ul>
+              </nav>
             </div>
           </div>
 
@@ -152,150 +143,156 @@
     </section>
 
     <!-- Modal d'ajout -->
-<div class="modal fade" id="addPersonnelModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
+    <div class="modal fade" id="addPersonnelModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">Ajouter un personnel</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-      </div>
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Ajouter un personnel</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
 
-      <div class="modal-body">
-        <section class="section">
-          <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="nom" class="form-label">Nom</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-person"></i></span>
-                  <input type="text" id="nom" class="form-control" formControlName="nom" placeholder="Entrer le nom">
+          <div class="modal-body">
+            <section class="section">
+              <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="nom" class="form-label">Nom</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" id="nom" class="form-control" formControlName="nom"
+                        placeholder="Entrer le nom">
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="prenom" class="form-label">Prénom</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" id="prenom" class="form-control" formControlName="prenom"
+                        placeholder="Entrer le prénom">
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="prenom" class="form-label">Prénom</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-person"></i></span>
-                  <input type="text" id="prenom" class="form-control" formControlName="prenom" placeholder="Entrer le prénom">
-                </div>
-              </div>
-            </div>
 
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="matricule" class="form-label">Matricule</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-hash"></i></span>
-                  <input type="text" id="matricule" class="form-control" formControlName="matricule" placeholder="Entrer matricule">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="matricule" class="form-label">Matricule</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-hash"></i></span>
+                      <input type="text" id="matricule" class="form-control" formControlName="matricule"
+                        placeholder="Entrer matricule">
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="qualifications" class="form-label">Qualifications</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-award"></i></span>
+                      <input type="text" id="qualifications" class="form-control" formControlName="qualifications"
+                        placeholder="Qualifications">
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="qualifications" class="form-label">Qualifications</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-award"></i></span>
-                  <input type="text" id="qualifications" class="form-control" formControlName="qualifications" placeholder="Qualifications">
-                </div>
-              </div>
-            </div>
 
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="email" class="form-label">Email</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
-                  <input type="email" id="email" class="form-control" formControlName="email" placeholder="example@domaine.com">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
+                      <input type="email" id="email" class="form-control" formControlName="email"
+                        placeholder="example@domaine.com">
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="motDePasse" class="form-label">Mot de passe</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                      <input [type]="showPassword ? 'text' : 'password'" id="motDePasse" class="form-control"
+                        formControlName="motDePasse" placeholder="Mot de passe sécurisé">
+                      <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
+                        <i [ngClass]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="motDePasse" class="form-label">Mot de passe</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                  <input [type]="showPassword ? 'text' : 'password'" id="motDePasse" class="form-control"
-                    formControlName="motDePasse" placeholder="Mot de passe sécurisé">
-                  <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
-                    <i [ngClass]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+
+                <div class="mb-3">
+                  <label for="role" class="form-label">Rôle</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <select id="role" class="form-control" formControlName="role">
+                      <option value="" disabled selected>Choisir un rôle</option>
+                      <option value="RESPONSABLE_RECEPTION">Responsable Réception</option>
+                      <option value="CONTROLEUR">Contrôleur</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="text-center mt-4">
+                  <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-person-add"></i> Ajouter Personnel
                   </button>
                 </div>
-              </div>
-            </div>
+              </form>
+              <!-- Bouton caché pour fermer le modal -->
+              <button id="closeModalBtn" type="button" class="d-none" data-bs-dismiss="modal"></button>
+            </section>
+          </div>
 
-            <div class="mb-3">
-              <label for="role" class="form-label">Rôle</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                <select id="role" class="form-control" formControlName="role">
-                  <option value="" disabled selected>Choisir un rôle</option>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal pour Modifier un Personnel -->
+    <div class="modal fade" id="editPersonnelModal" tabindex="-1" aria-labelledby="editPersonnelModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editPersonnelModalLabel">Modifier Personnel</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="editPersonnelForm" (ngSubmit)="onUpdatePersonnel()">
+              <div class="mb-3">
+                <label class="form-label">Nom</label>
+                <input type="text" class="form-control" formControlName="nom">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Prénom</label>
+                <input type="text" class="form-control" formControlName="prenom">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Matricule</label>
+                <input type="text" class="form-control" formControlName="matricule">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Qualifications</label>
+                <input type="text" class="form-control" formControlName="qualifications">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" formControlName="email">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Mot De Passe</label>
+                <input type="password" class="form-control" formControlName="motDePasse">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Rôle</label>
+                <select class="form-control" formControlName="role">
                   <option value="RESPONSABLE_RECEPTION">Responsable Réception</option>
                   <option value="CONTROLEUR">Contrôleur</option>
                 </select>
               </div>
-            </div>
-
-            <div class="text-center mt-4">
-              <button type="submit" class="btn btn-primary w-100">
-                <i class="bi bi-person-add"></i> Ajouter Personnel
-              </button>
-            </div>
-          </form>
-          <!-- Bouton caché pour fermer le modal -->
-          <button id="closeModalBtn" type="button" class="d-none" data-bs-dismiss="modal"></button>
-        </section>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-    <!-- Modal pour Modifier un Personnel -->
-<div class="modal fade" id="editPersonnelModal" tabindex="-1" aria-labelledby="editPersonnelModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg"> 
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editPersonnelModalLabel">Modifier Personnel</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form [formGroup]="editPersonnelForm" (ngSubmit)="onUpdatePersonnel()">
-          <div class="mb-3">
-            <label class="form-label">Nom</label>
-            <input type="text" class="form-control" formControlName="nom">
+              <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
+            </form>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Prénom</label>
-            <input type="text" class="form-control" formControlName="prenom">
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Matricule</label>
-            <input type="text" class="form-control" formControlName="matricule">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Qualifications</label>
-            <input type="text" class="form-control" formControlName="qualifications">
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" formControlName="email">
-          </div>
-          
-          <div class="mb-3">
-            <label class="form-label">Mot De Passe</label>
-            <input type="password" class="form-control" formControlName="motDePasse" >
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Rôle</label>
-            <select class="form-control" formControlName="role">
-              <option value="RESPONSABLE_RECEPTION">Responsable Réception</option>
-              <option value="CONTROLEUR">Contrôleur</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
   </main><!-- End #main -->
 
@@ -304,4 +301,3 @@
 </body>
 
 </html>
-

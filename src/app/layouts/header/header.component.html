@@ -6,7 +6,7 @@
       <img src="assets/img/logoS.png" alt="Sidilec Logo" class="logo-img">
       <span class="d-none d-lg-block text-dark fs-4">Sidilec</span>
     </a>
-    <i class="bi bi-list toggle-sidebar-btn d-lg-none" *ngIf="role === 'ADMIN'"></i>
+    
   </div><!-- End Logo -->
 
   <!-- Search Bar for Admin -->
@@ -160,7 +160,7 @@
           </li>
           <li><hr class="dropdown-divider"></li>
           <li>
-            <a class="dropdown-item d-flex align-items-center" href="#" (click)="logout()">
+            <a class="dropdown-item d-flex align-items-center" href="#" (click)="onLogout()">
               <i class="bi bi-box-arrow-right"></i>
               <span>Déconnexion</span>
             </a>

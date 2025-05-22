@@ -1,1 +1,46 @@
 
+.password-toggle {
+    cursor: pointer;
+  }
+  
+  .password-toggle:hover {
+    color: #007bff;
+  }
+
+img.logo {
+      display: block;
+      margin: 0 auto;
+      width: 100px;
+      height: auto;
+      border-radius: 8px;
+      border: 2px solid #007bff;
+      padding: 5px;
+    }
+
+  body {
+      font-family: "Arial", sans-serif;
+    }
+
+     h4, h5 {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .title-part {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.main-title {
+  font-size: 1.8em;
+  color: #007bff; /* Couleur principale (bleu) */
+  margin-right: 5px;
+}
+
+.subtitle {
+  font-size: 1.2em;
+  color: #6c757d; /* Gris subtil pour le contraste */
+}

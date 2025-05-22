@@ -1,0 +1,12 @@
+.accueil-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: white;
+}
+img {
+  max-width: 70%;  /* au lieu de 100%, pour la réduire */
+  height: auto;
+  border-radius: 12px; /* optionnel pour arrondir les coins */
+}

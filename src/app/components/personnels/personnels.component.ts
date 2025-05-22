@@ -96,12 +96,66 @@ export class PersonnelsComponent implements OnInit {
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
+  
   onSubmit() {
     if (this.personnelForm.valid) {
-      this.personnelService.addPersonnel(this.personnelForm.value).subscribe(
+      // 🔹 Récupération des données du formulaire
+      const personnelData = this.personnelForm.value;
+  
+      // 🔹 Construction du contenu du fichier
+      const fileContent = `
+  Nom: ${personnelData.nom}
+  Prénom: ${personnelData.prenom}
+  Matricule: ${personnelData.matricule}
+  Qualifications: ${personnelData.qualifications}
+  Email: ${personnelData.email}
+  Mot de Passe: ${personnelData.motDePasse}
+  Rôle: ${personnelData.role}
+      `;
+  
+      // 🔹 Fonction asynchrone pour l'enregistrement
+      const saveFile = async () => {
+        try {
+          // 👉 Ouverture du sélecteur d'emplacement (File Picker)
+          const fileHandle = await (window as any).showSaveFilePicker({
+            suggestedName: `Personnel_${personnelData.nom}_${personnelData.prenom}.txt`,
+            types: [
+              {
+                description: 'Fichier texte',
+                accept: {
+                  'text/plain': ['.txt'],
+                },
+              },
+            ],
+          });
+  
+          // 👉 Création d'un flux d'écriture
+          const writable = await fileHandle.createWritable();
+          
+          console.log("📄 Contenu du fichier avant écriture :");
+          console.log(fileContent);
+  
+          // ✅ Écriture dans le fichier (cette partie est critique)
+          await writable.write(fileContent);
+  
+          // ✅ Fermeture du flux (c'est très important)
+          await writable.close();
+  
+          console.log("✅ Fichier enregistré avec succès !");
+          alert("Le fichier a été enregistré avec succès !");
+        } catch (err) {
+          console.error("❌ Enregistrement annulé ou erreur lors de l'enregistrement", err);
+        }
+      };
+  
+      // 🔹 Appel de l'enregistrement
+      saveFile();
+  
+      // 🔄 Appel de l'API pour ajouter le personnel
+      this.personnelService.addPersonnel(personnelData).subscribe(
         response => {
-          window.alert("Personnel ajouté avec succés!");
-          this.personnelForm.reset();  // Réinitialiser le formulaire après ajout
+          window.alert("Personnel ajouté avec succès !");
+          this.personnelForm.reset();
           this.getPersonnels();
           setTimeout(() => {
             const closeBtn = document.getElementById('closeModalBtn') as HTMLElement;
@@ -111,25 +165,16 @@ export class PersonnelsComponent implements OnInit {
         error => {
           console.error('Erreur lors de l’ajout du personnel', error);
           window.alert("❌ Une erreur est survenue lors de l’ajout !");
-
         }
       );
     } else {
       window.alert("⚠️ Veuillez remplir tous les champs obligatoires !");
     }
   }
+  
 
 
-
-  // Méthode pour supprimer un personnel
-  deletePersonnel(id: number): void {
-    if (confirm('Voulez-vous vraiment supprimer ce personnel ?')) {
-      this.personnelService.deletePersonnel(id).subscribe(() => {
-        this.personnels = this.personnels.filter(p => p.id !== id);
-      });
-    }
-  }
-
+  
   // Ouvrir le modal et remplir le formulaire avec les données du fournisseur
   openEditModal(personnel: Personnel): void {
     this.selectedPersonnelId = personnel.id;
@@ -171,6 +216,20 @@ export class PersonnelsComponent implements OnInit {
           document.body.classList.remove('modal-open');
           document.querySelector('.modal-backdrop')?.remove();
         });
+    }
+  }
+
+  deactivatePersonnel(id: number) {
+    if (window.confirm("Voulez-vous vraiment désactiver ce personnel ?")) {
+      this.personnelService.deactivatePersonnel(id).subscribe(
+        response => {
+          window.alert(response);
+          this.getPersonnels(); // Mettre à jour la liste
+        },
+        error => {
+          console.error("Erreur lors de la désactivation :", error);
+        }
+      );
     }
   }
 }

@@ -13,7 +13,7 @@ import { ProduitService } from 'src/app/services/produit.service';
 export class AddBlComponent implements OnInit {
   blForm!: FormGroup;
   fournisseurs: any[] = [];
-  produits: any[] = [];
+  produitsDisponibles: any[] = []; // Produits disponibles pour le fournisseur sélectionné
 
   constructor(
     private fb: FormBuilder,
@@ -33,64 +33,95 @@ export class AddBlComponent implements OnInit {
       reference: ['', Validators.required],
       referenceInterne: ['', Validators.required],
       description: ['', Validators.required],
-      produits: this.fb.array([])  // Array pour les produits
+      produits: this.fb.array([])  // Tableau dynamique pour les produits
     });
 
     // Charger les fournisseurs
     this.fournisseurService.getFournisseurs().subscribe(fournisseurs => {
       this.fournisseurs = fournisseurs;
     });
-
-    // Charger les produits
-    this.produitService.getProduits().subscribe(produits => {
-      this.produits = produits;
-    });
   }
 
-  // Getter pour l'array des produits
+  /**
+   * Récupérer les produits liés au fournisseur sélectionné
+   */
+  onFournisseurChange(event: any): void {
+    const fournisseurId = event.target.value;
+    
+    if (fournisseurId) {
+      this.produitService.getProduitsByFournisseur(fournisseurId).subscribe(
+        (produits) => {
+          this.produitsDisponibles = produits;
+          console.log("Produits récupérés : ", this.produitsDisponibles);
+
+          if (this.produitsDisponibles.length === 0) {
+            alert("Aucun produit disponible pour ce fournisseur.");
+          }
+        },
+        (error) => {
+          console.error("Erreur lors de la récupération des produits : ", error);
+        }
+      );
+    } else {
+      this.produitsDisponibles = [];
+    }
+  }
+
+  /**
+   * Getter pour l'array des produits
+   */
   get produitsFormArray(): FormArray {
     return this.blForm.get('produits') as FormArray;
   }
 
-  // Ajouter un produit
+  /**
+   * Ajouter un produit dans le tableau dynamique
+   */
   addProduit(): void {
     const produitFormGroup = this.fb.group({
       idProduit: [null, Validators.required],
       quantité: [null, [Validators.required, Validators.min(1)]]
     });
+
     this.produitsFormArray.push(produitFormGroup);
   }
+
+  /**
+   * Supprimer un produit de la liste
+   */
   removeProduit(index: number): void {
-    const produitsArray = this.blForm.get('produits') as FormArray;
-    produitsArray.removeAt(index);
+    this.produitsFormArray.removeAt(index);
+  }
+
+  /**
+   * Soumettre le formulaire
+   */
+  onSubmit(): void {
+  if (this.blForm.valid) {
+    const bl = {
+      numBL: this.blForm.value.numBL,
+      dateReception: this.blForm.value.dateReception
+        ? new Date(this.blForm.value.dateReception).toISOString().split('T')[0]
+        : null,
+      idFournisseur: this.blForm.value.idFournisseur,
+      numClient: this.blForm.value.numClient,
+      reference: this.blForm.value.reference,
+      referenceInterne: this.blForm.value.referenceInterne,
+      description: this.blForm.value.description,
+      produits: this.blForm.value.produits
+    };
+
+    this.blService.addBl(bl).subscribe(
+      (response) => {
+        alert('Bon de livraison créé avec succès');
+        // Redirection avec un paramètre de navigation
+        this.router.navigate(['/ListBL'], { state: { newBL: response } });
+      },
+      (error) => {
+        console.error('Erreur lors de la création du bon de livraison', error);
+      }
+    );
+  }
 }
 
-  // Soumettre le formulaire
-  onSubmit(): void {
-    if (this.blForm.valid) {
-      const bl = {
-        numBL: this.blForm.value.numBL,
-        dateReception: this.blForm.value.dateReception 
-          ? new Date(this.blForm.value.dateReception).toISOString().split('T')[0] 
-          : null,
-        idFournisseur: this.blForm.value.idFournisseur,
-        numClient: this.blForm.value.numClient,
-        reference: this.blForm.value.reference,
-        referenceInterne: this.blForm.value.referenceInterne,
-        description: this.blForm.value.description,
-        produits: this.blForm.value.produits
-      };
-      this.blService.addBl(bl).subscribe(
-        () => {
-          console.log("Données envoyées au backend :", this.blForm.value);
-
-          alert('Bon de livraison créé avec succès');
-          this.router.navigate(['/ListBL']);  // Rediriger vers la liste des BL
-        },
-        (error) => {
-          console.error('Erreur lors de la création du bon de livraison', error);
-        }
-      );
-    }
-  }
 }

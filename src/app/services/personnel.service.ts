@@ -50,4 +50,8 @@ export class PersonnelService {
   deletePersonnel(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
+
+  deactivatePersonnel(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/deactivate`, {}, { responseType: 'text' });
+  }
 }

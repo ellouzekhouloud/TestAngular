@@ -1,0 +1,55 @@
+<div class="card shadow-sm mb-4">
+  <div class="card-header text-primary">
+    <h5 class="card-title mb-0">Quantités par Fournisseur</h5>
+
+    <div class="row mb-3 align-items-center">
+  <!-- Type de période -->
+  <div class="col-auto">
+    <select [(ngModel)]="typePeriode" 
+            (ngModelChange)="typePeriodeChange.emit($event); filterChanged.emit()"
+            class="form-select">
+      <option value="custom">Période</option>
+      <option value="month">Mois</option>
+      <option value="quarter">Trimestre</option>
+      <option value="semester">Semestre</option>
+      <option value="year">Année</option>
+    </select>
+  </div>
+
+  <!-- Mois / Trimestre / Semestre / Année -->
+  <div class="col-auto" *ngIf="typePeriode !== 'custom'">
+    <input type="month" class="form-control" [(ngModel)]="dateFiltre"
+           (ngModelChange)="dateFiltreChange.emit($event); filterChanged.emit()" />
+  </div>
+
+  <!-- Période personnalisée -->
+  <div class="col-auto" *ngIf="typePeriode === 'custom'">
+    <label class="form-label mb-0 me-1">Du :</label>
+    <input type="date" class="form-control d-inline-block me-2" style="width: 160px;" [(ngModel)]="startDate"
+           (ngModelChange)="startDateChange.emit($event); filterChanged.emit()" />
+    <label class="form-label mb-0 me-1">Au :</label>
+    <input type="date" class="form-control d-inline-block" style="width: 160px;" [(ngModel)]="endDate"
+           (ngModelChange)="endDateChange.emit($event); filterChanged.emit()" />
+  </div>
+</div>
+    <div class="export-menu">
+      <div class="menu-icon" (click)="toggleMenu()" title="Exporter">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+          <path fill="none" d="M0 0h24v24H0V0z"></path>
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+        </svg>
+      </div>
+
+      <div class="menu-options" *ngIf="menuOpen">
+        <button (click)="downloadCSV()">Download CSV</button>
+        <button (click)="downloadExcel()">Download Excel</button>
+
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div style="height: 400px;">
+      <canvas id="dashboardChart"></canvas>
+    </div>
+  </div>
+</div>

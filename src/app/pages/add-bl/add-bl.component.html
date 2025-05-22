@@ -17,9 +17,9 @@
                     <label for="dateReception">Date</label>
                     <input type="date" id="dateReception" formControlName="dateReception" class="form-control" required>
                     <label for="idFournisseur">Fournisseur</label>
-                    <select id="idFournisseur" formControlName="idFournisseur" class="form-select" required>
+                    <select id="idFournisseur" formControlName="idFournisseur" class="form-select" (change)="onFournisseurChange($event)" required>
                         <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.idFournisseur">
-                            {{ fournisseur.nomFournisseur }}
+                            {{ fournisseur?.nomFournisseur }}
                         </option>
                     </select>
                     <label for="numBL">Numéro BL</label>
@@ -47,7 +47,7 @@
                         <div class="form-field">
                           <label for="idProduit" class="form-label">Produit</label>
                           <select id="idProduit" formControlName="idProduit" class="form-select" required>
-                            <option *ngFor="let produit of produits" [value]="produit.idProduit">{{ produit.nom }}</option>
+                            <option *ngFor="let produit of produitsDisponibles" [value]="produit.idProduit">{{ produit.nom }}</option>
                           </select>
                         </div>
                       

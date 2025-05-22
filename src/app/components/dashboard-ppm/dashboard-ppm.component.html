@@ -1,0 +1,34 @@
+<div class="card info-card shadow-sm border-0">
+  <div class="card-body">
+    <h5 class="card-title d-flex justify-content-between align-items-center">
+      PPM par Fournisseur
+      <i class="bi bi-graph-up-arrow text-warning fs-5"></i>
+    </h5>
+
+    <div class="d-flex align-items-start gap-3 mt-3">
+      <div
+        class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning text-white shadow-sm"
+        style="width: 50px; height: 50px;">
+        <i class="bi bi-bar-chart-line fs-4"></i>
+      </div>
+
+      <div class="flex-grow-1">
+        <label for="fournisseur" class="form-label fw-semibold">Sélectionner un fournisseur :</label>
+        <select id="fournisseur" class="form-select mb-3" [(ngModel)]="selectedFournisseur"
+          (change)="onFournisseurChange()">
+          <option value="">-- Choisir --</option>
+          <option *ngFor="let f of fournisseurs" [value]="f.nomFournisseur">
+            {{ f.nomFournisseur }}
+          </option>
+        </select>
+
+        <div *ngIf="ppm !== null">
+          <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded shadow-sm">
+            <span class="fw-bold">PPM Calculé :</span>
+            <span class="badge bg-info text-dark fs-6 px-3 py-2">{{ ppm | number: '1.0-3' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

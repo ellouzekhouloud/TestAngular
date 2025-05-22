@@ -1,0 +1,79 @@
+<div class="col-12">
+  <div class="card recent-sales overflow-auto">
+    <div class="card-body">
+      <h5 class="card-title ">Bons de Livraison Conformes </h5>
+
+      <!-- Filtres -->
+      <div class="row g-2 align-items-end mb-4">
+        <div class="col-md-4">
+          <label class="form-label">Fournisseur</label>
+          <select class="form-select" [(ngModel)]="fournisseur">
+            <option value="">-- Sélectionner --</option>
+            <option *ngFor="let f of fournisseurs" [value]="f.nomFournisseur">
+              {{ f.nomFournisseur }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Date de contrôle</label>
+          <input type="date" class="form-control" [(ngModel)]="date">
+        </div>
+
+        <div class="col-md-4 d-flex gap-2">
+          <button class="btn btn-outline-primary w-50" (click)="applyFilters()">
+            <i class="bi bi-funnel"></i> Filtrer
+          </button>
+          <button class="btn btn-outline-secondary w-50" (click)="clearFilters()">
+            <i class="bi bi-x-circle"></i> Effacer
+          </button>
+        </div>
+      </div>
+
+      <!-- Tableau -->
+      <table class="table table-hover align-middle text-nowrap">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Numéro BL</th>
+            <th>Référence</th>
+            <th>Fournisseur</th>
+            <th>Vérificateur</th>
+            <th>Date de Contrôle</th>
+            <th>Résultat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bl of paginatedBls; let i = index">
+            <td>{{ i + 1 + currentPage * pageSize }}</td>
+            <td>{{ bl.numBL }}</td>
+            <td>{{ bl.reference }}</td>
+            <td>{{ bl.fournisseur }}</td>
+            <td>{{ bl.verificateur }}</td>
+            <td>{{ bl.dateDeControle | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <span class="badge bg-success">
+                {{ bl.resultat }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedBls.length === 0">
+            <td colspan="7" class="text-center text-muted">Aucun bon de livraison trouvé.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-center mt-4 gap-2">
+        <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="currentPage === 0"
+          title="Page précédente">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="btn btn-outline-primary" (click)="nextPage()"
+          [disabled]="(currentPage + 1) * pageSize >= blsConformes.length" title="Page suivante">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

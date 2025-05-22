@@ -35,3 +35,39 @@
   font-size: 1.5rem;
 }
 
+canvas {
+  max-height: 400px;
+}
+
+.d-flex {
+  display: flex;
+  gap: 10px;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pagination-btn {
+  background-color: #007bff;
+  border: none;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #0056b3;
+}
+
+.pagination-btn:disabled {
+  background-color: #6c757d;
+}
+
+.pagination-icon {
+  font-size: 1.5rem; /* Augmente la taille des icônes */
+  color: white;
+}

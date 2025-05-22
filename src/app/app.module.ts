@@ -30,7 +30,7 @@ import { ScanneComponent } from './pages/scanne/scanne.component';
 import { AddBlComponent } from './pages/add-bl/add-bl.component';
 import { ListBlComponent } from './pages/list-bl/list-bl.component';
 import { NgChartsModule } from 'ng2-charts';
-import { ControleByBlComponent } from './pages/controle-by-bl/controle-by-bl.component';
+
 
 import { ControleComponent } from './pages/controle/controle.component';
 import { ListeFichesDeRefusComponent } from './pages/liste-fiches-de-refus/liste-fiches-de-refus.component';
@@ -38,6 +38,10 @@ import { ListeEtiquetteVerteComponent } from './pages/liste-etiquette-verte/list
 import { HistoriqueComponent } from './pages/historique/historique.component';
 import { FamilleComponent } from './components/famille/famille.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { DashboardChartComponent } from './components/dashboard-chart/dashboard-chart.component';
+import { DashboardBLConformeComponent } from './components/dashboard-blconforme/dashboard-blconforme.component';
+import { DashboardPPmComponent } from './components/dashboard-ppm/dashboard-ppm.component';
+
 
 
 
@@ -59,23 +63,27 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
     AddPersonnelComponent,
     LoginComponent,
     ControleurComponent,
-    
+
     PlansDeControleComponent,
-         ScanneComponent,
-         AddBlComponent,
-         ListBlComponent,
-         ControleByBlComponent,
-       
-         ControleComponent,
-                 ListeFichesDeRefusComponent,
-                 ListeEtiquetteVerteComponent,
-                 HistoriqueComponent,
-                 FamilleComponent,
-                 UnauthorizedComponent,
-    
+    ScanneComponent,
+    AddBlComponent,
+    ListBlComponent,
 
 
-    
+    ControleComponent,
+    ListeFichesDeRefusComponent,
+    ListeEtiquetteVerteComponent,
+    HistoriqueComponent,
+    FamilleComponent,
+    UnauthorizedComponent,
+    DashboardChartComponent,
+    DashboardBLConformeComponent,
+    DashboardPPmComponent,
+
+
+
+
+
 
 
   ],
@@ -87,9 +95,9 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
     ReactiveFormsModule,
     NgxIntlTelInputModule,
     NgChartsModule,
-    
-    
- 
+
+
+
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

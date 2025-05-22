@@ -17,7 +17,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(private loginService: LoginService, private router: Router,
     private notificationService: NotificationService,
-    private socketService: NotificationSocketService) { }
+    private socketService: NotificationSocketService,private authService: LoginService,) { }
 
   ngOnInit(): void {
     this.role = this.loginService.getRole();
@@ -64,9 +64,9 @@ export class HeaderComponent implements OnInit {
     return this.notifications.filter(n => !n.isRead).length;
   }
 
-  logout() {
-    localStorage.clear();
-    this.router.navigate(['/login']);
+  onLogout(): void {
+    this.authService.logout();  
+    this.router.navigate(['/login']);  
   }
 
 }
