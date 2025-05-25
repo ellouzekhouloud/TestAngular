@@ -4,18 +4,12 @@
   <div class="d-flex align-items-center justify-content-between">
     <a href="index.html" class="logo d-flex align-items-center">
       <img src="assets/img/logoS.png" alt="Sidilec Logo" class="logo-img">
-      <span class="d-none d-lg-block text-dark fs-4">Sidilec</span>
+      <span class="d-none d-lg-block text-dark fs-4">SIDILEC</span>
     </a>
     
   </div><!-- End Logo -->
 
-  <!-- Search Bar for Admin -->
-  <div class="search-bar" *ngIf="role === 'ADMIN'">
-    <form class="search-form d-flex align-items-center" method="POST" action="#">
-      <input type="text" name="query" placeholder="Recherche..." title="Enter search keyword" class="form-control search-input">
-      <button type="submit" title="Search" class="btn-search"><i class="bi bi-search"></i></button>
-    </form>
-  </div><!-- End Search Bar -->
+ 
 
  <!-- Tabs for RESPONSABLE_RECEPTION -->
 <div class="tabs-container" *ngIf="role === 'RESPONSABLE_RECEPTION'">

@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChargeTrackerService } from 'src/app/services/charge-tracker.service';
-import { ChargeService } from 'src/app/services/charge.service';
+import { BlService } from 'src/app/services/bl.service';
 
+import Swal from 'sweetalert2';
+declare var bootstrap: any;
 @Component({
   selector: 'app-list-bl',
   templateUrl: './list-bl.component.html',
@@ -19,8 +20,10 @@ export class ListBlComponent {
 currentPage: number = 1;
 itemsPerPage: number = 4;
 
-  constructor(private http: HttpClient,private router: Router,private chargeService: ChargeService,
-    private chargeTracker: ChargeTrackerService,
+
+
+  constructor(private http: HttpClient,private router: Router,
+     private blService : BlService
   ) {
      const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras.state as { newBL?: any };
@@ -74,11 +77,11 @@ openProduitModal(bl: any): void {
         this.blList = data.reverse(); // On inverse l'ordre pour avoir les plus récents en premier
       this.filteredBL = [...this.blList];
         // Vérification des données récupérées
-        console.log('Liste des BL récupérés:', this.blList);
+       
   
         // Vérification que chaque BL a un ID
         this.blList.forEach(bl => {
-          console.log('BL ID:', bl.id); // Assurez-vous que l'ID est bien présent
+         
         });
       },
       (error) => {
@@ -110,30 +113,56 @@ openProduitModal(bl: any): void {
     }
   }
 
-  // ✅ Fixed: Delete by 'idBL' (not 'numBL')
+  
   supprimerBL(idBL: number): void {
-    // Vérifie si l'ID est bien défini
-    if (idBL !== undefined && idBL !== null) {
-      console.log("Suppression du BL avec l'ID:", idBL);
-      if (confirm('Voulez-vous vraiment supprimer ce BL ?')) {
+  
+
+  if (idBL !== undefined && idBL !== null) {
+    Swal.fire({
+      title: 'Confirmation',
+      text: 'Voulez-vous vraiment supprimer ce BL ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
         this.http.delete(`http://localhost:8080/api/bl/${idBL}`).subscribe(
           () => {
-            // Mettre à jour la liste après suppression
             this.blList = this.blList.filter(bl => bl.id !== idBL);
             this.filteredBL = this.filteredBL.filter(bl => bl.id !== idBL);
-            alert('BL supprimé avec succès !');
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Supprimé',
+              text: 'Le bon de livraison a été supprimé avec succès.',
+              timer: 2000,
+              showConfirmButton: false
+            });
           },
           (error) => {
-            console.error('Erreur lors de la suppression du BL:', error);
-            alert('Erreur lors de la suppression.');
+           
+            Swal.fire({
+              icon: 'error',
+              title: 'Erreur',
+              text: 'Une erreur est survenue lors de la suppression.'
+            });
           }
         );
       }
-    } else {
-      console.error("L'ID du BL est undefined");
-      alert("L'ID du BL est introuvable.");
-    }
+    });
+  } else {
+   
+    Swal.fire({
+      icon: 'error',
+      title: "ID Introuvable",
+      text: "Impossible de récupérer l'identifiant du BL."
+    });
   }
+}
+
 
   onUpdateList(updatedBL: any): void {
     this.blList = this.blList.map(bl =>
@@ -152,23 +181,15 @@ openProduitModal(bl: any): void {
     }
   }
   demarrerControleEtNaviguer(blId: number): void {
-    const personnelId = this.chargeTracker.getPersonnelId();
+   
 
-  if (!personnelId) {
-    alert("Aucun ID personnel trouvé !");
-    return;
-  }
-
-  this.chargeService.demarrerControle(personnelId, blId).subscribe({
-    next: (res) => {
-      console.log("✅ Contrôle démarré :", res);
-      this.chargeTracker.setChargeId(res.id);  // Enregistrer l’ID de charge
+  
       this.router.navigate(['/controler', blId]);
-    },
-    error: (err) => {
-      console.error("❌ Erreur au démarrage du contrôle :", err);
-      alert("Erreur lors du démarrage du contrôle.");
     }
-  });
+    
 
-}}
+}
+
+
+
+

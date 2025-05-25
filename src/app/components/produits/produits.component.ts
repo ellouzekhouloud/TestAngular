@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { FamilleService } from 'src/app/services/famille.service';
 import { FournisseurService } from 'src/app/services/fournisseur.service';
 import { Produit, ProduitService } from 'src/app/services/produit.service';
+import Swal from 'sweetalert2';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-produits',
@@ -30,6 +32,11 @@ export class ProduitsComponent implements OnInit {
 currentPage: number = 1;
 itemsPerPage: number = 4;
 
+editProduitForm!: FormGroup;
+editProduitId: number = 0;
+editImagePreview: string | ArrayBuffer | null = null;
+editFichePreview: string | ArrayBuffer | null = null;
+editProduitModalInstance: any;
 
   constructor(private produitService: ProduitService, private router: Router, private fb: FormBuilder,
     private fournisseurService: FournisseurService,
@@ -53,6 +60,15 @@ itemsPerPage: number = 4;
     this.fournisseurService.getFournisseurs().subscribe(fournisseurs => this.fournisseurs = fournisseurs);
     this.familleService.getAllFamilles().subscribe(familles => this.familles = familles);
 
+this.editProduitForm = this.fb.group({
+  reference: ['', Validators.required],
+  nom: ['', Validators.required],
+  imagePath: [''],
+  ficheTechniquePath: [''],
+  fournisseur: [null, Validators.required],
+  famille: [null, Validators.required],
+  moq: ['', Validators.required],
+});
   }
 
   
@@ -162,43 +178,63 @@ itemsPerPage: number = 4;
 
 
   // Soumettre le produit
-  onSubmit(): void {
-    if (this.produitForm.valid) {
-      const produit = {
-        reference: this.produitForm.value.reference,
-        nom: this.produitForm.value.nom,
-        imagePath: this.produitForm.value.imagePath, 
-        fournisseur: {
-          idFournisseur: this.produitForm.value.fournisseur
-        },
-        ficheTechniquePath: this.produitForm.value.ficheTechniquePath,
-        famille: {
-          idFamille: this.produitForm.value.famille 
-        },
-        moq: this.produitForm.value.moq,
-      };
-  
-      // Envoyer le produit au backend
-      this.produitService.addProduit(produit).subscribe(
-        () => {
-          alert('Produit ajouté avec succès!');  
-          this.closeAddProductModal();  
-          this.produitForm.reset();
-          this.imagePath = null;  // ✅ Réinitialiser image
-        this.ficheTechniquePath = null;  // ✅ Réinitialiser fiche technique  
-          this.getProduits();  
-          setTimeout(() => {
-            const closeBtn = document.getElementById('closeProduitModalBtn') as HTMLElement;
-            if (closeBtn) closeBtn.click();
-          }, 100);
-        
-        },
-        (error) => {
-          console.error('Erreur lors de l\'ajout du produit:', error);
-        }
-      );
-    }
+onSubmit(): void {
+  if (this.produitForm.valid) {
+    const produit = {
+      reference: this.produitForm.value.reference,
+      nom: this.produitForm.value.nom,
+      imagePath: this.produitForm.value.imagePath,
+      fournisseur: {
+        idFournisseur: this.produitForm.value.fournisseur
+      },
+      ficheTechniquePath: this.produitForm.value.ficheTechniquePath,
+      famille: {
+        idFamille: this.produitForm.value.famille
+      },
+      moq: this.produitForm.value.moq,
+    };
+
+    this.produitService.addProduit(produit).subscribe(
+      () => {
+        // ✅ Succès
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Produit ajouté avec succès !',
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+        this.produitForm.reset();
+        this.imagePath = null;
+        this.ficheTechniquePath = null;
+        this.getProduits();
+
+        setTimeout(() => {
+          const closeBtn = document.getElementById('closeProduitModalBtn') as HTMLElement;
+          if (closeBtn) closeBtn.click();
+        }, 100);
+      },
+      (error) => {
+        // ❌ Erreur backend
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Une erreur est survenue lors de l\'ajout du produit.',
+        });
+        console.error('Erreur lors de l\'ajout du produit:', error);
+      }
+    );
+  } else {
+    // ⚠️ Formulaire invalide
+    Swal.fire({
+      icon: 'warning',
+      title: 'Champs incomplets',
+      text: 'Veuillez remplir tous les champs obligatoires !',
+    });
   }
+}
+
   // Récupère la liste des produits
   getProduits(): void {
     this.produitService.getProduits().subscribe(
@@ -213,27 +249,42 @@ itemsPerPage: number = 4;
     );
   }
 
-  // Supprimer un produit par son ID
-  supprimerProduit(idProduit: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+ supprimerProduit(idProduit: number): void {
+  Swal.fire({
+    title: 'Êtes-vous sûr ?',
+    text: "Cette action est irréversible !",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Oui, supprimer',
+    cancelButtonText: 'Annuler'
+  }).then((result) => {
+    if (result.isConfirmed) {
       this.produitService.deleteProduit(idProduit).subscribe(
         () => {
-          // Mise à jour de la liste des produits après suppression
           this.produits = this.produits.filter(produit => produit.idProduit !== idProduit);
           this.filteredProduits = this.filteredProduits.filter(p => p.idProduit !== idProduit);
+          Swal.fire(
+            'Supprimé !',
+            'Le produit a été supprimé.',
+            'success'
+          );
           console.log('Produit supprimé avec succès');
         },
         (error) => {
           console.error('Erreur lors de la suppression du produit:', error);
+          Swal.fire(
+            'Erreur !',
+            'La suppression a échoué.',
+            'error'
+          );
         }
       );
     }
-  }
-
-  // Rediriger vers la page de modification du produit
-  editProduit(idProduit: number): void {
-    this.router.navigate([`/modifier-produit/${idProduit}`]);
-  }
+  });
+}
+ 
 
   // Méthode pour filtrer les fournisseurs par certificat
   searchProduits(): void {
@@ -253,4 +304,103 @@ itemsPerPage: number = 4;
       this.router.navigate(['/plans-de-controle', idProduit], { state: { produit: selectedProduit } });
     }
   }
+
+ openEditProductModal(produit: any): void {
+  this.editProduitId = produit.idProduit;
+  this.editProduitForm.patchValue({
+    reference: produit.reference,
+    nom: produit.nom,
+    imagePath: produit.imagePath,
+    ficheTechniquePath: produit.ficheTechniquePath,
+    fournisseur: produit.fournisseur?.idFournisseur,
+    famille: produit.famille?.idFamille,
+    moq: produit.moq
+  });
+  this.editImagePreview = 'http://localhost:8080' + produit.imagePath;
+  this.editFichePreview = 'http://localhost:8080' + produit.ficheTechniquePath;
+
+  const modalElement = document.getElementById('editProduitModal');
+  if (modalElement) {
+    this.editProduitModalInstance = new bootstrap.Modal(modalElement);
+    this.editProduitModalInstance.show();
+  }
+}
+
+onEditImageUpload(event: any): void {
+  const file: File = event.target.files[0];
+  const idProduit = this.editProduitId; // tu as ça ici aussi
+
+  if (file && idProduit) {
+    this.produitService.uploadImage(idProduit, file).subscribe({
+      next: (res: any) => {
+        console.log('Réponse upload image :', res);
+        const imagePath = res.imagePath || res.path || res;
+        this.editProduitForm.controls['imagePath'].setValue(imagePath);
+        this.editImagePreview = 'http://localhost:8080' + imagePath;
+      },
+      error: (err) => {
+        console.error('Erreur upload image :', err);
+        Swal.fire('Erreur', 'Erreur lors de l\'upload de l\'image', 'error');
+      }
+    });
+  }
+}
+
+onEditFicheUpload(event: any): void {
+  const file: File = event.target.files[0];
+  const idProduit = this.editProduitId;
+
+  if (file && idProduit) {
+    this.produitService.uploadFicheTechnique(idProduit, file).subscribe({
+      next: (res: any) => {
+        console.log('Réponse upload fiche technique :', res);
+        const fichePath = res.ficheTechniquePath || res.path || res;
+        this.editProduitForm.controls['ficheTechniquePath'].setValue(fichePath);
+        this.editFichePreview = 'http://localhost:8080' + fichePath;
+      },
+      error: (err) => {
+        console.error('Erreur upload fiche technique :', err);
+        Swal.fire('Erreur', 'Erreur lors de l\'upload de la fiche technique', 'error');
+      }
+    });
+  }
+}
+
+
+onUpdateProduit(): void {
+  if (this.editProduitForm.valid) {
+    const formValue = this.editProduitForm.value;
+
+    const updatedProduit = {
+      reference: formValue.reference,
+      nom: formValue.nom,
+      moq: formValue.moq,
+      imagePath: formValue.imagePath,
+      ficheTechniquePath: formValue.ficheTechniquePath,
+      fournisseur: { idFournisseur: formValue.fournisseur },
+      famille: { idFamille: formValue.famille }
+    };
+
+    console.log('Produit à envoyer au backend :', updatedProduit);
+
+    this.produitService.updateProduit(this.editProduitId, updatedProduit).subscribe({
+      next: () => {
+        Swal.fire('Succès', 'Produit modifié avec succès', 'success');
+        if (this.editProduitModalInstance) {
+          this.editProduitModalInstance.hide();
+        }
+        this.getProduits();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la modification :', error);
+        Swal.fire('Erreur', 'La modification du produit a échoué', 'error');
+      }
+    });
+  }
+}
+
+
+
+
+
 }

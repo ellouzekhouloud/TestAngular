@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BlService } from 'src/app/services/bl.service';
 import { FournisseurService } from 'src/app/services/fournisseur.service';
 import { ProduitService } from 'src/app/services/produit.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-bl',
@@ -33,7 +34,7 @@ export class AddBlComponent implements OnInit {
       reference: ['', Validators.required],
       referenceInterne: ['', Validators.required],
       description: ['', Validators.required],
-      produits: this.fb.array([])  // Tableau dynamique pour les produits
+      produits: this.fb.array([], this.minLengthArray(1))  // Tableau dynamique pour les produits
     });
 
     // Charger les fournisseurs
@@ -41,6 +42,14 @@ export class AddBlComponent implements OnInit {
       this.fournisseurs = fournisseurs;
     });
   }
+
+  minLengthArray(min: number): ValidatorFn {
+  return (formArray: AbstractControl): ValidationErrors | null => {
+    const array = formArray as FormArray;
+    return array.length >= min ? null : { minLengthArray: { valid: false } };
+  };
+}
+
 
   /**
    * Récupérer les produits liés au fournisseur sélectionné
@@ -96,7 +105,7 @@ export class AddBlComponent implements OnInit {
   /**
    * Soumettre le formulaire
    */
-  onSubmit(): void {
+ onSubmit(): void {
   if (this.blForm.valid) {
     const bl = {
       numBL: this.blForm.value.numBL,
@@ -113,15 +122,34 @@ export class AddBlComponent implements OnInit {
 
     this.blService.addBl(bl).subscribe(
       (response) => {
-        alert('Bon de livraison créé avec succès');
-        // Redirection avec un paramètre de navigation
-        this.router.navigate(['/ListBL'], { state: { newBL: response } });
+        console.log('ID du BL reçu:', response.id);
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Bon de livraison créé avec succès',
+          timer: 2000,
+          showConfirmButton: false
+        }).then(() => {
+          this.router.navigate(['/ListBL'], { state: { newBL: response } });
+        });
       },
       (error) => {
         console.error('Erreur lors de la création du bon de livraison', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Une erreur est survenue lors de la création du BL.'
+        });
       }
     );
+  } else {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Formulaire incomplet',
+      text: 'Veuillez remplir tous les champs obligatoires.'
+    });
   }
 }
+
 
 }

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { BLEtiquetteVerteDTO, DashboardService } from 'src/app/services/dashboard.service';
 import { FournisseurService } from 'src/app/services/fournisseur.service';
 import { Fournisseur } from 'src/app/services/produit.service';
-
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 @Component({
   selector: 'app-dashboard-blconforme',
   templateUrl: './dashboard-blconforme.component.html',
@@ -18,6 +19,8 @@ blsConformes: BLEtiquetteVerteDTO[] = [];
   
   currentPage: number = 0;
   pageSize: number = 4;
+  menuOpen: boolean = false;
+
   constructor (private dashboardService: DashboardService, private fournisseurService : FournisseurService){}
 
 ngOnInit(): void {
@@ -83,6 +86,16 @@ ngOnInit(): void {
       this.updatePagination();
     }
   }
+toggleMenu(): void {
+  this.menuOpen = !this.menuOpen;
+}
+downloadExcel(): void {
+  const worksheet = XLSX.utils.json_to_sheet(this.blsConformes);
+  const workbook = { Sheets: { 'BLs Conformes': worksheet }, SheetNames: ['BLs Conformes'] };
+  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  FileSaver.saveAs(blob, 'bls-conformes.xlsx');
+}
 
 
 

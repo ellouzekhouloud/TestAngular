@@ -57,65 +57,113 @@
     </div><!-- End Page Title -->
 
     <section class="section">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Liste des familles</h5>
-      
-                <!-- Bouton Ajouter Famille -->
-                <div class="d-flex justify-content-end mb-3">
-                  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFamilleModal">
-                    <i class="bi bi-plus-circle ms-1"></i> Ajouter Famille
-                  </button>
-                </div>
-      
-                <!-- Affichage en cartes -->
-                <div class="row g-3">
-                  <div class="col-md-4" *ngFor="let famille of familles">
-                    <div class="card shadow-sm h-100">
-                      <div class="card-body d-flex align-items-center">
-                        <i class="bi bi-folder2 me-3 fs-1 text-primary"></i>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste des familles</h5>
+
+              <!-- Bouton Ajouter Famille -->
+              <div class="d-flex justify-content-end mb-3">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFamilleModal">
+                  <i class="bi bi-plus-circle ms-1"></i> Ajouter Famille
+                </button>
+              </div>
+
+              <!-- Affichage en cartes -->
+              <div class="row">
+                <div class="col-md-4 mb-4" *ngFor="let famille of familles">
+                  <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                      <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-folder2 me-3 fs-1 text-primary"></i>
+                          <h5 class="card-title mb-0">{{ famille.nomFamille }}</h5>
+                        </div>
                         <div>
-                          <h5 class="card-title mb-1">{{ famille.nomFamille }}</h5>
-                          <!-- <p class="card-text small text-muted">Description éventuelle</p> -->
+                          <!-- Bouton modifier -->
+                          <button class="btn btn-primary btn-sm me-2" (click)="ouvrirModalModification(famille)"
+                            data-bs-toggle="modal" data-bs-target="#editFamilleModal" title="Modifier">
+                            <i class="bi bi-pencil-fill"></i>
+                          </button>
+
+                          <!-- Bouton supprimer -->
+                          <button class="btn btn-danger btn-sm" (click)="confirmerSuppression(famille.idFamille)"
+                            title="Supprimer">
+                            <i class="bi bi-trash-fill"></i>
+                          </button>
                         </div>
                       </div>
+                      <!-- Tu peux ajouter un contenu supplémentaire ici si tu veux, comme une description -->
+                      <!--<p class="card-text">Description ou autre info</p>-->
                     </div>
                   </div>
                 </div>
-                <!-- Fin cartes -->
               </div>
+
+
+
+              <!-- Fin cartes -->
             </div>
           </div>
         </div>
-      </section>
-      
-    
-<!-- Modal d'ajout de famille -->
-<div class="modal fade" id="addFamilleModal" tabindex="-1" aria-labelledby="addFamilleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Ajouter une nouvelle famille</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-        </div>
-        <div class="modal-body">
-          <form #familleForm="ngForm">
-            <div class="mb-3">
-              <label for="nomFamille" class="form-label">Nom de la famille</label>
-              <input type="text" class="form-control" id="nomFamille" name="nomFamille" [(ngModel)]="newFamille.nomFamille" required />
+      </div>
+    </section>
+
+
+    <!-- Modal d'ajout de famille -->
+    <div class="modal fade" id="addFamilleModal" tabindex="-1" aria-labelledby="addFamilleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Ajouter une nouvelle famille</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
           </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-primary" (click)="ajouterFamille()">Ajouter</button>
+          <div class="modal-body">
+            <form #familleForm="ngForm">
+              <div class="mb-3">
+                <label for="nomFamille" class="form-label">Nom de la famille</label>
+                <input type="text" class="form-control" id="nomFamille" name="nomFamille"
+                  [(ngModel)]="newFamille.nomFamille" required />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="button" class="btn btn-primary" (click)="ajouterFamille()">Ajouter</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
+
+
+    <!-- Modal de modification de famille -->
+    <div class="modal fade" id="editFamilleModal" tabindex="-1" aria-labelledby="editFamilleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modifier la famille</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+            <form #editFamilleForm="ngForm">
+              <div class="mb-3">
+                <label for="editNomFamille" class="form-label">Nom de la famille</label>
+                <input type="text" class="form-control" id="editNomFamille" name="editNomFamille"
+                  [(ngModel)]="familleEnCours.nomFamille" required />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="button" class="btn btn-primary" (click)="modifierFamille()">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
   </main><!-- End #main -->
 

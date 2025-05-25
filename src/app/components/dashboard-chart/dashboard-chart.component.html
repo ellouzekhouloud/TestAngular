@@ -3,35 +3,35 @@
     <h5 class="card-title mb-0">Quantités par Fournisseur</h5>
 
     <div class="row mb-3 align-items-center">
-  <!-- Type de période -->
-  <div class="col-auto">
-    <select [(ngModel)]="typePeriode" 
-            (ngModelChange)="typePeriodeChange.emit($event); filterChanged.emit()"
-            class="form-select">
-      <option value="custom">Période</option>
-      <option value="month">Mois</option>
-      <option value="quarter">Trimestre</option>
-      <option value="semester">Semestre</option>
-      <option value="year">Année</option>
-    </select>
-  </div>
 
-  <!-- Mois / Trimestre / Semestre / Année -->
-  <div class="col-auto" *ngIf="typePeriode !== 'custom'">
-    <input type="month" class="form-control" [(ngModel)]="dateFiltre"
-           (ngModelChange)="dateFiltreChange.emit($event); filterChanged.emit()" />
-  </div>
+      <!-- Filtre période personnalisée -->
+      <div class="col-auto">
+        <label class="form-label mb-0">Période personnalisée</label><br />
+        <input type="date" class="form-control d-inline-block me-2" style="width: 160px;" [(ngModel)]="startDate"
+               (ngModelChange)="onCustomDateChange()" placeholder="Date début" />
+        <input type="date" class="form-control d-inline-block" style="width: 160px;" [(ngModel)]="endDate"
+               (ngModelChange)="onCustomDateChange()" placeholder="Date fin" />
+      </div>
 
-  <!-- Période personnalisée -->
-  <div class="col-auto" *ngIf="typePeriode === 'custom'">
-    <label class="form-label mb-0 me-1">Du :</label>
-    <input type="date" class="form-control d-inline-block me-2" style="width: 160px;" [(ngModel)]="startDate"
-           (ngModelChange)="startDateChange.emit($event); filterChanged.emit()" />
-    <label class="form-label mb-0 me-1">Au :</label>
-    <input type="date" class="form-control d-inline-block" style="width: 160px;" [(ngModel)]="endDate"
-           (ngModelChange)="endDateChange.emit($event); filterChanged.emit()" />
-  </div>
-</div>
+      <!-- Filtre période standard -->
+      <div class="col-auto">
+        <label class="form-label mb-0">Filtre période</label>
+        <select [(ngModel)]="typePeriode" (ngModelChange)="onStandardFilterChange()" class="form-select">
+          <option value="">-- Sélectionner --</option>
+          <option value="month">Mois</option>
+          <option value="quarter">Trimestre</option>
+          <option value="semester">Semestre</option>
+          <option value="year">Année</option>
+        </select>
+      </div>
+
+      <!-- Date pour le filtre standard -->
+      <div class="col-auto" *ngIf="typePeriode">
+        <input type="month" class="form-control" [(ngModel)]="dateFiltre" (ngModelChange)="onStandardFilterChange()" />
+      </div>
+
+    </div>
+
     <div class="export-menu">
       <div class="menu-icon" (click)="toggleMenu()" title="Exporter">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
@@ -41,12 +41,11 @@
       </div>
 
       <div class="menu-options" *ngIf="menuOpen">
-        <button (click)="downloadCSV()">Download CSV</button>
-        <button (click)="downloadExcel()">Download Excel</button>
-
+        <button (click)="downloadExcel()">Télécharger Excel</button>
       </div>
     </div>
   </div>
+
   <div class="card-body">
     <div style="height: 400px;">
       <canvas id="dashboardChart"></canvas>

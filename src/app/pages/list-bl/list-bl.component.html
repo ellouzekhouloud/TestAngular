@@ -104,7 +104,7 @@
                 <td>{{ bl.description }}</td>
                 <td>
 
-                  <button class="icon-button" data-bs-toggle="modal" data-bs-target="#produitModal"
+                  <button class="icon-button " data-bs-toggle="modal" data-bs-target="#produitModal"
                     (click)="openProduitModal(bl)">
                     🔍
                   </button>
@@ -124,14 +124,15 @@
                 </td>
                 <td>
                   <!-- Bouton "Contrôler" visible uniquement si le statut est "PRÊT" -->
-                  <button *ngIf="bl.status === 'PRET'" type="button" class="btn btn-warning"
+                  <button *ngIf="bl.status === 'PRET'" type="button" class="btn btn-warning btn-sm"
                     (click)="demarrerControleEtNaviguer(bl.id)" title="Contrôler">
                     <i class="bi bi-toggle-on"></i>
                   </button>
-                  <button type="button" class="btn btn-primary" title="Modifier">
+                  <button type="button" class="btn btn-primary btn-sm" title="Modifier" data-bs-toggle="modal"
+                    data-bs-target="#modifierBLModal" >
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <button type="button" class="btn btn-danger" (click)="supprimerBL(bl.idBL)" title="Supprimer">
+                  <button type="button" class="btn btn-danger btn-sm" (click)="supprimerBL(bl.id)" title="Supprimer">
                     <i class="bi bi-trash"></i>
                   </button>
 
@@ -139,6 +140,8 @@
               </tr>
             </tbody>
           </table>
+         
+
           <!-- PAGINATION -->
           <nav class="d-flex justify-content-end mt-3">
             <ul class="pagination pagination-sm">

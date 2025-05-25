@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -58,23 +58,23 @@ export class ProduitService {
 
   
   uploadImage(idProduit: number, file: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', file);
-  
-    const headers = this.getHeaders(); 
-  
-    return this.http.post(`${this.apiUrl}/uploadImage/${idProduit}`, formData, { headers: headers });
-  }
-  
-  uploadFicheTechnique(idProduit: number, file: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', file);
-  
-    const headers = this.getHeaders(); 
-  
-    return this.http.post(`${this.apiUrl}/uploadFicheTechnique/${idProduit}`, formData, { headers: headers });
-  }
-  
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const params = new HttpParams().set('idProduit', idProduit.toString());
+
+  return this.http.post(`${this.apiUrl}/uploadImage`, formData, { params });
+}
+
+uploadFicheTechnique(idProduit: number, file: File): Observable<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const params = new HttpParams().set('idProduit', idProduit.toString());
+
+  return this.http.post(`${this.apiUrl}/uploadFicheTechnique`, formData, { params });
+}
+
 
   
   getFournisseurs(): Observable<any[]> {
@@ -85,4 +85,8 @@ export class ProduitService {
   getProduitsByFournisseur(id: number): Observable<Produit[]> {
     return this.http.get<Produit[]>(`${this.apiUrl}/fournisseur/${id}`, { headers: this.getHeaders() });
   }
+
+ updateProduit(id: number, produit: any): Observable<Produit> {
+  return this.http.put<Produit>(`${this.apiUrl}/edit/${id}`, produit);
+}
 }

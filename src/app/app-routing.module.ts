@@ -15,7 +15,7 @@ import { AuthGuard } from './auth.guard';
 import { ScanneComponent } from './pages/scanne/scanne.component';
 import { AddBlComponent } from './pages/add-bl/add-bl.component';
 import { ListBlComponent } from './pages/list-bl/list-bl.component';
-import { ControleByBlComponent } from './pages/controle-by-bl/controle-by-bl.component';
+
 
 import { ControleComponent } from './pages/controle/controle.component';
 import { ListeFichesDeRefusComponent } from './pages/liste-fiches-de-refus/liste-fiches-de-refus.component';
@@ -42,7 +42,7 @@ const routes: Routes = [
   { path: 'scanner', component: ScanneComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] }},
   { path: 'addBL', component: AddBlComponent, canActivate: [AuthGuard], data: { role: 'RESPONSABLE_RECEPTION' } },
   { path: 'ListBL', component: ListBlComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },
-  { path: 'controles-en-cours', component: ControleByBlComponent, canActivate: [AuthGuard] },
+  
   { path: 'controler/:id', component: ControleComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },
   { path: 'etiquette', component: ListeEtiquetteVerteComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },
   { path: 'fiches-refus', component: ListeFichesDeRefusComponent, canActivate: [AuthGuard],  data: { roles: ['RESPONSABLE_RECEPTION', 'CONTROLEUR'] } },

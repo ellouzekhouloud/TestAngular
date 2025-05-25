@@ -104,15 +104,15 @@
                     <td>{{ fournisseur.adresse }}</td>
                     <td>{{ fournisseur.telephone }}</td>
                     <td>
-                      <button type="button" class="btn btn-info"
+                      <button type="button" class="btn btn-info btn-sm"
                         [routerLink]="['/fournisseurs', fournisseur.idFournisseur, 'produits']">
                         <i class="bi bi-files"></i>
                       </button>
-                      <button type="button" class="btn btn-primary" (click)="openEditModal(fournisseur)"
+                      <button type="button" class="btn btn-primary btn-sm" (click)="openEditModal(fournisseur)"
                         data-bs-toggle="modal" data-bs-target="#editFournisseurModal">
                         <i class="bi bi-pencil"></i>
                       </button>
-                      <button type="button" class="btn btn-danger"
+                      <button type="button" class="btn btn-danger btn-sm"
                         (click)="deleteFournisseur(fournisseur.idFournisseur)">
                         <i class="bi bi-trash"></i>
                       </button>

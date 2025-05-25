@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Personnel, PersonnelService } from 'src/app/services/personnel.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-personnels',
@@ -20,13 +21,20 @@ export class PersonnelsComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 4;
 
+
+  passwordFocused: boolean = false;
+
   constructor(private personnelService: PersonnelService, private fb: FormBuilder) {
 
     this.personnelForm = this.fb.group({
       nom: ['', Validators.required],
       prenom: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      motDePasse: ['', Validators.required],
+      motDePasse: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern('^(?=.*[A-Z])(?=.*\\d).{8,}$')
+      ]],
       matricule: ['', Validators.required],
       qualifications: ['', Validators.required],
       role: ['', Validators.required]
@@ -39,9 +47,9 @@ export class PersonnelsComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       matricule: ['', Validators.required],
       qualifications: ['', Validators.required],
-      
+
       motDePasse: [{ value: '', disabled: true }], // Désactivé ici
-  role: [{ value: '', disabled: true }]   
+      role: [{ value: '', disabled: true }]
     });
   }
 
@@ -74,13 +82,13 @@ export class PersonnelsComponent implements OnInit {
     const pages: number[] = [];
     const start = Math.max(2, this.currentPage - 1);
     const end = Math.min(this.totalPages - 1, this.currentPage + 1);
-  
+
     for (let i = start; i <= end; i++) {
       if (this.getPaginatedPersonnel().length > 0) {
         pages.push(i);
       }
     }
-  
+
     return pages;
   }
 
@@ -96,85 +104,91 @@ export class PersonnelsComponent implements OnInit {
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
-  
+
   onSubmit() {
-    if (this.personnelForm.valid) {
-      // 🔹 Récupération des données du formulaire
-      const personnelData = this.personnelForm.value;
-  
-      // 🔹 Construction du contenu du fichier
-      const fileContent = `
-  Nom: ${personnelData.nom}
-  Prénom: ${personnelData.prenom}
-  Matricule: ${personnelData.matricule}
-  Qualifications: ${personnelData.qualifications}
-  Email: ${personnelData.email}
-  Mot de Passe: ${personnelData.motDePasse}
-  Rôle: ${personnelData.role}
-      `;
-  
-      // 🔹 Fonction asynchrone pour l'enregistrement
-      const saveFile = async () => {
-        try {
-          // 👉 Ouverture du sélecteur d'emplacement (File Picker)
-          const fileHandle = await (window as any).showSaveFilePicker({
-            suggestedName: `Personnel_${personnelData.nom}_${personnelData.prenom}.txt`,
-            types: [
-              {
-                description: 'Fichier texte',
-                accept: {
-                  'text/plain': ['.txt'],
-                },
-              },
-            ],
-          });
-  
-          // 👉 Création d'un flux d'écriture
-          const writable = await fileHandle.createWritable();
-          
-          console.log("📄 Contenu du fichier avant écriture :");
-          console.log(fileContent);
-  
-          // ✅ Écriture dans le fichier (cette partie est critique)
-          await writable.write(fileContent);
-  
-          // ✅ Fermeture du flux (c'est très important)
-          await writable.close();
-  
-          console.log("✅ Fichier enregistré avec succès !");
-          alert("Le fichier a été enregistré avec succès !");
-        } catch (err) {
-          console.error("❌ Enregistrement annulé ou erreur lors de l'enregistrement", err);
-        }
-      };
-  
-      // 🔹 Appel de l'enregistrement
-      saveFile();
-  
-      // 🔄 Appel de l'API pour ajouter le personnel
-      this.personnelService.addPersonnel(personnelData).subscribe(
-        response => {
-          window.alert("Personnel ajouté avec succès !");
-          this.personnelForm.reset();
-          this.getPersonnels();
-          setTimeout(() => {
-            const closeBtn = document.getElementById('closeModalBtn') as HTMLElement;
-            if (closeBtn) closeBtn.click();
-          }, 100);
-        },
-        error => {
-          console.error('Erreur lors de l’ajout du personnel', error);
-          window.alert("❌ Une erreur est survenue lors de l’ajout !");
-        }
-      );
-    } else {
-      window.alert("⚠️ Veuillez remplir tous les champs obligatoires !");
-    }
+  if (this.personnelForm.valid) {
+    const personnelData = this.personnelForm.value;
+
+    const fileContent = `
+Nom: ${personnelData.nom}
+Prénom: ${personnelData.prenom}
+Matricule: ${personnelData.matricule}
+Qualifications: ${personnelData.qualifications}
+Email: ${personnelData.email}
+Mot de Passe: ${personnelData.motDePasse}
+Rôle: ${personnelData.role}
+    `;
+
+    const saveFile = async () => {
+      try {
+        const fileHandle = await (window as any).showSaveFilePicker({
+          suggestedName: `Personnel_${personnelData.nom}_${personnelData.prenom}.txt`,
+          types: [
+            {
+              description: 'Fichier texte',
+              accept: { 'text/plain': ['.txt'] },
+            },
+          ],
+        });
+
+        const writable = await fileHandle.createWritable();
+        await writable.write(fileContent);
+        await writable.close();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Fichier enregistré',
+          text: 'Le fichier a été enregistré avec succès !',
+        });
+      } catch (err) {
+        console.error("Erreur lors de l'enregistrement", err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Annulé',
+          text: "L'enregistrement a été annulé ou une erreur est survenue.",
+        });
+      }
+    };
+
+    saveFile();
+
+    this.personnelService.addPersonnel(personnelData).subscribe(
+      response => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Personnel ajouté avec succès !',
+        });
+
+        this.personnelForm.reset();
+        this.getPersonnels();
+
+        setTimeout(() => {
+          const closeBtn = document.getElementById('closeModalBtn') as HTMLElement;
+          if (closeBtn) closeBtn.click();
+        }, 100);
+      },
+      error => {
+        console.error('Erreur lors de l’ajout du personnel', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Une erreur est survenue lors de l’ajout !',
+        });
+      }
+    );
+  } else {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Champs incomplets',
+      text: 'Veuillez remplir tous les champs obligatoires !',
+    });
   }
-  
+}
 
 
-  
+
+
   // Ouvrir le modal et remplir le formulaire avec les données du fournisseur
   openEditModal(personnel: Personnel): void {
     this.selectedPersonnelId = personnel.id;
@@ -189,47 +203,102 @@ export class PersonnelsComponent implements OnInit {
       motDePasse: ''  // On initialise le mot de passe à vide (si l'utilisateur le change, il le remplit)
     });
     this.editPersonnelForm.get('motDePasse')?.disable();
-  this.editPersonnelForm.get('role')?.disable();
+    this.editPersonnelForm.get('role')?.disable();
   }
 
   // Enregistrer les modifications
   onUpdatePersonnel(): void {
-    if (this.selectedPersonnelId && this.editPersonnelForm.valid) {
+  if (this.selectedPersonnelId && this.editPersonnelForm.valid) {
 
-      // Vérification si le mot de passe est vide
-      const formValues = this.editPersonnelForm.value;
+    const formValues = this.editPersonnelForm.value;
 
-      // Si le mot de passe est vide, on ne l'envoie pas dans l'objet de mise à jour
-      if (!formValues.motDePasse) {
-        delete formValues.motDePasse;
-      }
-     
-      this.personnelService.updatePersonnel(this.selectedPersonnelId, this.editPersonnelForm.value)
-        .subscribe(updatePersonnel => {
-          // Mise à jour de la liste des fournisseurs
-          this.personnels = this.personnels.map(p =>
-            p.id === this.selectedPersonnelId ? updatePersonnel : p
-          );
-
-          // Fermer le modal
-          document.getElementById('editPersonnelModal')?.classList.remove('show');
-          document.body.classList.remove('modal-open');
-          document.querySelector('.modal-backdrop')?.remove();
-        });
+    // Ne pas inclure le mot de passe vide dans la mise à jour
+    if (!formValues.motDePasse) {
+      delete formValues.motDePasse;
     }
-  }
 
+    // ✅ Confirmation avant mise à jour
+    Swal.fire({
+      title: 'Confirmation',
+      text: 'Voulez-vous vraiment enregistrer les modifications ?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, enregistrer',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.personnelService.updatePersonnel(this.selectedPersonnelId!, formValues)
+          .subscribe(
+            updatePersonnel => {
+              // ✅ Mise à jour de la liste
+              this.personnels = this.personnels.map(p =>
+                p.id === this.selectedPersonnelId ? updatePersonnel : p
+              );
+
+              // ✅ Fermer le modal
+              document.getElementById('editPersonnelModal')?.classList.remove('show');
+              document.body.classList.remove('modal-open');
+              document.querySelector('.modal-backdrop')?.remove();
+
+              // ✅ Message de succès
+              Swal.fire({
+                icon: 'success',
+                title: 'Modifications enregistrées',
+                text: 'Le personnel a été modifié avec succès.',
+              });
+            },
+            error => {
+              console.error("Erreur lors de la mise à jour :", error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: 'Erreur lors de la modification du personnel.',
+              });
+            }
+          );
+      }
+    });
+  } else {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Formulaire invalide',
+      text: 'Veuillez remplir correctement tous les champs.',
+    });
+  }
+}
   deactivatePersonnel(id: number) {
-    if (window.confirm("Voulez-vous vraiment désactiver ce personnel ?")) {
+  Swal.fire({
+    title: 'Confirmation',
+    text: 'Voulez-vous vraiment désactiver ce personnel ?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Oui, désactiver',
+    cancelButtonText: 'Annuler'
+  }).then((result) => {
+    if (result.isConfirmed) {
       this.personnelService.deactivatePersonnel(id).subscribe(
         response => {
-          window.alert(response);
-          this.getPersonnels(); // Mettre à jour la liste
+          Swal.fire({
+            icon: 'success',
+            title: 'Désactivé',
+            text: 'Le personnel a été désactivé avec succès.',
+          });
+          this.getPersonnels(); // Met à jour la liste
         },
         error => {
           console.error("Erreur lors de la désactivation :", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Une erreur est survenue lors de la désactivation.',
+          });
         }
       );
     }
-  }
+  });
+}
 }

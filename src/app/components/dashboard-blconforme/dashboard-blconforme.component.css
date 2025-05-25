@@ -1,0 +1,14 @@
+.export-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-icon {
+  cursor: pointer;
+}
+
+.menu-options {
+  position: absolute;
+  right: 0;
+  z-index: 1000;
+}

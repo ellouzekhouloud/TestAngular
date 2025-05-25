@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Fournisseur } from '../../services/fournisseur.service';
 import { Produit, ProduitService } from 'src/app/services/produit.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-fournisseurs',
@@ -82,27 +83,44 @@ itemsPerPage: number = 4;
     }
   }
 
-  onSubmit() {
-    if (this.fournisseurForm.valid) {
-      this.FournisseurService.addFournisseur(this.fournisseurForm.value).subscribe(
-        response => {
-          window.alert("✅ Fournisseur ajouté avec succès !");
-          this.fournisseurForm.reset();
-          this.getFournisseurs();
-          setTimeout(() => {
-            const closeBtn = document.getElementById('closeModalBtn') as HTMLElement;
-            if (closeBtn) closeBtn.click();
-          }, 100);
-        },
-        error => {
-          console.error('Erreur lors de l’ajout du fournisseur', error);
-          window.alert("❌ Une erreur est survenue lors de l’ajout !");
-        }
-      );
-    } else {
-      window.alert("⚠️ Veuillez remplir tous les champs obligatoires !");
-    }
+ onSubmit() {
+  if (this.fournisseurForm.valid) {
+    this.FournisseurService.addFournisseur(this.fournisseurForm.value).subscribe(
+      response => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Fournisseur ajouté avec succès !',
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+        this.fournisseurForm.reset();
+        this.getFournisseurs();
+
+        setTimeout(() => {
+          const closeBtn = document.getElementById('closeModalBtn') as HTMLElement;
+          if (closeBtn) closeBtn.click();
+        }, 100);
+      },
+      error => {
+        console.error('Erreur lors de l’ajout du fournisseur', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Une erreur est survenue lors de l’ajout du fournisseur.',
+        });
+      }
+    );
+  } else {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Champs obligatoires',
+      text: 'Veuillez remplir tous les champs obligatoires !',
+    });
   }
+}
+
 
   getFournisseurs(): void {
     this.FournisseurService.getFournisseurs().subscribe(data => {
@@ -111,14 +129,39 @@ itemsPerPage: number = 4;
     });
   }
 
-  deleteFournisseur(id: number): void {
-    if (confirm('Voulez-vous supprimer ce fournisseur ?')) {
+ deleteFournisseur(id: number): void {
+  Swal.fire({
+    title: 'Confirmation',
+    text: 'Voulez-vous vraiment supprimer ce fournisseur ?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Oui, supprimer',
+    cancelButtonText: 'Annuler'
+  }).then((result) => {
+    if (result.isConfirmed) {
       this.FournisseurService.deleteFournisseur(id).subscribe(() => {
         this.fournisseurs = this.fournisseurs.filter(f => f.idFournisseur !== id);
         this.filteredFournisseurs = this.filteredFournisseurs.filter(f => f.idFournisseur !== id);
+        Swal.fire({
+          icon: 'success',
+          title: 'Supprimé',
+          text: 'Le fournisseur a été supprimé avec succès.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }, error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Erreur lors de la suppression du fournisseur.'
+        });
       });
     }
-  }
+  });
+}
+
 
   // Ouvrir le modal et remplir le formulaire avec les données du fournisseur
   openEditModal(fournisseur: Fournisseur): void {
@@ -134,25 +177,44 @@ itemsPerPage: number = 4;
 
   // Enregistrer les modifications
   onUpdateFournisseur(): void {
-    if (this.selectedFournisseurId && this.editFournisseurForm.valid) {
-      this.FournisseurService.updateFournisseur(this.selectedFournisseurId, this.editFournisseurForm.value)
-        .subscribe(updatedFournisseur => {
-          // Mise à jour de la liste des fournisseurs
-          this.fournisseurs = this.fournisseurs.map(f =>
-            f.idFournisseur === this.selectedFournisseurId ? updatedFournisseur : f
-          );
+  if (this.selectedFournisseurId && this.editFournisseurForm.valid) {
+    this.FournisseurService.updateFournisseur(this.selectedFournisseurId, this.editFournisseurForm.value)
+      .subscribe(updatedFournisseur => {
+        this.fournisseurs = this.fournisseurs.map(f =>
+          f.idFournisseur === this.selectedFournisseurId ? updatedFournisseur : f
+        );
+        this.filteredFournisseurs = this.filteredFournisseurs.map(f =>
+          f.idFournisseur === this.selectedFournisseurId ? updatedFournisseur : f
+        );
 
-          this.filteredFournisseurs = this.filteredFournisseurs.map(f =>
-            f.idFournisseur === this.selectedFournisseurId ? updatedFournisseur : f
-          );
+        // Fermer le modal
+        document.getElementById('editFournisseurModal')?.classList.remove('show');
+        document.body.classList.remove('modal-open');
+        document.querySelector('.modal-backdrop')?.remove();
 
-          // Fermer le modal
-          document.getElementById('editFournisseurModal')?.classList.remove('show');
-          document.body.classList.remove('modal-open');
-          document.querySelector('.modal-backdrop')?.remove();
+        Swal.fire({
+          icon: 'success',
+          title: 'Modifié',
+          text: 'Le fournisseur a été modifié avec succès.',
+          timer: 2000,
+          showConfirmButton: false
         });
-    }
+      }, error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Erreur lors de la modification du fournisseur.'
+        });
+      });
+  } else {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Formulaire invalide',
+      text: 'Veuillez remplir correctement tous les champs.'
+    });
   }
+}
+
 
   // Méthode pour filtrer les fournisseurs par certificat
   searchFournisseurs(): void {

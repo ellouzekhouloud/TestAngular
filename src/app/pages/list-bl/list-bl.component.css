@@ -55,10 +55,6 @@ td:last-child {
   white-space: nowrap;
 }
 
-.btn {
-  margin-right: 4px;
-  padding: 6px 10px;
-}
 
 /* Icônes un peu plus grandes */
 .btn i {

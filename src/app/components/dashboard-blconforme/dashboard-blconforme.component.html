@@ -1,7 +1,26 @@
 <div class="col-12">
   <div class="card recent-sales overflow-auto">
     <div class="card-body">
-      <h5 class="card-title ">Bons de Livraison Conformes </h5>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title ">
+          Bons de Livraison Conformes
+        </h5>
+
+        <div class="export-menu">
+          <div class="menu-icon" (click)="toggleMenu()" title="Exporter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+              <path fill="none" d="M0 0h24v24H0V0z" />
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+            </svg>
+          </div>
+
+          <div class="menu-options bg-white border rounded shadow p-2 mt-1" *ngIf="menuOpen">
+            <button class="btn btn-sm btn-outline-success w-100" (click)="downloadExcel()">
+              Télécharger Excel
+            </button>
+          </div>
+        </div>
+      </div>
 
       <!-- Filtres -->
       <div class="row g-2 align-items-end mb-4">

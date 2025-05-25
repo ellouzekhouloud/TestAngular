@@ -22,7 +22,7 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Liste des Personnels</h1>
+      <h1>Liste des Qualifications ( Personnels )</h1>
     </div><!-- End Page Title -->
 
     <section class="section">
@@ -31,7 +31,7 @@
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Liste des Personnels</h5>
+              <h5 class="card-title">Liste des Qualifications ( Personnels )</h5>
               <div class="mb-3 text-end">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPersonnelModal">
                   <i class="bi bi-person-add "></i> Ajouter un personnel
@@ -64,24 +64,26 @@
                     <td>{{ personnel.role }}</td>
                     <td>
                       <div class="action-buttons d-flex flex-wrap gap-1">
-                        <button *ngIf="personnel.role !== 'ADMIN'" type="button" class="btn btn-sm btn-primary"
-                          (click)="openEditModal(personnel)" data-bs-toggle="modal" data-bs-target="#editPersonnelModal">
+                        <button *ngIf="personnel.active && personnel.role !== 'ADMIN'" type="button"
+                          class="btn btn-sm btn-primary" (click)="openEditModal(personnel)" data-bs-toggle="modal"
+                          data-bs-target="#editPersonnelModal">
                           <i class="bi bi-pencil"></i>
                         </button>
-                    
+
+
                         <button *ngIf="personnel.active && personnel.role !== 'ADMIN'"
-                          class="btn btn-sm btn-outline-warning"
-                          (click)="deactivatePersonnel(personnel.id)" title="Désactiver le compte">
+                          class="btn btn-sm btn-outline-warning" (click)="deactivatePersonnel(personnel.id)"
+                          title="Désactiver le compte">
                           <i class="bi bi-person-lock"></i>
                         </button>
-                    
+
                         <span *ngIf="!personnel.active && personnel.role !== 'ADMIN'" class="badge bg-danger">
                           <i class="bi bi-x-lg" title="Ce compte est désactivé"></i>
 
                         </span>
                       </div>
                     </td>
-                    
+
                   </tr>
                 </tbody>
               </table>
@@ -207,10 +209,15 @@
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-lock"></i></span>
                       <input [type]="showPassword ? 'text' : 'password'" id="motDePasse" class="form-control"
-                        formControlName="motDePasse" placeholder="Mot de passe sécurisé">
+                        formControlName="motDePasse" placeholder="Mot de passe sécurisé"
+                        (focus)="passwordFocused = true" (blur)="passwordFocused = false">
                       <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
                         <i [ngClass]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                       </button>
+                    </div>
+                    <div *ngIf="passwordFocused" class="form-text text-danger">
+                      Doit contenir au moins <strong>8 caractères</strong>, une <strong>majuscule</strong> et un
+                      <strong>chiffre</strong>.
                     </div>
                   </div>
                 </div>
@@ -243,56 +250,105 @@
     </div>
 
     <!-- Modal pour Modifier un Personnel -->
+    <!-- Modal pour Modifier un Personnel -->
     <div class="modal fade" id="editPersonnelModal" tabindex="-1" aria-labelledby="editPersonnelModalLabel"
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
+
           <div class="modal-header">
-            <h5 class="modal-title" id="editPersonnelModalLabel">Modifier Personnel</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="editPersonnelModalLabel">Modifier un personnel</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
           </div>
+
           <div class="modal-body">
-            <form [formGroup]="editPersonnelForm" (ngSubmit)="onUpdatePersonnel()">
-              <div class="mb-3">
-                <label class="form-label">Nom</label>
-                <input type="text" class="form-control" formControlName="nom">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Prénom</label>
-                <input type="text" class="form-control" formControlName="prenom">
-              </div>
+            <section class="section">
+              <form [formGroup]="editPersonnelForm" (ngSubmit)="onUpdatePersonnel()">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Nom</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" class="form-control" formControlName="nom" placeholder="Entrer le nom">
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Prénom</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" class="form-control" formControlName="prenom" placeholder="Entrer le prénom">
+                    </div>
+                  </div>
+                </div>
 
-              <div class="mb-3">
-                <label class="form-label">Matricule</label>
-                <input type="text" class="form-control" formControlName="matricule">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Qualifications</label>
-                <input type="text" class="form-control" formControlName="qualifications">
-              </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Matricule</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-hash"></i></span>
+                      <input type="text" class="form-control" formControlName="matricule"
+                        placeholder="Entrer le matricule">
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Qualifications</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-award"></i></span>
+                      <input type="text" class="form-control" formControlName="qualifications"
+                        placeholder="Qualifications">
+                    </div>
+                  </div>
+                </div>
 
-              <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" formControlName="email">
-              </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Email</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
+                      <input type="email" class="form-control" formControlName="email"
+                        placeholder="example@domaine.com">
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Mot de passe</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                      <input [type]="showPassword ? 'text' : 'password'" class="form-control"
+                        formControlName="motDePasse" placeholder="Laisser vide pour ne pas modifier"
+                        (focus)="passwordFocused = true" (blur)="passwordFocused = false">
+                      <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
+                        <i [ngClass]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
-              <div class="mb-3">
-                <label class="form-label">Mot De Passe</label>
-                <input type="password" class="form-control" formControlName="motDePasse">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Rôle</label>
-                <select class="form-control" formControlName="role">
-                  <option value="RESPONSABLE_RECEPTION">Responsable Réception</option>
-                  <option value="CONTROLEUR">Contrôleur</option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
-            </form>
+                <div class="mb-3">
+                  <label class="form-label">Rôle</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <select class="form-control" formControlName="role">
+                      <option value="RESPONSABLE_RECEPTION">Responsable Réception</option>
+                      <option value="CONTROLEUR">Contrôleur</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="text-center mt-4">
+                  <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-pencil-square"></i> Enregistrer les modifications
+                  </button>
+                </div>
+              </form>
+
+              <!-- Bouton caché pour fermer le modal -->
+              <button id="closeEditModalBtn" type="button" class="d-none" data-bs-dismiss="modal"></button>
+            </section>
           </div>
         </div>
       </div>
     </div>
+
 
   </main><!-- End #main -->
 

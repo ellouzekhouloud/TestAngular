@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BLProduit, BlService } from 'src/app/services/bl.service';
-import { ChargeTrackerService } from 'src/app/services/charge-tracker.service';
-import { ChargeService } from 'src/app/services/charge.service';
+
 import { ControleProduitService } from 'src/app/services/controle-produit.service';
 import { EtiquetteVerteService } from 'src/app/services/etiquette-verte.service';
 import { FicheDeRefusService } from 'src/app/services/fiche-de-refus.service';
@@ -47,8 +46,8 @@ export class ControleComponent {
     private route: ActivatedRoute,
     private blService: BlService, private scanneService: ScanneService, private controleProduitService: ControleProduitService,
     private router: Router, private ficheDeRefusService: FicheDeRefusService, private etiquetteService: EtiquetteVerteService,
-    private http: HttpClient, private chargeService: ChargeService,
-    private chargeTracker: ChargeTrackerService,
+    private http: HttpClient, 
+    
   ) {
     this.verificateur = this.getUtilisateurConnecte();
     this.dateDeControle = new Date().toISOString().split('T')[0];
@@ -297,16 +296,7 @@ export class ControleComponent {
     } else {
       this.controleProduitService.verifierBLTermine(this.idBL!).subscribe(response => {
         if (response === true) {
-          // 🔁 Appel pour terminer le calcul de charge
-          const chargeId = this.chargeTracker.getChargeId();
-          if (chargeId) {
-            this.chargeService.terminerControle(chargeId).subscribe({
-              next: () => console.log("✅ Calcul de charge terminé."),
-              error: (err) => console.error("❌ Erreur en terminant le calcul de charge :", err)
-            });
-          } else {
-            console.warn("Aucun ID de charge trouvé dans le stockage.");
-          }
+          
           setTimeout(() => {
             window.alert("🎉 Tous les produits sont contrôlés, le BL est terminé !");
             this.router.navigate(['/ListBL']);

@@ -42,7 +42,7 @@ import { DashboardChartComponent } from './components/dashboard-chart/dashboard-
 import { DashboardBLConformeComponent } from './components/dashboard-blconforme/dashboard-blconforme.component';
 import { DashboardPPmComponent } from './components/dashboard-ppm/dashboard-ppm.component';
 
-
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 
 
 
@@ -95,7 +95,7 @@ import { DashboardPPmComponent } from './components/dashboard-ppm/dashboard-ppm.
     ReactiveFormsModule,
     NgxIntlTelInputModule,
     NgChartsModule,
-
+    SweetAlert2Module.forRoot()
 
 
   ],

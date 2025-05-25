@@ -13,6 +13,7 @@ export interface BLProduit {
 })
 export class BlService {
   private apiUrl = 'http://localhost:8080/api/bl/create';  
+   private baseUrl = 'http://localhost:8080/api/bl';
 // Méthode pour envoyer le bon de livraison
 addBl(bl: any): Observable<any> {
   return this.http.post(this.apiUrl, bl);
@@ -32,6 +33,8 @@ addBl(bl: any): Observable<any> {
   deleteBl(idBL: number): Observable<void> {
     return this.http.delete<void>(`http://localhost:8080/api/bl/${idBL}`);
   }
+
+    
 
   
 }

@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
-import { ChargeTrackerService } from './charge-tracker.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ import { ChargeTrackerService } from './charge-tracker.service';
 export class LoginService {
   private apiUrl = 'http://localhost:8080/auth/login';
 
-  constructor(private http: HttpClient, private router: Router, private chargeTracker: ChargeTrackerService) { }
+  constructor(private http: HttpClient, private router: Router, ) { }
   login(email: string, motDePasse: string, rememberMe: boolean) {
     return this.http.post<any>(this.apiUrl, { email, motDePasse }).pipe(
       tap(response => {
@@ -32,7 +32,7 @@ export class LoginService {
     localStorage.clear();
     sessionStorage.clear();
     
-    this.chargeTracker.clearChargeId(); 
+    
     this.router.navigate(['/login']);
   }
 

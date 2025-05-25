@@ -29,7 +29,16 @@ export class FamilleService {
     return this.http.get<Famille[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
+ updateFamille(famille: Famille) {
+  return this.http.put<Famille>(`${this.apiUrl}/${famille.idFamille}`, famille);
+}
+
+
   addFamille(famille: Partial<Famille>): Observable<Famille> {
     return this.http.post<Famille>(this.apiUrl, famille);
+  }
+
+   deleteFamille(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

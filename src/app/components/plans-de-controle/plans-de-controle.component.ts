@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlanDeControleService } from 'src/app/services/plan-de-controle.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-plans-de-controle',
@@ -77,46 +78,118 @@ export class PlansDeControleComponent {
   }
 
   enregistrerPlan() {
-    const plan = {
-      idProduit: this.idProduit,
-      lignes: this.planDeControleLignes
-    };
+  // Vérifie si toutes les lignes sont correctement remplies
+  const formulaireValide = this.planDeControleLignes.every(ligne =>
+    ligne.caracteristique && ligne.donneeTechnique && ligne.tolerance &&
+    ligne.frequenceEtTailleDePrelevement && ligne.moyenDeControle && ligne.methodeDeControle
+  );
 
-    this.planService.ajouterPlan(plan).subscribe(
-      () => {
-        this.closeModal();
-        this.chargerPlansDeControle();
-      },
-      error => {
-        console.error('Erreur lors de l\'ajout du plan:', error);
-      }
-    );
+  if (!formulaireValide) {
+    // ⚠️ SweetAlert si un champ est vide
+    Swal.fire({
+      icon: 'warning',
+      title: 'Champs requis',
+      text: 'Veuillez remplir tous les champs de chaque ligne avant de soumettre le plan.',
+    });
+    return;
   }
 
-  modifierPlan() {
-    this.planService.modifierPlan(this.selectedPlan).subscribe(
-      () => {
-        this.closeModifyModal();
-        this.chargerPlansDeControle();
-      },
-      error => {
-        console.error('Erreur lors de la modification du plan:', error);
-      }
-    );
-  }
+  // Tous les champs sont remplis
+  const plan = {
+    idProduit: this.idProduit,
+    lignes: this.planDeControleLignes
+  };
+
+  this.planService.ajouterPlan(plan).subscribe(
+    () => {
+      // ✅ SweetAlert succès
+      Swal.fire({
+        icon: 'success',
+        title: 'Succès',
+        text: 'Plan de contrôle enregistré avec succès !',
+        showConfirmButton: false,
+        timer: 2000
+      });
+
+      this.closeModal();
+      this.chargerPlansDeControle();
+    },
+    error => {
+      // ❌ SweetAlert erreur
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Une erreur est survenue lors de l\'ajout du plan.',
+      });
+      console.error('Erreur lors de l\'ajout du plan:', error);
+    }
+  );
+}
+
+
+ modifierPlan() {
+  this.planService.modifierPlan(this.selectedPlan).subscribe(
+    () => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Succès',
+        text: 'Plan de contrôle modifié avec succès !',
+        showConfirmButton: false,
+        timer: 2000
+      });
+
+      this.closeModifyModal();
+      this.chargerPlansDeControle();
+    },
+    error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Une erreur est survenue lors de la modification du plan.',
+      });
+      console.error('Erreur lors de la modification du plan:', error);
+    }
+  );
+}
+
 
   supprimerPlan(id: number) {
-    if (confirm("Êtes-vous sûr de vouloir supprimer ce plan ?")) {
+  Swal.fire({
+    title: 'Confirmer la suppression',
+    text: 'Êtes-vous sûr de vouloir supprimer ce plan ?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Oui, supprimer',
+    cancelButtonText: 'Annuler'
+  }).then((result) => {
+    if (result.isConfirmed) {
       this.planService.supprimerPlan(id).subscribe(
         () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Supprimé',
+            text: 'Le plan a été supprimé avec succès.',
+            showConfirmButton: false,
+            timer: 2000
+          });
+
           this.chargerPlansDeControle();
         },
         error => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Une erreur est survenue lors de la suppression du plan.',
+          });
           console.error('Erreur lors de la suppression du plan:', error);
         }
       );
     }
-  }
+  });
+}
+
 
   goBack() {
     this.router.navigate(['/produits']);

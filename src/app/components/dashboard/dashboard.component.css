@@ -71,3 +71,18 @@ button:disabled {
   font-size: 1.5rem; /* Augmente la taille des icônes */
   color: white;
 }
+
+.export-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-icon {
+  cursor: pointer;
+}
+
+.menu-options {
+  position: absolute;
+  right: 0;
+  z-index: 1000;
+}

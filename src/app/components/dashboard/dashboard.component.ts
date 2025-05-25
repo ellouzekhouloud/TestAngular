@@ -5,6 +5,7 @@ import { FournisseurService } from 'src/app/services/fournisseur.service';
 import { Fournisseur } from 'src/app/services/produit.service';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import * as FileSaver from 'file-saver';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -36,6 +37,8 @@ export class DashboardComponent {
   pageSize = 4;
   currentPage = 0;
   selectedPeriod: string = '';
+  menuOpen: boolean = false;
+
 
   constructor(private dashboardService: DashboardService, private fournisseurService: FournisseurService) { }
 
@@ -176,88 +179,76 @@ export class DashboardComponent {
 }
 
 
-  // ✅ Méthode pour appliquer le filtre et récupérer les données
   applyFilter() {
   if (!this.typePeriode) {
-    alert('Veuillez sélectionner un type de période.');
+    alert('Veuillez sélectionner un type de période ou une période personnalisée.');
     return;
   }
 
-  let formattedDate = this.dateFiltre;
-
-  // Gestion du filtre personnalisé (custom)
+  // Pour filtre personnalisé
   if (this.typePeriode === 'custom') {
     if (!this.startDate || !this.endDate) {
       alert('Veuillez sélectionner une période valide (date de début et de fin).');
       return;
     }
 
-    console.log(`Filtre personnalisé du ${this.startDate} au ${this.endDate}`);
     this.dashboardService.getQuantitesParFournisseur(this.typePeriode, undefined, this.startDate, this.endDate)
       .subscribe({
         next: (data) => {
-          console.log('Données récupérées :', data);
           this.fournisseurs = data.map((item: any) => item.nomFournisseur);
           this.quantitesReceptionnees = data.map((item: any) => item.quantiteReceptionnee);
           this.quantitesNonConformes = data.map((item: any) => item.quantiteNonConforme);
         },
         error: (err) => {
-          console.error('Erreur lors de la récupération :', err);
-          alert('Une erreur est survenue lors de la récupération des données.');
-        },
+          alert('Erreur lors de la récupération des données.');
+          console.error(err);
+        }
       });
     return;
   }
 
-  // Autres filtres (month, quarter, semester, year)
+  // Pour les autres filtres standard (mois, trimestre, semestre, année)
   if (!this.dateFiltre) {
     alert('Veuillez sélectionner une date.');
     return;
   }
 
+  let formattedDate = this.dateFiltre;
+
   switch (this.typePeriode) {
     case 'month':
       formattedDate = formattedDate + '-01';
       break;
-
     case 'quarter': {
       const month = parseInt(formattedDate.split('-')[1]);
-      const currentQuarter = Math.floor((month - 1) / 3);
-      const quarterStartMonth = currentQuarter * 3 + 1;
+      const quarterStartMonth = Math.floor((month - 1) / 3) * 3 + 1;
       formattedDate = formattedDate.split('-')[0] + `-${String(quarterStartMonth).padStart(2, '0')}-01`;
       break;
     }
-
     case 'semester': {
       const month = parseInt(formattedDate.split('-')[1]);
       const semesterStartMonth = month <= 6 ? '01' : '07';
       formattedDate = formattedDate.split('-')[0] + `-${semesterStartMonth}-01`;
       break;
     }
-
     case 'year':
       formattedDate = formattedDate.split('-')[0] + '-01-01';
       break;
-
     default:
       alert('Type de filtre non valide !');
       return;
   }
 
-  console.log(`Type de filtre : ${this.typePeriode} | Date formattée : ${formattedDate}`);
-
-  // Appel standard au backend
   this.dashboardService.getQuantitesParFournisseur(this.typePeriode, formattedDate).subscribe({
     next: (data) => {
-      console.log('Données récupérées :', data);
       this.fournisseurs = data.map((item: any) => item.nomFournisseur);
       this.quantitesReceptionnees = data.map((item: any) => item.quantiteReceptionnee);
       this.quantitesNonConformes = data.map((item: any) => item.quantiteNonConforme);
     },
     error: (err) => {
-      console.error('Erreur lors de la récupération :', err);
-      alert('Une erreur est survenue lors de la récupération des données.');
-    },
+      alert('Erreur lors de la récupération des données.');
+      console.error(err);
+    }
   });
 }
 
@@ -316,5 +307,15 @@ export class DashboardComponent {
     this.currentPage = 0;
     this.getBlsNonConformes();
   }
+toggleMenu(): void {
+  this.menuOpen = !this.menuOpen;
+}
+downloadExcel(): void {
+  const worksheet = XLSX.utils.json_to_sheet(this.blsNonConformes);
+  const workbook = { Sheets: { 'BLs Non Conformes': worksheet }, SheetNames: ['BLs Non Conformes'] };
+  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  FileSaver.saveAs(blob, 'bls-non-conformes.xlsx');
+}
 
 }
