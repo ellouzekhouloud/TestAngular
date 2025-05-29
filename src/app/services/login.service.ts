@@ -14,7 +14,7 @@ export class LoginService {
   login(email: string, motDePasse: string, rememberMe: boolean) {
     return this.http.post<any>(this.apiUrl, { email, motDePasse }).pipe(
       tap(response => {
-        console.log('Réponse de la connexion:', response);
+       
 
         // 🔄 Gestion de l'option "Se souvenir de moi"
         const storage = rememberMe ? localStorage : sessionStorage;
@@ -22,9 +22,15 @@ export class LoginService {
         storage.setItem('refreshToken', response.refreshToken);
         storage.setItem('role', response.role);
         storage.setItem('nom', response.nom);
+         storage.setItem('prenom', response.prenom);
         storage.setItem('personnelId', response.personnelId);
+        
       })
     );
+  }
+  getUserId(): number | null {
+    const id = localStorage.getItem('personnelId') || sessionStorage.getItem('personnelId');
+    return id ? Number(id) : null;
   }
 
   logout() {
@@ -51,6 +57,9 @@ export class LoginService {
 
   getNom(): string | null {
     return localStorage.getItem('nom') || sessionStorage.getItem('nom');
+  }
+  getPrenom(): string | null {
+    return localStorage.getItem('prenom') || sessionStorage.getItem('prenom');
   }
 
   isLoggedIn(): boolean {

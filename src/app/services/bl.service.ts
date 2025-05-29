@@ -2,11 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+
 export interface BLProduit {
   id: number;
   referenceProduit: string;
   quantite: number;
   controleEffectue: boolean;
+}
+
+export interface BL {
+  id: number;
+  numBL: string;
+  dateReception: string;
+  numClient: string;
+  reference: string;
+  referenceInterne: string;
+  description: string;
+  produits: BLProduit[];
+  fournisseur?: any;
 }
 @Injectable({
   providedIn: 'root'

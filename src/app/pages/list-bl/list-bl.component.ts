@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BlService } from 'src/app/services/bl.service';
+import { BL, BLProduit, BlService } from 'src/app/services/bl.service';
+import { FournisseurService } from 'src/app/services/fournisseur.service';
+import { Fournisseur, Produit, ProduitService } from 'src/app/services/produit.service';
 
 import Swal from 'sweetalert2';
 declare var bootstrap: any;
@@ -23,7 +25,7 @@ itemsPerPage: number = 4;
 
 
   constructor(private http: HttpClient,private router: Router,
-     private blService : BlService
+     private blService : BlService, 
   ) {
      const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras.state as { newBL?: any };
@@ -68,9 +70,11 @@ openProduitModal(bl: any): void {
   this.selectedProduits = bl.produits;
 }
   ngOnInit(): void {
+     
     this.getBL();
   }
 
+  
   getBL(): void {
     this.http.get<any[]>('http://localhost:8080/api/bl').subscribe(
       (data) => {
@@ -187,7 +191,7 @@ openProduitModal(bl: any): void {
       this.router.navigate(['/controler', blId]);
     }
     
-
+  
 }
 
 

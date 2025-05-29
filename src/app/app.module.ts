@@ -43,6 +43,7 @@ import { DashboardBLConformeComponent } from './components/dashboard-blconforme/
 import { DashboardPPmComponent } from './components/dashboard-ppm/dashboard-ppm.component';
 
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { ChatPopupComponent } from './pages/chat-popup/chat-popup.component';
 
 
 
@@ -79,6 +80,7 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
     DashboardChartComponent,
     DashboardBLConformeComponent,
     DashboardPPmComponent,
+    ChatPopupComponent,
 
 
 

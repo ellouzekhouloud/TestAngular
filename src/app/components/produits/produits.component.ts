@@ -177,8 +177,7 @@ this.editProduitForm = this.fb.group({
   
 
 
-  // Soumettre le produit
-onSubmit(): void {
+ onSubmit(): void {
   if (this.produitForm.valid) {
     const produit = {
       reference: this.produitForm.value.reference,
@@ -216,13 +215,23 @@ onSubmit(): void {
         }, 100);
       },
       (error) => {
-        // ❌ Erreur backend
-        Swal.fire({
-          icon: 'error',
-          title: 'Erreur',
-          text: 'Une erreur est survenue lors de l\'ajout du produit.',
-        });
         console.error('Erreur lors de l\'ajout du produit:', error);
+
+        const backendMessage = error.error?.message;
+
+        if (backendMessage && backendMessage.includes('référence')) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: backendMessage  // Affiche "Cette référence existe déjà."
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Cette référence existe déjà. Veuillez en saisir une autre.'
+          });
+        }
       }
     );
   } else {
@@ -234,6 +243,7 @@ onSubmit(): void {
     });
   }
 }
+
 
   // Récupère la liste des produits
   getProduits(): void {

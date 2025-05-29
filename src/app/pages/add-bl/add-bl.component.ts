@@ -122,7 +122,7 @@ export class AddBlComponent implements OnInit {
 
     this.blService.addBl(bl).subscribe(
       (response) => {
-        console.log('ID du BL reçu:', response.id);
+        
         Swal.fire({
           icon: 'success',
           title: 'Succès',
@@ -135,12 +135,21 @@ export class AddBlComponent implements OnInit {
       },
       (error) => {
         console.error('Erreur lors de la création du bon de livraison', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Erreur',
-          text: 'Une erreur est survenue lors de la création du BL.'
-        });
-      }
+        
+       if (error.error && error.error.message && error.error.message.includes("existe déjà")) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Doublon',
+      text: 'Ce numéro de bon de livraison existe déjà. Veuillez en saisir un autre.'
+    });
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erreur',
+      text: 'Une erreur est survenue lors de la création du BL.'
+    });
+  }
+}
     );
   } else {
     Swal.fire({

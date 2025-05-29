@@ -9,6 +9,7 @@ import { FicheDeRefusService } from 'src/app/services/fiche-de-refus.service';
 import { Produit } from 'src/app/services/produit.service';
 
 import { ScanneService } from 'src/app/services/scanne.service';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -46,21 +47,21 @@ export class ControleComponent {
     private route: ActivatedRoute,
     private blService: BlService, private scanneService: ScanneService, private controleProduitService: ControleProduitService,
     private router: Router, private ficheDeRefusService: FicheDeRefusService, private etiquetteService: EtiquetteVerteService,
-    private http: HttpClient, 
-    
+    private http: HttpClient,
+
   ) {
     this.verificateur = this.getUtilisateurConnecte();
     this.dateDeControle = new Date().toISOString().split('T')[0];
   }
 
 
- getUtilisateurConnecte(): string {
-  return (
-    localStorage.getItem('nom') || 
-    sessionStorage.getItem('nom') || 
-    'Utilisateur inconnu'
-  );
-}
+  getUtilisateurConnecte(): string {
+    return (
+      localStorage.getItem('nom') ||
+      sessionStorage.getItem('nom') ||
+      'Utilisateur inconnu'
+    );
+  }
 
   ngOnInit(): void {
     // Récupérer l'ID du BL depuis l'URL
@@ -235,21 +236,37 @@ export class ControleComponent {
     this.controleProduitService.enregistrerControle(data).subscribe({
       next: (response) => {
         console.log("Contrôle enregistré avec succès :", response);
+
         // 🔄 Mise à jour du champ is_controle
         this.controleProduitService.marquerProduitCommeControle(this.produit.reference).subscribe(() => {
           console.log("Produit marqué comme contrôlé");
         });
-        window.alert("✅ Contrôle enregistré avec succès !");
+
+        // ✅ Affichage SweetAlert2
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: '✅ Contrôle enregistré avec succès !',
+          confirmButtonText: 'OK'
+        });
+
         this.produitsControles.push(this.produit.reference);
         this.imprimerEtiquette();
-        
-
       },
       error: (error) => {
         console.error("Erreur lors de l'enregistrement du contrôle :", error);
+
+        // ❌ Affichage erreur SweetAlert2
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: "Une erreur est survenue lors de l'enregistrement du contrôle.",
+          confirmButtonText: 'Fermer'
+        });
       }
     });
   }
+
 
   enregistrerRefus() {
     const data = this.buildControleData(true);
@@ -257,19 +274,34 @@ export class ControleComponent {
     this.controleProduitService.enregistrerControle(data).subscribe({
       next: (response) => {
         console.log("Fiche de refus enregistrée :", response);
-        window.alert("🚫 Fiche de refus enregistrée avec succès !");
+
+        // ✅ Affichage SweetAlert2
+        Swal.fire({
+          icon: 'warning',
+          title: 'Fiche de refus',
+          text: '🚫 Fiche de refus enregistrée avec succès !',
+          confirmButtonText: 'OK'
+        });
+
         // 🔄 Mise à jour du champ is_controle
         this.controleProduitService.marquerProduitCommeControle(this.produit.reference).subscribe(() => {
           console.log("Produit marqué comme contrôlé");
         });
+
         this.produitsControles.push(this.produit.reference);
 
         this.imprimerFicheDeRefus();
-
-
       },
       error: (error) => {
         console.error("Erreur lors de l'enregistrement de la fiche de refus :", error);
+
+        // ❌ Affichage erreur SweetAlert2
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: "Une erreur est survenue lors de l'enregistrement de la fiche de refus.",
+          confirmButtonText: 'Fermer'
+        });
       }
     });
   }
@@ -289,26 +321,48 @@ export class ControleComponent {
     if (this.produitsRestants.length > 0) {
       // ✅ Décaler l'affichage pour éviter l'empilement
       setTimeout(() => {
-        window.alert("ℹ️ Il reste encore des produits à contrôler.");
-      }, 500); // attend 0.5s après "Contrôle enregistré"
+        Swal.fire({
+          icon: 'info',
+          title: 'Produits restants',
+          text: 'ℹ️ Il reste encore des produits à contrôler.',
+          confirmButtonText: 'OK',
+          timer: 2500, // 2.5 secondes
+          timerProgressBar: true
+        });
+      }, 500);
+
       this.referenceProduit = this.produitsRestants[0].reference;
       this.rechercherProduit();
     } else {
       this.controleProduitService.verifierBLTermine(this.idBL!).subscribe(response => {
         if (response === true) {
-          
           setTimeout(() => {
-            window.alert("🎉 Tous les produits sont contrôlés, le BL est terminé !");
-            this.router.navigate(['/ListBL']);
+            Swal.fire({
+              icon: 'success',
+              title: 'BL terminé',
+              text: '🎉 Tous les produits sont contrôlés, le BL est terminé !',
+              confirmButtonText: 'Retour à la liste',
+
+            }).then(() => {
+              this.router.navigate(['/ListBL']);
+            });
           }, 500);
         } else {
           setTimeout(() => {
-            window.alert("⚠️ le BL n'est pas encore terminé, certains produits ne sont pas marqués.");
+            Swal.fire({
+              icon: 'warning',
+              title: 'BL incomplet',
+              text: '⚠️ Le BL n\'est pas encore terminé, certains produits ne sont pas contrôlés.',
+              confirmButtonText: 'OK',
+              timer: 2500, // 2.5 secondes
+              timerProgressBar: true
+            });
           }, 500);
         }
       });
     }
   }
+
 
 
 
@@ -373,8 +427,8 @@ export class ControleComponent {
     this.etiquetteService.saveEtiquette(etiquetteData).subscribe({
       next: (response) => {
         // 3. Une fois sauvegardée, imprimer
-       
-        
+
+
       },
       error: (error) => {
         console.error('Erreur lors de la sauvegarde', error);
@@ -386,22 +440,22 @@ export class ControleComponent {
     const moq = this.produit?.moq;
     const quantite = this.quantiteProduit;
     const quantiteIncorrecte = this.quantiteIncorrecte;
-  
+
     if (moq == null || quantite == null || moq <= 0 || quantite <= 0) {
       console.error('MOQ ou quantité non définie ou invalide', { moq, quantite });
       return;
     }
-   
+
     const nombreFiches = Math.floor((quantite - quantiteIncorrecte) / moq);
     const nombreEtiquettesRestantes = Math.ceil(quantiteIncorrecte / moq);
-    
-  
+
+
     if (!printWindow) return;
-  
+
     const quantiteNonConforme = data.quantiteStatus === 'invalid'
       ? `<p><strong>Quantité non conforme :</strong> ${data.quantiteIncorrecte} au lieu de ${data.quantiteProduit}</p>`
       : '';
-  
+
     let printContent = `
       <html>
       <head>
@@ -434,7 +488,7 @@ export class ControleComponent {
       </head>
       <body>
     `;
-  
+
     // Fiches de refus
     for (let i = 1; i <= nombreFiches; i++) {
       printContent += `
@@ -451,7 +505,7 @@ export class ControleComponent {
         </div>
       `;
     }
-  
+
     // Étiquettes conformes restantes
     for (let i = 1; i <= nombreEtiquettesRestantes; i++) {
       printContent += `
@@ -463,7 +517,7 @@ export class ControleComponent {
         </div>
       `;
     }
-  
+
     printContent += `
         <script>
           window.onload = function() {
@@ -475,17 +529,17 @@ export class ControleComponent {
       </body>
       </html>
     `;
-  
+
     printWindow.document.open();
     printWindow.document.write(printContent);
     printWindow.document.close();
   }
-  
+
 
   imprimerEtiquette() {
     // 1. Ouvre la fenêtre d'impression IMMÉDIATEMENT pour éviter le blocage navigateur
     const printWindow = window.open('', '', 'width=800,height=600');
-  
+
     const etiquetteData = {
       reference: this.produit.reference,
       fournisseur: this.produit.fournisseur?.nomFournisseur,
@@ -494,13 +548,13 @@ export class ControleComponent {
       dateDeControle: this.dateDeControle,
       resultat: 'Conforme'
     };
-  
+
     // 2. Sauvegarde dans la base
     this.etiquetteService.saveEtiquette(etiquetteData).subscribe({
       next: (response) => {
         console.log('Étiquette sauvegardée avec succès', response);
         // 3. Une fois sauvegardée, imprimer
-       
+
         this.printEtiquette(printWindow); // 👈 envoie la fenêtre déjà ouverte
         this.resetForm();
         this.passerAuProduitSuivant();
@@ -511,18 +565,18 @@ export class ControleComponent {
       }
     });
   }
-  
+
   printEtiquette(printWindow: Window | null) {
     const moq = this.produit?.moq;
     const quantite = this.quantiteProduit;
-  
+
     if (moq == null || quantite == null || moq <= 0 || quantite <= 0) {
       console.error('MOQ ou quantité non définie ou invalide', { moq, quantite });
       return;
     }
-  
+
     const nombreEtiquettes = Math.ceil(quantite / moq);
-  
+
     let printContent = `
       <html>
       <head>
@@ -543,7 +597,7 @@ export class ControleComponent {
       </head>
       <body>
     `;
-  
+
     for (let i = 1; i <= nombreEtiquettes; i++) {
       printContent += `
         <div class="etiquette">
@@ -554,7 +608,7 @@ export class ControleComponent {
         </div>
       `;
     }
-  
+
     printContent += `
         <script>
           window.onload = function() {
@@ -566,7 +620,7 @@ export class ControleComponent {
       </body>
       </html>
     `;
-  
+
     // Remplir la fenêtre ouverte plus tôt
     if (printWindow) {
       printWindow.document.open(); // s'assurer que c’est prêt
@@ -574,6 +628,6 @@ export class ControleComponent {
       printWindow.document.close();
     }
   }
-  
+
 
 }

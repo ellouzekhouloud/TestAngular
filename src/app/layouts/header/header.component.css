@@ -156,3 +156,7 @@
   font-size: 0.75rem;
   padding: 4px 6px;
 }
+.messages .message-item a:hover {
+  background-color: #f8f9fa; /* gris clair */
+  text-decoration: none;
+}

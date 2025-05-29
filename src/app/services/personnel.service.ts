@@ -30,7 +30,9 @@ export class PersonnelService {
       'Content-Type': 'application/json'
     });
   }
-
+getPersonnelById(id: number): Observable<Personnel> {
+  return this.http.get<Personnel>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+}
  
   getPersonnels(): Observable<Personnel[]> {
     return this.http.get<Personnel[]>(this.apiUrl, { headers: this.getHeaders() });
@@ -54,4 +56,10 @@ export class PersonnelService {
   deactivatePersonnel(id: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}/deactivate`, {}, { responseType: 'text' });
   }
+
+  getActivePersonnels(): Observable<Personnel[]> {
+  return this.http.get<Personnel[]>(`${this.apiUrl}/actifs`, {
+    headers: this.getHeaders()
+  });
+}
 }

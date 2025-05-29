@@ -1,0 +1,23 @@
+<div class="chat-popup shadow rounded-3">
+  <div class="chat-header d-flex align-items-center justify-content-between px-3 py-2 bg-primary text-white rounded-top">
+    <strong>{{ receiverNom }}</strong>
+    <button type="button" class="btn-close btn-close-black" aria-label="Fermer" (click)="close()"></button>
+  </div>
+
+  <div class="chat-body px-3 py-2" #chatBody>
+    <div *ngFor="let msg of messages" [ngClass]="{'own': msg.sender.id === senderId, 'received': msg.sender.id !== senderId}">
+      <span class="message-c">{{ msg.content }}</span>
+    </div>
+  </div>
+
+  <div class="chat-footer px-3 py-2 border-top bg-light d-flex align-items-center gap-2">
+    <input
+      type="text"
+      class="form-control rounded-pill"
+      [(ngModel)]="newMessage"
+      placeholder="Écrire un message..."
+      (keyup.enter)="sendMessage()"
+    />
+    <button class="btn btn-primary rounded-pill px-3" (click)="sendMessage()">Envoyer</button>
+  </div>
+</div>
